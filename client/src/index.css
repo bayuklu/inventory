@@ -1,0 +1,498 @@
+body{
+  background-color: rgb(255, 255, 255);
+}
+.my-sidebar {
+  width: 300px;
+  height: 100vh;
+  position: fixed;
+  background-color: black;
+  padding: 5px;
+  padding-right: 20px;
+  margin-right: 10px;
+  padding-top: 20px;
+}
+
+.my-dashboard{
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  margin-left: 320px;
+  height: 100vh;
+  /* background-color: yellow; */
+  padding: 10px;
+  gap: 10px;
+}
+
+.my-dashboardChild{
+  width: 100%;
+  height: 298px;
+  /* background-color: blue; */
+  display: flex;
+  gap: 20px;
+}
+
+.my-headMenu{
+  display: flex;
+  width: 50%;
+  height: 250px;
+  /* border: 1px solid grey; */
+  border-radius: 0%;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.my-menu {
+  width: 2500px;
+  height: auto;
+  background-color: black;
+  padding: 30px;
+  border-radius: 10px;
+  /* cursor: pointer; */
+}
+
+.my-menu h3 {
+  font-weight: bold;
+  color: white;
+}
+
+.my-menu h1{
+  font-size: 45px;
+  font-weight: bold;
+  margin-left: -3px;
+  color: lightgreen;
+}
+
+
+
+/* cashier */
+.myCashierContainer {
+  width: 83%;
+  height: 100vh;
+  margin-left: 320px;
+}
+
+.judul {
+  width: 100%;
+  height: 160px;
+  display: flex;
+  align-items: center;
+}
+
+.judul h1{
+  font-size: 70px;
+  font-weight: bold;
+  color: black;
+  border-left: 10px solid darkorange;
+  padding-left: 10px;
+  margin-left: 30px;
+  margin-top: 10px;
+}
+
+.formContainer {
+  width: 100%;
+  height: auto;
+  padding-right: 20px;
+}
+
+.orderView{
+  width: 100%;
+  height: 400px;
+  overflow: scroll;
+  margin-top: 20px;
+  border-top: 3px solid lightgray;
+}
+
+
+/* inventory */
+.inventoryContainer {
+  width: 1580px;
+  height: 100vh;
+  margin-left: 320px;
+}
+
+.inventoryMenu {
+  width: 100%;
+  height: 50px;
+}
+
+.inventoryMenu ul {
+  display: flex;
+  width: auto;
+  height: 50px;
+  align-items: center;
+  margin-left: 10px;
+  gap: 30px;
+}
+
+.inventoryMenu ul li button{
+  width: 150px;
+  font-weight: bold;
+  color: darkorange;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 5px;
+  border: 2px solid darkorange;
+}
+
+.inventoryContainer ul li:nth-child(6) {
+  margin-left: auto;
+  margin-right: 20px;
+  order: 2;
+}
+
+.inventoryContainer ul li:nth-child(6) button{
+  background-color: black;
+  border-color: black;
+  color: white;
+}
+
+.inventoryContainer ul li:nth-child(6) button:hover{
+  background-color: black;
+  border-color: transparent;
+  color: white;
+}
+
+.inventoryMenu ul li button:hover{
+  background-color: black;
+  color: darkorange;
+}
+
+.tableContainer {
+  margin-top: 10px;
+  width: 100%;
+  height: 680px;
+  border-top: 3px solid lightgray;
+  border-left: 3px solid lightgray;
+  overflow: scroll;
+}
+
+.tableContainer table thead{
+  z-index: 9998;
+  background-color: black;
+  position: sticky;
+  top: 0;
+}
+
+.tableContainer table tbody tr:hover {
+  background-color: lightgrey;
+}
+
+.is-active-btn {
+  background-color: hsl( 221 , 14% , 9% );
+  
+}
+
+.formAddProduct {
+  width: 100%;
+  height: 100vh;
+  background-color:rgba(0,0,0,0.9);
+  position: fixed;
+  z-index: 9999;
+  padding: 20px;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hideFormAddProduct {
+  top: -100%;
+}
+
+.formAddProduct form{
+  background-color: hsl( 221 , 14% , 9% );
+  width: 650px;
+  height: auto;
+  padding: 30px;
+  border-radius: 10px;
+}
+
+.formAddStock {
+  width: 100%;
+  height: 100vh;
+  background-color:rgba(0,0,0,0.9);
+  position: fixed;
+  z-index: 9999;
+  padding: 20px;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hideFormAddStock {
+  top: -100%;
+}
+
+.formAddStock form{
+  background-color: hsl( 221 , 14% , 9% );
+  width: 400px;
+  height: 250px;
+  padding: 30px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.stockNameInfo {
+  position: absolute;
+  margin-top: -180px;
+}
+
+/* outlet */
+.outletContainer {
+  width: 82%;
+  height: 100vh;
+  margin-left: 320px;
+}
+
+.outletHeader {
+  width: 100%;
+  height: 200px;
+  display: flex;
+}
+
+.addOutlet {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.addOutlet form {
+  display: flex;
+  gap: 2px;
+}
+
+.addOutlet button {
+  height: 50px;
+}
+
+.outletContent {
+  margin-top: -50px;
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.outletBox {
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  width: 300px;
+  background-color: black;
+  border-radius: 10px;
+  padding: 20px;
+  overflow: hidden;
+  box-sizing: border-box;
+  color: white;
+  position: relative;
+}
+
+.outletBox div h1, .outletBox div p {
+  color: white;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin-top: 20px;
+  position: absolute;
+  bottom: 5px;
+}
+
+.pagination button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.pagination button:hover {
+  background-color: #e0e0e0;
+}
+
+.pagination button.active {
+  background-color: darkorange;
+  color: white;
+  border: none;
+}
+
+.pagination-arrow {
+  background-color: #e0e0e0;
+  border: 1px solid #ccc;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination-arrow:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* chart */
+.chartContainer {
+  width: 700px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  margin-top: 70px;
+  margin-left: 20px;
+  padding: 30px;
+  border-radius: 10px;
+}
+
+.chartView {
+  transform: scale(1.3);
+}
+
+.searchItem {
+  width: 200px;
+  height: 40px;
+  border-radius: 5px;
+  padding: 0px 10px 0px 10px;
+  outline: none;
+}
+
+.stockHabis {
+  background-color: pink;
+}
+
+.stockHabis:hover {
+  background-color: red;
+}
+
+/* Mengubah warna placeholder */
+input::placeholder {
+  color: black; /* Ganti dengan warna yang diinginkan */
+  opacity: 1;  /* Agar warna sesuai dengan yang ditentukan */
+}
+
+/* Menghilangkan kontrol spinner pada input number untuk Chrome, Safari, Edge, dan Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Menghilangkan kontrol spinner pada input number untuk Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.messages{
+  padding-left: 20px;
+  padding-right: 20px;
+  height: 50px;
+  border-radius: 10px;
+  position: absolute;
+  top: 2%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999999;
+}
+
+.messages p {
+  text-align: center;
+  color: white;
+}
+
+
+
+
+.orders-container {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.formOrders {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  padding: 20px;
+}
+
+.formOrders form {
+  display: flex;
+  gap: 10px;
+}
+
+.viewOrders {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+}
+
+.infoOrders {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  background-color: black;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.itemOrders {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 1px solid black;
+  padding: 20px;
+  gap: 20px;
+}
+
+.itemOrder {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+}
+
+.itemOrder:hover {
+  background-color: lightgray;
+}
+
+.itemOrder p {
+  color: black;
+}
