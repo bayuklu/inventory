@@ -3,7 +3,7 @@ import Items from '../model/ItemsModel.js'
 
 export const addItem = async(req, res) => {
     //list category [foods = FOO****, drinks = DRI****, bathroom = BAT****, kitchen = KIT****]
-    const {name, category, price, stock, unit, discount, capitalPrice} = req.body
+    const {name, category, price, stock, unit, unitPack, discount, capitalPrice} = req.body
     // console.log(typeof capitalPrice)
 
     if(!name || !price || !stock || !capitalPrice) return res.status(400).json({msg: "name, price, stock, or capital price field are required!"})
@@ -63,6 +63,7 @@ export const addItem = async(req, res) => {
             price: price,
             stock: stock,
             unitTotal: unit,
+            unitTotalPack: unitPack,
             discount: convDiscount || 0.0,
             capitalPrice: parseCapitalPrice
         })
@@ -85,7 +86,7 @@ export const addItem = async(req, res) => {
 export const getAllItem = async(req, res) => {
     try {
         const get = await Items.findAll({
-            attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'discount', 'capitalPrice']
+            attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
         })
         return res.status(200).json({data: [...get]})
     } catch (error) {
@@ -100,7 +101,7 @@ export const getFoods = async(req, res) => {
             where: {
                 category: 'foods'
             },
-            attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'discount', 'capitalPrice']
+            attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
         })
         return res.status(200).json({data: [...get]})
     } catch (error) {
@@ -115,7 +116,7 @@ export const getDrinks = async(req, res) => {
             where: {
                 category: 'drinks'
             },
-            attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'discount', 'capitalPrice']
+            attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
         })
         return res.status(200).json({data: [...get]})
     } catch (error) {
@@ -130,7 +131,7 @@ export const getBathroom = async(req, res) => {
             where: {
                 category: 'bathroom'
             },
-            attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'discount', 'capitalPrice']
+            attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
         })
         return res.status(200).json({data: [...get]})
     } catch (error) {
@@ -145,7 +146,7 @@ export const getKitchen = async(req, res) => {
             where: {
                 category: 'kitchen'
             },
-            attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'discount', 'capitalPrice']
+            attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
         })
         return res.status(200).json({data: [...get]})
     } catch (error) {
@@ -293,7 +294,7 @@ export const searchItem = async(req, res) => {
     if(!value) return res.status(400).json({msg: "Must insert a value"})
     try {
         const item = await Items.findAll({
-            attributes: ['code', 'name', 'category', 'stock', 'unitTotal', 'discount', 'price', 'capitalPrice'],
+            attributes: ['code', 'name', 'category', 'stock', 'unitTotal', 'discount', 'price', 'capitalPrice', 'unitTotalPack'],
             where: {
                 [Op.or] : {
                     name : {

@@ -38,6 +38,7 @@ const Outlet = () => {
     const getOutlet = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_BASEURL}/outlet`);
+            // console.log(response.data.data)
             if (response) {
                 setOutlets(response.data.data);
             }

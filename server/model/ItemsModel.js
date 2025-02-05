@@ -28,6 +28,10 @@ const Items = db.define(
             type: DataTypes.INTEGER,
             allowNull: false
         },        
+        unitTotalPack: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },        
         discount: {
             type: DataTypes.FLOAT,
             allowNull: true

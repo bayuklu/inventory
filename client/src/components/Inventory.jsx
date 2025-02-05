@@ -21,6 +21,7 @@ const Inventory = () => {
   const [price, setPrice] = useState('')
   const [stock, setStock] = useState('')
   const [unit, setUnit] = useState('')
+  const [unitPack, setUnitPack] = useState('')
   const [capitalPrice, setCapitalPrice] = useState('')
   const [discount, setDiscount] = useState('')
 
@@ -48,6 +49,7 @@ const Inventory = () => {
         price: price,
         stock: stock,
         unit: unit,
+        unitPack: unitPack,
         discount: discount,
         capitalPrice: parseInt(capitalPrice)
       })
@@ -244,6 +246,7 @@ const Inventory = () => {
                             <th style={{color: 'white'}}>Product Name</th>
                             <th style={{color: 'white'}}>Stock</th> 
                             <th style={{color: 'white'}}>Isi 1 Dus</th> 
+                            <th style={{color: 'white'}}>Isi 1 Pack</th> 
                             <th style={{color: 'white'}}>Discount</th> 
                             <th style={{color: 'white'}}>Original Price</th> 
                             <th style={{color: 'white'}}>Capital Price</th> 
@@ -259,6 +262,7 @@ const Inventory = () => {
                             <td>{item.name.toUpperCase()}</td>
                             <td>{item.stock} pcs</td>
                             <td>{item.unitTotal || 0} pcs</td>
+                            <td>{item.unitTotalPack || 0} pcs</td>
                             <td>{item.discount * 100}%</td>
                             <td>{rupiah(item.price)}</td>
                             <td>{rupiah(item.capitalPrice)}</td>
@@ -317,7 +321,14 @@ const Inventory = () => {
                   <div className="control">
                     <input className="input" type="number" placeholder="" value={unit} onChange={(e) => setUnit(e.target.value)}/>
                   </div>
-                  <p style={{color: 'white'}} className="help">Masukkan isi dalam 1 dus</p>
+                  <p style={{color: 'white'}} className="help">Masukkan isi dalam 1 dus (jika ada)</p>
+                </div>
+                <div className="field">
+                  <label style={{color: 'white'}} className="label">Isi Stock Dalam 1 Pack</label>
+                  <div className="control">
+                    <input className="input" type="number" placeholder="" value={unitPack} onChange={(e) => setUnitPack(e.target.value)}/>
+                  </div>
+                  <p style={{color: 'white'}} className="help">Masukkan isi dalam 1 pack (jika ada)</p>
                 </div>
                 <div className="field">
                   <label style={{color: 'yellow'}} className="label">Capital Price</label>
