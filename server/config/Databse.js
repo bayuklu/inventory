@@ -17,7 +17,7 @@ const db = new Sequelize(process.env.PSQL, {
     dialectOptions: {
         ssl: {
             require: true,
-            rejectUnauthrorized: true
+            rejectUnauthrorized: false
         }
     },
     logging: false,
