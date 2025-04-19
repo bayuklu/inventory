@@ -19,9 +19,9 @@ const PORT = process.env.PORT
 try {
     await db.authenticate()
     console.log("Database connected")
-    await db.sync({
-        alter: true
-    })
+    // await db.sync({
+    //     alter: true
+    // })
 
     // console.log("Migrasi...")
     // const [rows] = await mysqlDb.query('SELECT * FROM outlets');
