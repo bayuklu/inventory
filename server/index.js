@@ -9,7 +9,7 @@ import Items from './model/ItemsModel.js'
 import Orders from './model/ordersModel.js'
 import Outlet from './model/outletModels.js'
 
-import mysqlDb from './config/MysqlDb.js'
+// import mysqlDb from './config/MysqlDb.js'
 
 const app = express()
 
