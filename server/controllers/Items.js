@@ -84,6 +84,7 @@ export const addItem = async(req, res) => {
 }
 
 export const getAllItem = async(req, res) => {
+    console.log(req.headers.origin)
     try {
         const get = await Items.findAll({
             attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
