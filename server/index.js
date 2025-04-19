@@ -39,8 +39,8 @@ try {
     console.log(error)
 }
 
-app.use(cors({credentials: true, 
-    origin: "http://localhost:5173",
+app.use(cors({credentials: false, 
+    // origin: "http://localhost:5173",
     // origin: "http:"
 }))
 
