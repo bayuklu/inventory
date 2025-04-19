@@ -11,9 +11,10 @@ import Outlet from './model/outletModels.js'
 
 import mysqlDb from './config/MysqlDb.js'
 
-dotenv.config()
-
 const app = express()
+
+dotenv.config()
+const PORT = process.env.PORT
 
 try {
     await db.authenticate()
@@ -47,4 +48,4 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(router)
 
-app.listen(process.env.PORT, () => {console.log("Server running at port 5000")})
+app.listen(PORT, () => {console.log(`Server running at port ${PORT}`)})
