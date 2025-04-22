@@ -41,7 +41,7 @@ try {
 
 app.use(cors({credentials: true, 
     // origin: "http://localhost:5173",
-    origin: "https://anabasalim-frozen.vercel.app"
+    origin: "https://abfrozen.vercel.app"
 }))
 
 app.use(cookieParser())
