@@ -110,22 +110,22 @@ const Inventory = () => {
           setDataView(category)
           break;
         case 'Drinks':
-          response = await axios.get('http://localhost:5000/items/drinks')
+          response = await axios.get(`${import.meta.env.VITE_BASEURL}/items/drinks`)
           setItems(response.data.data)
           setDataView(category)
           break;
         case 'Bathroom':
-          response = await axios.get('http://localhost:5000/items/bathroom')
+          response = await axios.get(`${import.meta.env.VITE_BASEURL}/items/bathroom`)
           setItems(response.data.data)
           setDataView(category)
           break;
         case 'Kitchen':
-          response = await axios.get('http://localhost:5000/items/kitchen')
+          response = await axios.get(`${import.meta.env.VITE_BASEURL}/items/kitchen`)
           setItems(response.data.data)
           setDataView(category)
           break;
         default:
-          response = await axios.get('http://localhost:5000/items')
+          response = await axios.get(`${import.meta.env.VITE_BASEURL}/items`)
           setItems(response.data.data)
           setDataView(category)
           break;
