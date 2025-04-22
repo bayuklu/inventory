@@ -84,10 +84,7 @@ export const changePriceForSelectedItem = async(req, res) => {
 
 export const createRecordOrder = async(req, res) => {
     const {turnCode, itemCode, quantity, isUnitChecked} = req.body
-    console.log(`quantity: ${quantity}`)
-    console.log(`itemCode: ${itemCode}`)
-    console.log(`turnCode: ${turnCode}`)
-    console.log(`isUnitChecked: ${isUnitChecked}`)
+
     if (isUnitChecked.split("-")[0] == 2 && quantity == 0) {
         return res.status(400).json({msg: "Barang ini belum memiliki data per pack!"})
     }else if(!turnCode || !itemCode || !quantity || !isUnitChecked){

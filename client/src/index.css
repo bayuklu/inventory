@@ -177,9 +177,9 @@ body{
   top: 0;
 }
 
-.tableContainer table tbody tr:hover {
+/* .tableContainer table tbody tr:hover {
   background-color: lightgrey;
-}
+} */
 
 .is-active-btn {
   background-color: hsl( 221 , 14% , 9% );
@@ -387,7 +387,7 @@ body{
 }
 
 .stockHabis {
-  background-color: pink;
+  background-color: rgb(70, 0, 12);
 }
 
 .stockHabis:hover {
