@@ -299,10 +299,10 @@ export const searchItem = async(req, res) => {
             where: {
                 [Op.or] : {
                     name : {
-                        [Op.like] : `%${value}%`
+                        [Op.iLike] : `%${value}%`
                     },
                     code : {
-                        [Op.like] : `%${value}%`
+                        [Op.iLike] : `%${value}%`
                     }
                 }
             }
