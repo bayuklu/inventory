@@ -84,6 +84,7 @@ export const changePriceForSelectedItem = async(req, res) => {
 
 export const createRecordOrder = async(req, res) => {
     const {turnCode, itemCode, quantity, isUnitChecked} = req.body
+    console.log(isUnitChecked)
     if(!turnCode || !itemCode || !quantity || !isUnitChecked){
         return res.status(400).json({msg: "All field are required!"})
     }
