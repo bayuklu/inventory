@@ -152,7 +152,7 @@ const Cashier = () => {
           isUnitChecked: oneOrNull,
         }
       );
-      console.log(isUnitChecked)
+      console.log(`ini debugggggggggggg: ${oneOrNull}`)
       if (response) {
         setProductCode("");
         setQuantity("");
