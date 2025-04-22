@@ -91,7 +91,7 @@ export const createRecordOrder = async(req, res) => {
     if(!turnCode || !itemCode || !quantity || !isUnitChecked){
         return res.status(400).json({msg: "All field are required!"})
     }else if (isUnitChecked.split("-")[0] == 2 && quantity == 0) {
-        res.status(400).json({msg: "Barang ini belum memiliki data per pack!"})
+        return res.status(400).json({msg: "Barang ini belum memiliki data per pack!"})
     }
 
     try {
