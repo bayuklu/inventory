@@ -1,5 +1,5 @@
 import express from 'express'
-import db from './config/Databse.js'
+import db from './config/Database.js'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import router from './router/index.js'
@@ -20,7 +20,7 @@ const PORT = process.env.PORT
 try {
     await db.authenticate()
     console.log("Database connected")
-    
+
     await Users.sync({
         alter: true
     })
