@@ -9,7 +9,6 @@ import Items from './model/ItemsModel.js'
 import Orders from './model/ordersModel.js'
 import Outlet from './model/outletModels.js'
 import Users from './model/userModel.js'
-import protectOrigin from './middleware/originProtect.js'
 
 // import mysqlDb from './config/MysqlDb.js'
 
@@ -22,9 +21,9 @@ try {
     await db.authenticate()
     console.log("Database connected")
 
-    await Users.sync({
-        alter: true
-    })
+    // await Users.sync({
+    //     alter: true
+    // })
 
     // console.log("Migrasi...")
     // const [rows] = await mysqlDb.query('SELECT * FROM outlets');
@@ -48,7 +47,6 @@ app.use(cors({credentials: true,
 
 app.use(cookieParser())
 app.use(express.json())
-app.use(protectOrigin())
 app.use(router)
 
 app.listen(PORT, () => {console.log(`Server running at port ${PORT}`)})
