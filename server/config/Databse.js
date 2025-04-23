@@ -14,6 +14,7 @@ dotenv.config()
 const db = new Sequelize(process.env.PSQL, {
     dialect: "postgres",
     protocol: "postgres",
+    timezone: "+08:00",
     dialectOptions: {
         ssl: {
             require: true,

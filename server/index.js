@@ -8,6 +8,7 @@ import orderRecords from './model/orderRecordModel.js'
 import Items from './model/ItemsModel.js'
 import Orders from './model/ordersModel.js'
 import Outlet from './model/outletModels.js'
+import Users from './model/userModel.js'
 
 // import mysqlDb from './config/MysqlDb.js'
 
@@ -19,9 +20,10 @@ const PORT = process.env.PORT
 try {
     await db.authenticate()
     console.log("Database connected")
-    // await db.sync({
-    //     alter: true
-    // })
+    
+    await Users.sync({
+        alter: true
+    })
 
     // console.log("Migrasi...")
     // const [rows] = await mysqlDb.query('SELECT * FROM outlets');
@@ -34,7 +36,6 @@ try {
     //     }
     //   );
     // }    
-    // console.log("migrasi selesai...")
 } catch (error) {
     console.log(error)
 }
