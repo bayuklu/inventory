@@ -493,6 +493,7 @@ const Cashier = () => {
 
   const handleSelectProduct = (product) => {
     setProductName(product.name);
+    setProductCode(product.code);
     setShowDropdownProductCode(false);
   };
 
