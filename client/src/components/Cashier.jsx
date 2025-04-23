@@ -156,6 +156,7 @@ const Cashier = () => {
       );
       if (response) {
         setProductCode("");
+        setProductName("");
         setQuantity("");
         getRecords();
       }
