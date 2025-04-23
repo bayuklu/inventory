@@ -483,6 +483,7 @@ const Cashier = () => {
   const handleProductCodeChange = (e) => {
     const value = e.target.value;
     setProductCode(value);
+    setProductName(value);
     if (value.length > 1) {
       searchProducts(value);
     } else {
@@ -491,7 +492,6 @@ const Cashier = () => {
   };
 
   const handleSelectProduct = (product) => {
-    console.log(product)
     setProductName(product.name);
     setShowDropdownProductCode(false);
   };
