@@ -3,12 +3,13 @@ import { addItem, getAllItem, getFoods, getDrinks, getBathroom, getKitchen, upda
 import {getTurnCode, getRecordsByTurnCode, createRecordOrder, createFinalOrder, changePriceForSelectedItem, deleteRecordOrder} from "../controllers/orders.js"
 import {getTotalOfItemsStock, getTotalOFItemsProduct, getTodayOrders, getTodayIncomes, getLast7DaysIncomes, getBestSeller, getTodayBestSeller, getTodayOrdersData, getTodayProfit} from "../controllers/dashboard.js"
 import { addOutlet, deleteOutlet, getOutlet, searchOutlet, updateOutlet } from "../controllers/outlet.js";
-import { isUserLoggedIn, Login, Logout } from '../controllers/user.js'
+import { isUserLoggedIn, Login, Logout, Register } from '../controllers/user.js'
 import { refreshToken } from '../controllers/refreshToken.js'
 
 const router = express.Router()
 
 router.post('/login', Login)
+router.post('/register', Register)
 router.get('/login', isUserLoggedIn)
 router.get('/token', refreshToken)
 router.delete('/logout', Logout)

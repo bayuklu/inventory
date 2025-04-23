@@ -77,3 +77,29 @@ export const isUserLoggedIn = async(req, res) => {
         res.status(500).json({msg: "Internal server error!"})
     }
 }
+
+
+
+
+
+// MANUAL REGIST
+export const Register = async(req, res) => {
+    const {firstName, lastName, password, confPassword} = req.body
+    if(!firstName, !lastName, !password, !confPassword) return res.status(400).json({msg: "All field are required"})
+    if(password !== confPassword) return res.status(400).json({msg: "Password and confirm password must be match!"})
+
+    try {
+        const salt = await bcrypt.genSalt(10)
+        const hashPassword = await bcrypt.hash(password, salt)
+
+        await Users.create({
+            username: `${firstName}${lastName}`,
+            password: hashPassword,
+            role: 'admin'
+        })
+        res.status(200).json({msg: "Register Successfully!"})
+    } catch (error) { 
+        console.log(error)
+        res.status(500).json({msg: "Internal server error!"})
+    }
+}
