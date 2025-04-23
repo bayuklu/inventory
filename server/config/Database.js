@@ -19,7 +19,8 @@ const db = new Sequelize(process.env.PSQL, {
         ssl: {
             require: true,
             rejectUnauthrorized: false
-        }
+        },
+        useUTC: false
     },
     pool: {
         max: 5,
