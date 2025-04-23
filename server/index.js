@@ -9,6 +9,7 @@ import Items from './model/ItemsModel.js'
 import Orders from './model/ordersModel.js'
 import Outlet from './model/outletModels.js'
 import Users from './model/userModel.js'
+import protectOrigin from './middleware/originProtect.js'
 
 // import mysqlDb from './config/MysqlDb.js'
 
@@ -47,6 +48,7 @@ app.use(cors({credentials: true,
 
 app.use(cookieParser())
 app.use(express.json())
+app.use(protectOrigin())
 app.use(router)
 
 app.listen(PORT, () => {console.log(`Server running at port ${PORT}`)})
