@@ -84,6 +84,7 @@ export const isUserLoggedIn = async(req, res) => {
 
 // MANUAL REGIST
 export const Register = async(req, res) => {
+    console.log(req.headers)
     const {firstName, lastName, password, confPassword} = req.body
     if(!firstName, !lastName, !password, !confPassword) return res.status(400).json({msg: "All field are required"})
     if(password !== confPassword) return res.status(400).json({msg: "Password and confirm password must be match!"})
