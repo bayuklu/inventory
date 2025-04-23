@@ -496,3 +496,7 @@ input[type="number"] {
 .itemOrder p {
   color: black;
 }
+
+.dropdownItemLoading {
+  pointer-events: none;
+}

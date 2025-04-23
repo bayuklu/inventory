@@ -23,6 +23,8 @@ const Cashier = () => {
   const [showDropdownOutlet, setShowDropdownOutlet] = useState(false); // State untuk menampilkan dropdown
   const [isStoreClicked, setIsStoreClicked] = useState(false); // State untuk tombol Store
   const [previousPrice, setPreviousPrice] = useState({});
+  const [waitItemSearch, setWaitItemSearch] = useState(true)
+  const [waitOutletSearch, setWaitOutletSearch] = useState(true)
 
   //jika menggunakan cash tanpa input manual (otomatis)
   //akan mengeset cash di store orders dengan nilai "cashTanpaInput"
@@ -470,6 +472,7 @@ const Cashier = () => {
       if (response) {
         setProductList(response.data.data);
         setShowDropdownProductCode(true);
+        setWaitItemSearch(false)
       }
     } catch (error) {
       console.log(error.response);
@@ -479,6 +482,7 @@ const Cashier = () => {
   };
 
   const handleProductCodeChange = (e) => {
+    setWaitItemSearch(true)
     const value = e.target.value;
     setProductCode(value);
     if (value.length > 1) {
@@ -724,7 +728,7 @@ const Cashier = () => {
                 onChange={handleProductCodeChange}
               />
               {showDropdownProductCode && (
-                <ul className="dropdown" style={dropdownStyle}>
+                <ul className={`dropdown ${waitItemSearch ? 'dropdownItemLoading' : ''}`} style={dropdownStyle}>
                   {productList.map((product) => (
                     <li
                       style={{ cursor: "pointer", color: "green" }}
