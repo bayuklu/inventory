@@ -8,6 +8,7 @@ const Cashier = () => {
   const [msg, setMsg] = useState(null);
   const [recordCode, setRecordCode] = useState("");
   const [productCode, setProductCode] = useState("");
+  const [productName, setProductName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [records, setRecords] = useState([]);
   const [total, setTotal] = useState("");
@@ -23,7 +24,6 @@ const Cashier = () => {
   const [showDropdownOutlet, setShowDropdownOutlet] = useState(false); // State untuk menampilkan dropdown
   const [isStoreClicked, setIsStoreClicked] = useState(false); // State untuk tombol Store
   const [previousPrice, setPreviousPrice] = useState({});
-  const [waitItemSearch, setWaitItemSearch] = useState(true)
   const [waitOutletSearch, setWaitOutletSearch] = useState(true)
 
   //jika menggunakan cash tanpa input manual (otomatis)
@@ -471,8 +471,7 @@ const Cashier = () => {
       );
       if (response) {
         setProductList(response.data.data);
-        setShowDropdownProductCode(true);
-        setWaitItemSearch(false)
+        setShowDropdownProductCode(true);    
       }
     } catch (error) {
       console.log(error.response);
@@ -482,7 +481,6 @@ const Cashier = () => {
   };
 
   const handleProductCodeChange = (e) => {
-    setWaitItemSearch(true)
     const value = e.target.value;
     setProductCode(value);
     if (value.length > 1) {
@@ -494,7 +492,7 @@ const Cashier = () => {
 
   const handleSelectProduct = (product) => {
     console.log(product)
-    setProductCode(product.code);
+    setProductName(product.name);
     setShowDropdownProductCode(false);
   };
 
@@ -725,11 +723,11 @@ const Cashier = () => {
                 type="text"
                 className="input"
                 placeholder="Search Item with code or name of product"
-                value={productCode}
+                value={productName}
                 onChange={handleProductCodeChange}
               />
               {showDropdownProductCode && (
-                <ul className={`dropdown ${waitItemSearch ? 'dropdownItemLoading' : ''}`} style={dropdownStyle}>
+                <ul className="dropdown" style={dropdownStyle}>
                   {productList.map((product) => (
                     <li
                       style={{ cursor: "pointer", color: "green" }}
