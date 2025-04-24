@@ -79,7 +79,7 @@ const LoginPage = () => {
     }
 
   return (
-    <div className='my-container' style={{backgroundImage: `url(${outletBackground})`,backgroundSize: 'cover',backgroundPosition: 'center',backgroundAttachment: 'fixed', filter: 'blur(5px)', zIndex: 0}}>
+    <div className='my-container' style={{backgroundImage: `url(${outletBackground})`,backgroundSize: 'cover',backgroundPosition: 'center',backgroundAttachment: 'fixed', filter: 'blur(5px)', zIndex: -1}}>
         <div className="loginBox" style={{position: 'relative', zIndex: 1}}>
             <div className="loginLogo">
                 <img src={abLogo} alt="logo" style={{filter: 'invert(1)'}}/>
