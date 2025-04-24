@@ -11,7 +11,7 @@ import SpinnerLoader from './SpinnerLoader';
 // import smendak from '../assets/img/smendak.png'
 
 const LoginPage = () => {
-    const [email, setEmail] = useState('')
+    const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [msg, setMsg] = useState('')
     const [isLoading, setIsLoading] = useState(false)
@@ -31,7 +31,7 @@ const LoginPage = () => {
             const response = await axios.get(`${import.meta.env.VITE_BASEURL}/login`)
             if(response.status == 200) {
                 setIsLoggedIn(true)
-                navigate('/dashboard')
+                navigate('/')
             } 
         } catch (error) {
             console.log(error.response.data.msg)
@@ -47,11 +47,11 @@ const LoginPage = () => {
         try {
             setIsLoading(true)
             const response = await axios.post(`${import.meta.env.VITE_BASEURL}/login`,{
-                email: email,
+                username: username,
                 password: password
             })
             if(response) {
-                navigate('/dashboard')
+                navigate('/')
                 setIsLoading(false)
             } 
         } catch (error) {
@@ -83,21 +83,21 @@ const LoginPage = () => {
         <div className="loginBox">
             <div className="loginLogo">
                 <img src={abLogo} alt="" />
-                <p>KELURAHAN MATARAM TIMUR</p>
+                <p>AB FROZEN GROSIR</p>
             </div>
             <div className="loginForm">
                 <i className='shield-login'><CIcon icon={cilShieldAlt}/></i>
                 <h1 style={{color: 'black', position: 'absolute', marginTop: '-30px', fontWeight: 'bold'}}>Selamat Datang...</h1>
                 <form action="">
                     <div className="field">
-                        <label className="label has-text-black">Email</label>
+                        <label className="label has-text-black">Username</label>
                         <div className="control has-icons-left">
-                            <input className="input is-fullwidth has-background-white has-text-black" type="email" placeholder="contoh@email.com" onChange={(e) => setEmail(e.target.value)} required/>
+                            <input className="input is-fullwidth has-background-white has-text-black" type="email" placeholder="contoh@email.com" onChange={(e) => setUsername(e.target.value)} required/>
                             <span className="icon is-small is-left">
                                 <CIcon icon={cilUser} style={{padding: '7px', color: "hsla( 153deg , 53% , 53% , 1)"}} size="xxl"/>
                             </span>
                         </div>
-                        <p className="help has-text-black">Masukkan email</p>
+                        <p className="help has-text-black">Masukkan username</p>
                     </div>  
                     <div className="field">
                         <label className="label has-text-black">Password</label>
