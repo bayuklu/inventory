@@ -4,6 +4,7 @@ import Cashier from './components/Cashier'
 import Inventory from './components/Inventory'
 import Outlet from './components/Outlet'
 import Orders from './components/Orders'
+import LoginPage from './components/LoginPage'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
        <Route path="/cashier" element={<Cashier/>}/>
        <Route path="/Outlet" element={<Outlet/>}/>
        <Route path="/orders" element={<Orders/>}/>
+       <Route path="/login" element={<LoginPage/>}/>
      </Routes>
    </Router>
     </>

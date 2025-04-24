@@ -1,3 +1,14 @@
+POST https://inventory-anabasalim-server.vercel.app/register
+Content-Type: application/json
+
+{
+    "firstName": "ab",
+    "lastName": "kasir",
+    "password": "ab12345",
+    "confPassword": "ab12345"
+}
+
+###
 POST http://localhost:5000/items
 Content-Type: application/json
 
