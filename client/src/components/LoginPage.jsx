@@ -84,9 +84,6 @@ const LoginPage = () => {
             <div className="loginLogo">
                 <img src={abLogo} alt="" />
                 <p>KELURAHAN MATARAM TIMUR</p>
-                <div style={{width: '100%', padding: '10px', display: 'flex', justifyContent: 'center'}}>
-                        <img src={smendak} style={{borderRadius: '5px', width: '75px', objectFit: 'cover'}} alt="" />
-                </div>
             </div>
             <div className="loginForm">
                 <i className='shield-login'><CIcon icon={cilShieldAlt}/></i>
