@@ -8,7 +8,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import SpinnerLoader from './SpinnerLoader';
-// import smendak from '../assets/img/smendak.png'
+import outletBackground from '../assets/img/outletBackground.jpeg'
 
 const LoginPage = () => {
     const [username, setUsername] = useState('')
@@ -79,7 +79,7 @@ const LoginPage = () => {
     }
 
   return (
-    <div className='my-container'>
+    <div className='my-container' style={{backgroundImage: outletBackground}}>
         <div className="loginBox">
             <div className="loginLogo">
                 <img src={abLogo} alt="" />
