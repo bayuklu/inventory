@@ -79,7 +79,7 @@ const LoginPage = () => {
     }
 
   return (
-    <div className='my-container' style={{backgroundImage: `url(${outletBackground})`,backgroundSize: 'cover',backgroundPosition: 'center',backgroundAttachment: 'fixed', filter: 'blur(5px)'}}>
+    <div className='my-container' style={{backgroundSize: 'cover',backgroundPosition: 'center',backgroundAttachment: 'fixed'}}>
         {/* Background Blur Layer */}
         <div
             style={{
