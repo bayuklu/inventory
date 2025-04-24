@@ -80,24 +80,7 @@ const LoginPage = () => {
 
   return (
     <div className='my-container' style={{backgroundSize: 'cover',backgroundPosition: 'center',backgroundAttachment: 'fixed'}}>
-        {/* Background Blur Layer */}
-        <div
-            style={{
-            backgroundImage: `url(${outletBackground})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'fixed',
-            filter: 'blur(5px)',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            zIndex: -1,
-            }}
-        />
-
-        <div className="loginBox" style={{position: 'relative', zIndex: 1}}>
+        <div className="loginBox">
             <div className="loginLogo">
                 <img src={abLogo} alt="logo" style={{filter: 'invert(1)'}}/>
                 <p>AB FROZEN GROSIR</p>
