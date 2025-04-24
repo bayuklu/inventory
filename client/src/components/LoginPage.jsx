@@ -82,7 +82,7 @@ const LoginPage = () => {
     <div className='my-container' style={{backgroundImage: `url(${outletBackground})`,backgroundSize: 'cover',backgroundPosition: 'center',backgroundAttachment: 'fixed'}}>
         <div className="loginBox">
             <div className="loginLogo">
-                <img src={abLogo} alt="" />
+                <img src={abLogo} alt="logo" style={{filter: 'invert(1)'}}/>
                 <p>AB FROZEN GROSIR</p>
             </div>
             <div className="loginForm">
