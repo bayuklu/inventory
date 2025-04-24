@@ -79,8 +79,8 @@ const LoginPage = () => {
     }
 
   return (
-    <div className='my-container' style={{backgroundImage: `url(${outletBackground})`,backgroundSize: 'cover',backgroundPosition: 'center',backgroundAttachment: 'fixed'}}>
-        <div className="loginBox">
+    <div className='my-container' style={{backgroundImage: `url(${outletBackground})`,backgroundSize: 'cover',backgroundPosition: 'center',backgroundAttachment: 'fixed', filter: 'blur(5px)', zIndex: 0}}>
+        <div className="loginBox" style={{position: 'relative', zIndex: 1}}>
             <div className="loginLogo">
                 <img src={abLogo} alt="logo" style={{filter: 'invert(1)'}}/>
                 <p>AB FROZEN GROSIR</p>
@@ -92,7 +92,7 @@ const LoginPage = () => {
                     <div className="field">
                         <label className="label has-text-black">Username</label>
                         <div className="control has-icons-left">
-                            <input className="input is-fullwidth has-background-white has-text-black" type="email" placeholder="contoh@email.com" onChange={(e) => setUsername(e.target.value)} required/>
+                            <input className="input is-fullwidth has-background-white has-text-black" type="email" placeholder="" onChange={(e) => setUsername(e.target.value)} required/>
                             <span className="icon is-small is-left">
                                 <CIcon icon={cilUser} style={{padding: '7px', color: "hsla( 153deg , 53% , 53% , 1)"}} size="xxl"/>
                             </span>
