@@ -113,7 +113,7 @@ const Inventory = () => {
     e.preventDefault()
     
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BASEURL}/items`, {
+      const response = await axiosJWT.post(`${import.meta.env.VITE_BASEURL}/items`, {
         name: name,
         category: category,
         price: price,
@@ -138,7 +138,7 @@ const Inventory = () => {
     e.preventDefault()
 
     try {
-      const response = await axios.put(`${import.meta.env.VITE_BASEURL}/items/stock/${codeAddStock}`, {
+      const response = await axiosJWT.put(`${import.meta.env.VITE_BASEURL}/items/stock/${codeAddStock}`, {
         stockAdded: totalAddStock,
         dataView: dataView
       })
@@ -156,7 +156,7 @@ const Inventory = () => {
   const handleDeleteItems = async(code, name) => {
     if(confirm(`Are you sure want to delete ${name.toUpperCase()}?`) != true) return
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_BASEURL}/items/${code}`, {
+      const response = await axiosJWT.delete(`${import.meta.env.VITE_BASEURL}/items/${code}`, {
         data: {dataView: dataView}
       })
       if(response) {
@@ -175,27 +175,27 @@ const Inventory = () => {
       let response
       switch (category) {
         case 'Foods':
-          response = await axios.get(`${import.meta.env.VITE_BASEURL}/items/foods`)
+          response = await axiosJWT.get(`${import.meta.env.VITE_BASEURL}/items/foods`)
           setItems(response.data.data)
           setDataView(category)
           break;
         case 'Drinks':
-          response = await axios.get(`${import.meta.env.VITE_BASEURL}/items/drinks`)
+          response = await axiosJWT.get(`${import.meta.env.VITE_BASEURL}/items/drinks`)
           setItems(response.data.data)
           setDataView(category)
           break;
         case 'Bathroom':
-          response = await axios.get(`${import.meta.env.VITE_BASEURL}/items/bathroom`)
+          response = await axiosJWT.get(`${import.meta.env.VITE_BASEURL}/items/bathroom`)
           setItems(response.data.data)
           setDataView(category)
           break;
         case 'Kitchen':
-          response = await axios.get(`${import.meta.env.VITE_BASEURL}/items/kitchen`)
+          response = await axiosJWT.get(`${import.meta.env.VITE_BASEURL}/items/kitchen`)
           setItems(response.data.data)
           setDataView(category)
           break;
         default:
-          response = await axios.get(`${import.meta.env.VITE_BASEURL}/items`)
+          response = await axiosJWT.get(`${import.meta.env.VITE_BASEURL}/items`)
           setItems(response.data.data)
           setDataView(category)
           break;
@@ -242,7 +242,7 @@ const Inventory = () => {
     e.preventDefault()
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BASEURL}/items/search`, {
+      const response = await axiosJWT.post(`${import.meta.env.VITE_BASEURL}/items/search`, {
         value: search
       })
       setDataView(search)
