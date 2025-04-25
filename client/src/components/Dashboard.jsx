@@ -89,7 +89,7 @@ const Dashboard = () => {
       getLast6DaysIncomes();
       getTodayProfit();
       getTodayBestSellerProduct();
-            
+
     } catch (error) {
       if (error.response) {
         setIsNoLoggedIn(true);
@@ -126,7 +126,7 @@ const Dashboard = () => {
           alignItems: "center",
         }}
       >
-        <SpinnerLoader color={"white"} width={"100px"} />
+        <SpinnerLoader color={"black"} width={"100px"} />
       </div>
     );
   }
