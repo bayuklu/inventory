@@ -35,8 +35,8 @@ const Sidebar = () => {
             <a href="cashier">Cashier</a>
           </li>
         </ul>
-        <ul>
-          <li>
+        <ul className="menu-list">
+          <li className="mb-1">
             <a href="#" onClick={handleLogout}>Log Out</a>
           </li>
         </ul>
