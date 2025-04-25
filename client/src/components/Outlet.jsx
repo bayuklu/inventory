@@ -42,6 +42,19 @@ const Outlet = () => {
         refreshToken()
     }, []);
 
+    useEffect(() => {
+        if (token) {
+          try {
+            const decoded = jwtDecode(token)
+            if (decoded.role === "admin") {
+              getOutlet()
+            }
+          } catch (error) {
+            console.error("Token decoding failed:", error)
+          }
+        }
+      }, [token])
+
     const refreshToken = async () => {
         try {
           const response = await axios.get(
@@ -60,8 +73,6 @@ const Outlet = () => {
           setToken(response.data.accessToken);
           setExpire(decoded.exp);
           setIsNoLoggedIn(false);
-    
-          getOutlet()
     
         } catch (error) {
           if (error.response) {
