@@ -43,6 +43,12 @@ const Inventory = () => {
     refreshToken()
   }, [])
 
+  useEffect(() => {
+    if (jwtDecode(token).role === "admin") {
+      handleButtonClick('All Category')
+    }
+  }, [token])  
+
   const refreshToken = async () => {
     try {
       const response = await axios.get(
@@ -61,8 +67,6 @@ const Inventory = () => {
       setToken(response.data.accessToken);
       setExpire(decoded.exp);
       setIsNoLoggedIn(false);
-
-      handleButtonClick('All Category')
 
     } catch (error) {
       if (error.response) {

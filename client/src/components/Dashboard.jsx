@@ -14,7 +14,6 @@ import {
   Legend,
 } from "chart.js";
 import SpinnerLoader from "./SpinnerLoader";
-
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -68,6 +67,18 @@ const Dashboard = () => {
     refreshToken()
   }, []);
 
+  useEffect(() => {
+    if (jwtDecode(token).role === "admin") {
+      getProduct();
+      getStock();
+      getTodayOrders();
+      getTodayIncomes();
+      getLast6DaysIncomes();
+      getTodayProfit();
+      getTodayBestSellerProduct();
+    }
+  }, [token])  
+
   const refreshToken = async () => {
     try {
       const response = await axios.get(
@@ -87,13 +98,6 @@ const Dashboard = () => {
       setExpire(decoded.exp);
       setIsNoLoggedIn(false);
 
-      getProduct();
-      getStock();
-      getTodayOrders();
-      getTodayIncomes();
-      getLast6DaysIncomes();
-      getTodayProfit();
-      getTodayBestSellerProduct();
 
     } catch (error) {
       if (error.response) {
