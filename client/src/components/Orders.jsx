@@ -5,12 +5,97 @@ import CIcon from '@coreui/icons-react';
 import * as icon from '@coreui/icons';
 import XLSX from 'xlsx/dist/xlsx.full.min.js';
 import FileSaver from 'file-saver';
+import { useNavigate } from 'react-router-dom';
+import SpinnerLoader from "./SpinnerLoader";
 
 const Orders = () => {
     const [ordersData, setOrdersData] = useState([])
+    const [token, setToken] = useState('')
+    const [expire, setExpire] = useState('')
+    const [isNoLoggedIn, setIsNoLoggedIn] = useState(false)
+    const [authCheck, setAuthCheck] = useState(true)  
+    const navigate = useNavigate()
+
     useEffect(() => {
-        fetchData()
+        refreshToken()
     }, [])
+
+    useEffect(() => {
+        if (token) {
+          try {
+            const decoded = jwtDecode(token)
+            if (decoded.role === "admin") {
+              fetchData()
+            }
+          } catch (error) {
+            console.error("Token decoding failed:", error)
+          }
+        }
+      }, [token])
+
+    const refreshToken = async () => {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_BASEURL}/token`,
+            {
+              withCredentials: true,
+            }
+          );
+    
+          const decoded = jwtDecode(response.data.accessToken);
+    
+          if(decoded.role !== "admin" && decoded.role === "kasir") {
+            navigate("/cashier")
+          }
+    
+          setToken(response.data.accessToken);
+          setExpire(decoded.exp);
+          setIsNoLoggedIn(false);
+    
+        } catch (error) {
+          if (error.response) {
+            setIsNoLoggedIn(true);
+            navigate("/login");
+          }
+        } finally {
+          setAuthCheck(false);
+        }
+      };
+    
+      const axiosJWT = axios.create();
+      axiosJWT.interceptors.request.use(async (config) => {
+          const currentDate = new Date();
+          if (expire * 1000 < currentDate.getTime()) {
+              const response = await axios.get(`${import.meta.env.VITE_BASEURL}/token`);
+              config.headers.Authorization = `Bearer ${response.data.accessToken}`;
+              setToken(response.data.accessToken);
+              const decoded = jwtDecode(response.data.accessToken);
+              setExpire(decoded.exp);
+          }
+          return config;
+      }, (error) => {
+          return Promise.reject(error);
+      });  
+    
+      if (authCheck) {
+        return (
+          <div
+            style={{
+              width: "100%",
+              height: "100vh",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <SpinnerLoader color={"black"} width={"100px"} />
+          </div>
+        );
+      }
+    
+      if (isNoLoggedIn) {
+        return null;
+      }
 
     const fetchData = async() => {
         try{
