@@ -68,16 +68,23 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (jwtDecode(token).role === "admin") {
-      getProduct();
-      getStock();
-      getTodayOrders();
-      getTodayIncomes();
-      getLast6DaysIncomes();
-      getTodayProfit();
-      getTodayBestSellerProduct();
+    if (token) {
+      try {
+        const decoded = jwtDecode(token)
+        if (decoded.role === "admin") {
+          getProduct();
+          getStock();
+          getTodayOrders();
+          getTodayIncomes();
+          getLast6DaysIncomes();
+          getTodayProfit();
+          getTodayBestSellerProduct();
+        }
+      } catch (error) {
+        console.error("Token decoding failed:", error)
+      }
     }
-  }, [token])  
+  }, [token])
 
   const refreshToken = async () => {
     try {

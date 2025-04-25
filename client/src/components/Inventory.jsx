@@ -41,11 +41,18 @@ const Inventory = () => {
 
   useEffect(() => {
     refreshToken()
-  }, [])
+  }, [])  
 
   useEffect(() => {
-    if (jwtDecode(token).role === "admin") {
-      handleButtonClick('All Category')
+    if (token) {
+      try {
+        const decoded = jwtDecode(token)
+        if (decoded.role === "admin") {
+          handleButtonClick('All Category')
+        }
+      } catch (error) {
+        console.error("Token decoding failed:", error)
+      }
     }
   }, [token])  
 
