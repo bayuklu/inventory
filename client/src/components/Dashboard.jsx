@@ -77,8 +77,13 @@ const Dashboard = () => {
         }
       );
 
-      setToken(response.data.accessToken);
       const decoded = jwtDecode(response.data.accessToken);
+
+      if(decoded.role !== "admin" && decoded.role === "kasir") {
+        navigate("/cashier")
+      }
+
+      setToken(response.data.accessToken);
       setExpire(decoded.exp);
       setIsNoLoggedIn(false);
 
