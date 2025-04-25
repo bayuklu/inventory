@@ -1,16 +1,19 @@
+import React from "react";
+import "../index.css";
+import axios from "axios";
+import {useNavigate } from "react-router-dom";
+
 const Sidebar = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleLogout = async () => {
     try {
-      const response = await axios.delete(
-        `${import.meta.env.VITE_BASEURL}/logout`
-      );
-      if (response) navigate("/login");
+      const response = await axios.delete(`${import.meta.env.VITE_BASEURL}/logout`)
+      if (response) navigate("/login")
     } catch (error) {
-      console.log(error.response);
+      console.log(error.response)
     }
-  };
+  }
 
   return (
     <div className="my-sidebar h-screen flex flex-col justify-between">
@@ -41,12 +44,13 @@ const Sidebar = () => {
       <div className="p-4">
         <ul className="menu-list">
           <li>
-            <a href="#" onClick={handleLogout}>
-              Log Out
-            </a>
+            <a href="#" onClick={handleLogout}>Log Out</a>
           </li>
         </ul>
       </div>
     </div>
   );
 };
+
+
+export default Sidebar;
