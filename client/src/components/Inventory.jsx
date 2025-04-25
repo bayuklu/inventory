@@ -6,7 +6,8 @@ import { useState } from 'react'
 import {useNavigate} from 'react-router-dom'
 import CIcon from '@coreui/icons-react';
 import * as icon from '@coreui/icons';
-
+import { jwtDecode } from 'jwt-decode'
+import SpinnerLoader from "./SpinnerLoader";
 
 const Inventory = () => {
   const [msg, setMsg] = useState(null)
@@ -31,14 +32,83 @@ const Inventory = () => {
   const [search, setSearch] = useState('')
 
   const [totalAddStock, setTotalAddStock] = useState('')
+  const [token, setToken] = useState('')
+  const [expire, setExpire] = useState('')
+  const [isNoLoggedIn, setIsNoLoggedIn] = useState(false)
+  const [authCheck, setAuthCheck] = useState(true)  
 
   const navigate = useNavigate()
 
   useEffect(() => {
-    handleButtonClick('All Category')
-    console.log(items)
+    refreshToken()
   }, [])
-  
+
+  const refreshToken = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASEURL}/token`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      const decoded = jwtDecode(response.data.accessToken);
+
+      if(decoded.role !== "admin" && decoded.role === "kasir") {
+        navigate("/cashier")
+      }
+
+      setToken(response.data.accessToken);
+      setExpire(decoded.exp);
+      setIsNoLoggedIn(false);
+
+      handleButtonClick('All Category')
+
+    } catch (error) {
+      if (error.response) {
+        setIsNoLoggedIn(true);
+        navigate("/login");
+      }
+    } finally {
+      setAuthCheck(false);
+    }
+  };
+
+  const axiosJWT = axios.create();
+  axiosJWT.interceptors.request.use(async (config) => {
+      const currentDate = new Date();
+      if (expire * 1000 < currentDate.getTime()) {
+          const response = await axios.get(`${import.meta.env.VITE_BASEURL}/token`);
+          config.headers.Authorization = `Bearer ${response.data.accessToken}`;
+          setToken(response.data.accessToken);
+          const decoded = jwtDecode(response.data.accessToken);
+          setExpire(decoded.exp);
+      }
+      return config;
+  }, (error) => {
+      return Promise.reject(error);
+  });  
+
+  if (authCheck) {
+    return (
+      <div
+        style={{
+          width: "100%",
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <SpinnerLoader color={"black"} width={"100px"} />
+      </div>
+    );
+  }
+
+  if (isNoLoggedIn) {
+    return null;
+  }
+
   const addproduct = async(e) => {
     e.preventDefault()
     
