@@ -234,7 +234,7 @@ const Cashier = () => {
     // })
     console.log(datas);
     const config = qz.configs.create(
-      "Microsoft Print to PDF",
+      "108Label Printer",
       {
         size: { width: 100, height: 150 },
         units: "mm",
