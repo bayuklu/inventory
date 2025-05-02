@@ -3,6 +3,9 @@ import Sidebar from "./Sidebar";
 import axios from "axios";
 import "../index.css";
 import qz from "qz-tray";
+import { jwtDecode } from 'jwt-decode'
+import SpinnerLoader from "./SpinnerLoader";
+import { useNavigate } from "react-router-dom";
 
 const Cashier = () => {
   const [msg, setMsg] = useState(null);
@@ -25,14 +28,20 @@ const Cashier = () => {
   const [isStoreClicked, setIsStoreClicked] = useState(false); // State untuk tombol Store
   const [previousPrice, setPreviousPrice] = useState({});
   const [waitOutletSearch, setWaitOutletSearch] = useState(true)
-
+  
   //jika menggunakan cash tanpa input manual (otomatis)
   //akan mengeset cash di store orders dengan nilai "cashTanpaInput"
   const [cashTanpaInput, setCashTanpaInput] = useState(0);
-
+  
   //jika is Dus dan pack checked
   const [isUnitChecked, setIsUnitChecked] = useState(false);
   const [isPackChecked, setIsPackChecked] = useState(false);
+  
+  const [token, setToken] = useState('')
+  const [expire, setExpire] = useState('')
+  const [userRole, setUserRole] = useState("")
+  const [isNoLoggedIn, setIsNoLoggedIn] = useState(false)
+  const [authCheck, setAuthCheck] = useState(true)  
 
   //state untuk menyimpan cache data printan
   const [printData, setPrintData] = useState({
@@ -40,16 +49,8 @@ const Cashier = () => {
     transCode: null,
   });
 
-  useEffect(() => {
-    getTurnCode();
-  }, []);
-
-  useEffect(() => {
-    if (recordCode) {
-      getRecords();
-    }
-  }, [recordCode]);
-
+  const navigate = useNavigate()
+  
   useEffect(() => {
     //mengecek printer
 
@@ -60,16 +61,16 @@ const Cashier = () => {
     // }).catch(err => console.error(err));
 
     //punya bik ana
-    qz.security.setCertificatePromise(function (resolve, reject) {
-      resolve(
-        "-----BEGIN CERTIFICATE-----\nMIIECzCCAvOgAwIBAgIGAZG7LIaHMA0GCSqGSIb3DQEBCwUAMIGiMQswCQYDVQQGEwJVUzELMAkGA1UECAwCTlkxEjAQBgNVBAcMCUNhbmFzdG90YTEbMBkGA1UECgwSUVogSW5kdXN0cmllcywgTExDMRswGQYDVQQLDBJRWiBJbmR1c3RyaWVzLCBMTEMxHDAaBgkqhkiG9w0BCQEWDXN1cHBvcnRAcXouaW8xGjAYBgNVBAMMEVFaIFRyYXkgRGVtbyBDZXJ0MB4XDTI0MDkwMzAzNTU0M1oXDTQ0MDkwMzAzNTU0M1owgaIxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJOWTESMBAGA1UEBwwJQ2FuYXN0b3RhMRswGQYDVQQKDBJRWiBJbmR1c3RyaWVzLCBMTEMxGzAZBgNVBAsMElFaIEluZHVzdHJpZXMsIExMQzEcMBoGCSqGSIb3DQEJARYNc3VwcG9ydEBxei5pbzEaMBgGA1UEAwwRUVogVHJheSBEZW1vIENlcnQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC/IpyzVhnmSdUwXCY0l3/36dscdipmqbW4hDjxaWoXbjIZw4vxNyxlZJw/jTclMRfVJhPyqleKCZydJuKx/9zn/QaFSIKyQxyoP/AmSPqeb2ybOEZBbjUtnPU7GfVqoDefHaFRrREm7CWNN5g1kfomxz5ihWHGEZLwdGyllvjEVWVuCSZoGim10SyuZ84hyJIAnnGU4GzS9N2TVqYPvER0/F1yM6DeCfZM4CKFNpz5Sj8eMfioXNDJ4GRdWSWZblkUvoZ0CXnaVu/vKJLxWRfJ9UTGREOz6tAAZFPeLIHXbt667MthlVP9DLqTtB1+X5y9MbNzOM7jt745kANtxACpAgMBAAGjRTBDMBIGA1UdEwEB/wQIMAYBAf8CAQEwDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBRrBlmnue1ANqsyWuAqlXU/redqwDANBgkqhkiG9w0BAQsFAAOCAQEALMLc3Us3A3hq/IaVIXAZU0BNe+3xhdnS41fdZh90LLAJQo3/Ro191gaVmfsodddT2SOc93FHfhKvfS02B3yWzTX/3mmM3ze4On/YvUQ4QVnHRzzusYWNepZoO8dXVkDT+XpENXmSecbwcjXo1vZDbYzhJPLj1fYulOldd/rowyzmlMrBnSu9xTj9bkhxO4doDGgNranrKQg/BIWF34KxaPebFYrtHQ1sDohwAHp9ea9CRzFc2JoJ8Imm6WfFmXcu9m7oY6UtYl/TvhrliyC5WEQ7ssuO0xOA1K+S9oMbWO3OtE+SEVYt7kgTxO3o1Rm5IcodLpo1Z2YIEIJmNWdJ/w==\n-----END CERTIFICATE-----\n"
-      );
-    });
+    // qz.security.setCertificatePromise(function (resolve, reject) {
+    //   resolve(
+    //     "-----BEGIN CERTIFICATE-----\nMIIECzCCAvOgAwIBAgIGAZG7LIaHMA0GCSqGSIb3DQEBCwUAMIGiMQswCQYDVQQGEwJVUzELMAkGA1UECAwCTlkxEjAQBgNVBAcMCUNhbmFzdG90YTEbMBkGA1UECgwSUVogSW5kdXN0cmllcywgTExDMRswGQYDVQQLDBJRWiBJbmR1c3RyaWVzLCBMTEMxHDAaBgkqhkiG9w0BCQEWDXN1cHBvcnRAcXouaW8xGjAYBgNVBAMMEVFaIFRyYXkgRGVtbyBDZXJ0MB4XDTI0MDkwMzAzNTU0M1oXDTQ0MDkwMzAzNTU0M1owgaIxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJOWTESMBAGA1UEBwwJQ2FuYXN0b3RhMRswGQYDVQQKDBJRWiBJbmR1c3RyaWVzLCBMTEMxGzAZBgNVBAsMElFaIEluZHVzdHJpZXMsIExMQzEcMBoGCSqGSIb3DQEJARYNc3VwcG9ydEBxei5pbzEaMBgGA1UEAwwRUVogVHJheSBEZW1vIENlcnQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC/IpyzVhnmSdUwXCY0l3/36dscdipmqbW4hDjxaWoXbjIZw4vxNyxlZJw/jTclMRfVJhPyqleKCZydJuKx/9zn/QaFSIKyQxyoP/AmSPqeb2ybOEZBbjUtnPU7GfVqoDefHaFRrREm7CWNN5g1kfomxz5ihWHGEZLwdGyllvjEVWVuCSZoGim10SyuZ84hyJIAnnGU4GzS9N2TVqYPvER0/F1yM6DeCfZM4CKFNpz5Sj8eMfioXNDJ4GRdWSWZblkUvoZ0CXnaVu/vKJLxWRfJ9UTGREOz6tAAZFPeLIHXbt667MthlVP9DLqTtB1+X5y9MbNzOM7jt745kANtxACpAgMBAAGjRTBDMBIGA1UdEwEB/wQIMAYBAf8CAQEwDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBRrBlmnue1ANqsyWuAqlXU/redqwDANBgkqhkiG9w0BAQsFAAOCAQEALMLc3Us3A3hq/IaVIXAZU0BNe+3xhdnS41fdZh90LLAJQo3/Ro191gaVmfsodddT2SOc93FHfhKvfS02B3yWzTX/3mmM3ze4On/YvUQ4QVnHRzzusYWNepZoO8dXVkDT+XpENXmSecbwcjXo1vZDbYzhJPLj1fYulOldd/rowyzmlMrBnSu9xTj9bkhxO4doDGgNranrKQg/BIWF34KxaPebFYrtHQ1sDohwAHp9ea9CRzFc2JoJ8Imm6WfFmXcu9m7oY6UtYl/TvhrliyC5WEQ7ssuO0xOA1K+S9oMbWO3OtE+SEVYt7kgTxO3o1Rm5IcodLpo1Z2YIEIJmNWdJ/w==\n-----END CERTIFICATE-----\n"
+    //   );
+    // });
 
     //punya bayu
-    // qz.security.setCertificatePromise(function(resolve, reject) {
-    //     resolve("-----BEGIN CERTIFICATE-----\nMIIECzCCAvOgAwIBAgIGAZF0jXCaMA0GCSqGSIb3DQEBCwUAMIGiMQswCQYDVQQGEwJVUzELMAkGA1UECAwCTlkxEjAQBgNVBAcMCUNhbmFzdG90YTEbMBkGA1UECgwSUVogSW5kdXN0cmllcywgTExDMRswGQYDVQQLDBJRWiBJbmR1c3RyaWVzLCBMTEMxHDAaBgkqhkiG9w0BCQEWDXN1cHBvcnRAcXouaW8xGjAYBgNVBAMMEVFaIFRyYXkgRGVtbyBDZXJ0MB4XDTI0MDgyMDEwNDgzMloXDTQ0MDgyMDEwNDgzMlowgaIxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJOWTESMBAGA1UEBwwJQ2FuYXN0b3RhMRswGQYDVQQKDBJRWiBJbmR1c3RyaWVzLCBMTEMxGzAZBgNVBAsMElFaIEluZHVzdHJpZXMsIExMQzEcMBoGCSqGSIb3DQEJARYNc3VwcG9ydEBxei5pbzEaMBgGA1UEAwwRUVogVHJheSBEZW1vIENlcnQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDRLFVosBSOp+5Z4txzMzA6+M+bIooM6eoePWLKATbScFJlS/LqVlLJ/j9RdAsu8AB0055RHD9cA7OHg2qzt1E3PWq0tLaObe5gxS7pO7dlN7FkkQfAEWS9FaTL0N9ZXPnzMAQFB3iAjnEjnldGCgCtPoeQY5COpiElDNtUTB7Hm1EOr/2/N/G3bt6Plc8A+Vk9fffSKyW5xn+kNO9gQMwi8pbdB08jS3HeblnVz0SKUuEPtq46YyZ5cN0KA8n2dgSjuBmpeFm3w+TfrTm0tchqSBWhP3WjyxOMbbJwfYOyrPMtsTDS08qLizOts2hK57DzXAikVNcF96/pcS2NIXXJAgMBAAGjRTBDMBIGA1UdEwEB/wQIMAYBAf8CAQEwDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBSO/7SedSDuNS0aIJrl2O5XtudE1DANBgkqhkiG9w0BAQsFAAOCAQEAw3pyxfBeErqwNLr1xIW+T2NJ4YhrSZl9NpVjaS7oZ6YHDc3GiZq17gNGFtCmGQlCSCDHDesNAG7jtYACV2T49EKPqEvWxLw8/jr8Y3ggiCRqgLo56SKDWSEhzZmXGia6CVHK5yjKY7ca8njy7pWiT7k3ZyBqNMNd/+KL/8ckTTt4ZYQ1JT3rGYLfL+j1ksV7JGY/wCAu4cf/+0LsBFbamJMGmAzfQikir2PniWsMZ31WM3GiSOP92/TZNa8qtrU9NhvWyGP0emPly0jG1mvFoUXSYTkEEjEhnPne+BnPi+KAwM2TgoiH2z7ejdp+NyX+v2SlB7P0nwSYieWGilcA3A==\n-----END CERTIFICATE-----\n");
-    // });
+    qz.security.setCertificatePromise(function(resolve, reject) {
+        resolve("-----BEGIN CERTIFICATE-----\nMIIECzCCAvOgAwIBAgIGAZF0jXCaMA0GCSqGSIb3DQEBCwUAMIGiMQswCQYDVQQGEwJVUzELMAkGA1UECAwCTlkxEjAQBgNVBAcMCUNhbmFzdG90YTEbMBkGA1UECgwSUVogSW5kdXN0cmllcywgTExDMRswGQYDVQQLDBJRWiBJbmR1c3RyaWVzLCBMTEMxHDAaBgkqhkiG9w0BCQEWDXN1cHBvcnRAcXouaW8xGjAYBgNVBAMMEVFaIFRyYXkgRGVtbyBDZXJ0MB4XDTI0MDgyMDEwNDgzMloXDTQ0MDgyMDEwNDgzMlowgaIxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJOWTESMBAGA1UEBwwJQ2FuYXN0b3RhMRswGQYDVQQKDBJRWiBJbmR1c3RyaWVzLCBMTEMxGzAZBgNVBAsMElFaIEluZHVzdHJpZXMsIExMQzEcMBoGCSqGSIb3DQEJARYNc3VwcG9ydEBxei5pbzEaMBgGA1UEAwwRUVogVHJheSBEZW1vIENlcnQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDRLFVosBSOp+5Z4txzMzA6+M+bIooM6eoePWLKATbScFJlS/LqVlLJ/j9RdAsu8AB0055RHD9cA7OHg2qzt1E3PWq0tLaObe5gxS7pO7dlN7FkkQfAEWS9FaTL0N9ZXPnzMAQFB3iAjnEjnldGCgCtPoeQY5COpiElDNtUTB7Hm1EOr/2/N/G3bt6Plc8A+Vk9fffSKyW5xn+kNO9gQMwi8pbdB08jS3HeblnVz0SKUuEPtq46YyZ5cN0KA8n2dgSjuBmpeFm3w+TfrTm0tchqSBWhP3WjyxOMbbJwfYOyrPMtsTDS08qLizOts2hK57DzXAikVNcF96/pcS2NIXXJAgMBAAGjRTBDMBIGA1UdEwEB/wQIMAYBAf8CAQEwDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBSO/7SedSDuNS0aIJrl2O5XtudE1DANBgkqhkiG9w0BAQsFAAOCAQEAw3pyxfBeErqwNLr1xIW+T2NJ4YhrSZl9NpVjaS7oZ6YHDc3GiZq17gNGFtCmGQlCSCDHDesNAG7jtYACV2T49EKPqEvWxLw8/jr8Y3ggiCRqgLo56SKDWSEhzZmXGia6CVHK5yjKY7ca8njy7pWiT7k3ZyBqNMNd/+KL/8ckTTt4ZYQ1JT3rGYLfL+j1ksV7JGY/wCAu4cf/+0LsBFbamJMGmAzfQikir2PniWsMZ31WM3GiSOP92/TZNa8qtrU9NhvWyGP0emPly0jG1mvFoUXSYTkEEjEhnPne+BnPi+KAwM2TgoiH2z7ejdp+NyX+v2SlB7P0nwSYieWGilcA3A==\n-----END CERTIFICATE-----\n");
+    });
 
     qz.api.setSha256Type((data) => {
       return crypto.subtle.digest("SHA-256", new TextEncoder().encode(data));
@@ -79,12 +80,105 @@ const Cashier = () => {
       return new Promise(resolver);
     });
 
-    qz.websocket.connect().catch((err) => console.error(err));
+    if (!qz.websocket.isActive()) {
+      qz.websocket.connect().catch((err) => console.error(err));
+    }
 
     if (printData.datas && printData.transCode) {
       createRecipt(printData.datas, printData.transCode);
     }
-  }, [printData]);
+  }, [printData]);  
+
+  useEffect(() => {
+    refreshToken()
+  }, []);
+
+  useEffect(() => {
+    if (recordCode) {
+      getRecords();
+    }
+  }, [recordCode]);
+
+  useEffect(() => {
+    if (token) {
+      try {
+        const decoded = jwtDecode(token)
+        if (decoded.role === "kasir") {
+          getTurnCode()
+        }
+      } catch (error) {
+        console.error("Token decoding failed:", error)
+      }
+    }
+  }, [token])
+
+  const refreshToken = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASEURL}/token`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      const decoded = jwtDecode(response.data.accessToken);
+
+      console.log(decoded.role)
+
+      if(decoded.role !== "kasir" && decoded.role === "admin") {
+        navigate("/")
+      }
+      
+      setToken(response.data.accessToken);
+      setExpire(decoded.exp);
+      setIsNoLoggedIn(false);
+      setUserRole(decoded.role)
+
+    } catch (error) {
+      if (error.response) {
+        setIsNoLoggedIn(true);
+        navigate("/login");
+      }
+    } finally {
+      setAuthCheck(false);
+    }
+  };
+
+  // const axiosJWT = axios.create();
+  // axiosJWT.interceptors.request.use(async (config) => {
+  //     const currentDate = new Date();
+  //     if (expire * 1000 < currentDate.getTime()) {
+  //         const response = await axios.get(`${import.meta.env.VITE_BASEURL}/token`);
+  //         config.headers.Authorization = `Bearer ${response.data.accessToken}`;
+  //         setToken(response.data.accessToken);
+  //         const decoded = jwtDecode(response.data.accessToken);
+  //         setExpire(decoded.exp);
+  //     }
+  //     return config;
+  // }, (error) => {
+  //     return Promise.reject(error);
+  // });  
+
+  if (authCheck) {
+    return (
+      <div
+        style={{
+          width: "100%",
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <SpinnerLoader color={"black"} width={"100px"} />
+      </div>
+    );
+  }
+
+  if (isNoLoggedIn || !userRole) {
+    return null;
+  }  
+
 
   const rupiah = (number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -691,7 +785,7 @@ const Cashier = () => {
 
   return (
     <div className="is-flex">
-      <Sidebar />
+      <Sidebar role={userRole}/>
       {msg ? (
         <>
           <div className="messages" style={{ backgroundColor: msg.color }}>

@@ -34,6 +34,7 @@ const Inventory = () => {
   const [totalAddStock, setTotalAddStock] = useState('')
   const [token, setToken] = useState('')
   const [expire, setExpire] = useState('')
+  const [userRole, setUserRole] = useState('')
   const [isNoLoggedIn, setIsNoLoggedIn] = useState(false)
   const [authCheck, setAuthCheck] = useState(true)  
 
@@ -74,6 +75,7 @@ const Inventory = () => {
       setToken(response.data.accessToken);
       setExpire(decoded.exp);
       setIsNoLoggedIn(false);
+      setUserRole(decoded.role)
 
     } catch (error) {
       if (error.response) {
@@ -116,7 +118,7 @@ const Inventory = () => {
     );
   }
 
-  if (isNoLoggedIn) {
+  if (isNoLoggedIn || !userRole) {
     return null;
   }
 
@@ -271,7 +273,7 @@ const Inventory = () => {
   console.log(items)
   return (
     <div className='is-flex'>
-        <Sidebar/>
+        <Sidebar role={userRole}/>
 
         {msg ? 
             <>

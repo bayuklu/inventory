@@ -32,6 +32,7 @@ const Outlet = () => {
 
     const [token, setToken] = useState('')
     const [expire, setExpire] = useState('')
+    const [userRole, setUserRole] = useState('')
     const [isNoLoggedIn, setIsNoLoggedIn] = useState(false)
     const [authCheck, setAuthCheck] = useState(true)  
 
@@ -73,6 +74,7 @@ const Outlet = () => {
           setToken(response.data.accessToken);
           setExpire(decoded.exp);
           setIsNoLoggedIn(false);
+          setUserRole(decoded.role)
     
         } catch (error) {
           if (error.response) {
@@ -115,7 +117,7 @@ const Outlet = () => {
         );
       }
     
-      if (isNoLoggedIn) {
+      if (isNoLoggedIn || !userRole) {
         return null;
       }
       
@@ -297,7 +299,7 @@ const Outlet = () => {
     
     return (
         <div className='is-flex'>
-            <Sidebar />
+            <Sidebar role={userRole}/>
 
             {msg && 
                 <div className='messages' style={{ backgroundColor: msg.color }}>

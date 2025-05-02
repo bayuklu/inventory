@@ -34,6 +34,7 @@ const Dashboard = () => {
   const [todayBestSeler, setTodayBestSeller] = useState("");
   const [token, setToken] = useState('')
   const [expire, setExpire] = useState('')
+  const [userRole, setUserRole] = useState('')
   const [isNoLoggedIn, setIsNoLoggedIn] = useState(false)
   const [authCheck, setAuthCheck] = useState(true)
   const navigate = useNavigate();
@@ -104,6 +105,7 @@ const Dashboard = () => {
       setToken(response.data.accessToken);
       setExpire(decoded.exp);
       setIsNoLoggedIn(false);
+      setUserRole(decoded.role)
 
 
     } catch (error) {
@@ -147,7 +149,7 @@ const Dashboard = () => {
     );
   }
 
-  if (isNoLoggedIn) {
+  if (isNoLoggedIn || !userRole) {
     return null;
   }
 
@@ -305,7 +307,7 @@ const Dashboard = () => {
 
   return (
     <div className="is-flex">
-      <Sidebar />
+      <Sidebar role={userRole} />
 
       <div className="my-dashboard">
         <div className="my-dashboardChild">
