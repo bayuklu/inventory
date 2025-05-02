@@ -3,7 +3,7 @@ import "../index.css";
 import axios from "axios";
 import {useNavigate } from "react-router-dom";
 
-const Sidebar = () => {
+const Sidebar = ({role}) => {
   const navigate = useNavigate()
 
   const handleLogout = async () => {
