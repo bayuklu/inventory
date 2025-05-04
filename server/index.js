@@ -17,30 +17,34 @@ const app = express()
 dotenv.config()
 const PORT = process.env.PORT
 
-try {
-    await db.authenticate()
-    console.log("Database connected")
-
-    await db.query("SET TIME ZONE 'Asia/Makassar';")
-
-    // await Users.sync({
-    //     alter: true
-    // })
-
-    // console.log("Migrasi...")
-    // const [rows] = await mysqlDb.query('SELECT * FROM outlets');
-
-    // for (const row of rows) {
-    //   await db.query(
-    //     'INSERT INTO outlets("id", "name", "address", "phone", "createdAt", "updatedAt") VALUES($1, $2, $3, $4, $5, $6)',
-    //     {
-    //       bind: [row.id, row.name, row.address, row.phone, row.createdAt, row.updatedAt]
-    //     }
-    //   );
-    // }    
-} catch (error) {
-    console.log(error)
+const init = async() => {
+    try {
+        await db.authenticate()
+        console.log("Database connected")
+    
+        await db.query("SET TIME ZONE 'Asia/Makassar';")
+    
+        // await Users.sync({
+        //     alter: true
+        // })
+    
+        // console.log("Migrasi...")
+        // const [rows] = await mysqlDb.query('SELECT * FROM outlets');
+    
+        // for (const row of rows) {
+        //   await db.query(
+        //     'INSERT INTO outlets("id", "name", "address", "phone", "createdAt", "updatedAt") VALUES($1, $2, $3, $4, $5, $6)',
+        //     {
+        //       bind: [row.id, row.name, row.address, row.phone, row.createdAt, row.updatedAt]
+        //     }
+        //   );
+        // }    
+    } catch (error) {
+        console.log(error)
+    }
 }
+
+init()
 
 app.use(cors({credentials: true, 
     origin: "http://localhost:5173",
