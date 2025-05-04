@@ -21,6 +21,8 @@ try {
     await db.authenticate()
     console.log("Database connected")
 
+    await db.query(`SET TIME ZONE 'Asia/Makassar';`);
+
     // await Users.sync({
     //     alter: true
     // })

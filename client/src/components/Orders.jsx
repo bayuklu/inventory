@@ -7,6 +7,7 @@ import XLSX from 'xlsx/dist/xlsx.full.min.js';
 import FileSaver from 'file-saver';
 import { useNavigate } from 'react-router-dom';
 import SpinnerLoader from "./SpinnerLoader";
+import { jwtDecode } from 'jwt-decode';
 
 const Orders = () => {
     const [ordersData, setOrdersData] = useState([])
@@ -41,13 +42,13 @@ const Orders = () => {
               withCredentials: true,
             }
           );
-    
+          
           const decoded = jwtDecode(response.data.accessToken);
-    
+          
           if(decoded.role !== "admin" && decoded.role === "kasir") {
             navigate("/cashier")
           }
-    
+
           setToken(response.data.accessToken);
           setExpire(decoded.exp);
           setIsNoLoggedIn(false);
@@ -160,7 +161,7 @@ const Orders = () => {
             <a href="/" style={{marginLeft: '20px', marginTop: '20px', width: '20px'}}>
                 <i style={{color: 'black'}}><CIcon icon={icon.cilMediaStepBackward}/></i>
             </a>
-            <button className="button" onClick={handlePrint}>Simpan Data Hari Ini</button>
+            <button className="button" style={{margin: "0px 20px"}} onClick={handlePrint}>Simpan Data Hari Ini</button>
             <div className="viewOrders">
                 {ordersData.map((data, index) => (
                     <div key={index} className='orders'>
