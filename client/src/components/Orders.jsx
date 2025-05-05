@@ -118,23 +118,49 @@ const Orders = () => {
 
     const handlePrint = () => {
         console.log('isi dari ordersData', ordersData)
-        const worksheet = XLSX.utils.json_to_sheet(ordersData.map(order => ({
-            'Nama Toko': order[2],
-            'Barang Yang Dibeli': Array.isArray(order[0]) 
-                ? order[0].map(item => `[${item.itemName} x${item.quantity}pcs]`).join(', ') 
-                : '',
-            'Total Belanja': rupiah(order[3]),
-            'Keuntungan': rupiah(order[4]),
-            'Waktu': order[1]
+        const worksheet = XLSX.utils.json_to_sheet(ordersData.map((order, index) => ({
+            'No': index + 1,
+            'NAMA': order[2].toUpperCase(),
+            'JUMLAH': rupiah(order[3]),
+            'SALES': order[5],
+            'SETORAN': "",
+            'KET': ""
         })))
 
         worksheet['!cols'] = [
-            { wch: 20 }, // Lebar kolom 'Nama Toko'
-            { wch: 50 }, // Lebar kolom 'Barang Yang Dibeli'
-            { wch: 15 }, // Lebar kolom 'Total Belanja'
-            { wch: 15 }, // Lebar kolom 'Keuntungan'
-            { wch: 20 }  // Lebar kolom 'Waktu'
+            { wch: 5 }, 
+            { wch: 30 }, 
+            { wch: 10 }, 
+            { wch: 10 }, 
+            { wch: 10 },
+            { wch: 10 }  
         ];
+
+        const range = XLSX.utils.decode_range(worksheet['!ref']);
+
+        for (let R = range.s.r; R <= range.e.r; ++R) {
+          for (let C = range.s.c; C <= range.e.c; ++C) {
+            const cell_address = { c: C, r: R };
+            const cell_ref = XLSX.utils.encode_cell(cell_address);
+            const cell = worksheet[cell_ref];
+      
+            if (cell) {
+              cell.s = {
+                border: {
+                  top:    { style: "thin", color: { auto: 1 } },
+                  right:  { style: "thin", color: { auto: 1 } },
+                  bottom: { style: "thin", color: { auto: 1 } },
+                  left:   { style: "thin", color: { auto: 1 } }
+                },
+                alignment: {
+                  vertical: "center",
+                  horizontal: "center",
+                  wrapText: true
+                }
+              };
+            }
+          }
+        }        
 
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, worksheet, 'Data Laporan');
@@ -161,12 +187,12 @@ const Orders = () => {
             <a href="/" style={{marginLeft: '20px', marginTop: '20px', width: '20px'}}>
                 <i style={{color: 'black'}}><CIcon icon={icon.cilMediaStepBackward}/></i>
             </a>
-            <button className="button" style={{margin: "0px 20px"}} onClick={handlePrint}>Simpan Data Hari Ini</button>
+            <button className="button" style={{margin: "0px 20px"}} onClick={handlePrint}>Simpan Data Transaksi Hari Ini</button>
             <div className="viewOrders">
                 {ordersData.map((data, index) => (
                     <div key={index} className='orders'>
                         <div className="infoOrders">
-                            <p style={{fontWeight: 'bold', color: 'darkorange'}}>{`${data[2].toUpperCase()} ~ [${rupiah(data[3])}] ~ Profit = ${rupiah(data[4])}`}</p>
+                            <p style={{fontWeight: 'bold', color: 'darkorange'}}>{`${data[2].toUpperCase()} ~ [${rupiah(data[3])}] ~ Profit = ${rupiah(data[4])} ====>>> Sales: ${data[5]}`}</p>
                             <div style={{display: 'flex', gap: '5px'}}>
                                 <i style={{color: 'white'}}><CIcon icon={icon.cilClock}/></i>
                                 <p style={{color: '#fff'}}>{data[1]}</p>
