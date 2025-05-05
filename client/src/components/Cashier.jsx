@@ -1036,8 +1036,12 @@ const Cashier = () => {
                 <option value="Eja">Eja</option>
                 <option value="Uyung">Uyung</option>
                 <option value="Eva">Eva</option>
-                <option value="Uyun">Uyun</option>
+                <option value="Dwik">Dwik</option>
                 <option value="Suhendri">Suhendri</option>
+                <option value="Eman">Eman</option>
+                <option value="Ana">Ana</option>
+                <option value="Dian">Dian</option>
+                <option value="Eyung">Eyung</option>
               </select>
               {showDropdownOutlet && (
                 <ul className="dropdown" style={dropdownStyleOutlet}>
