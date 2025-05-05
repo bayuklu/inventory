@@ -121,19 +121,25 @@ const Orders = () => {
         const worksheet = XLSX.utils.json_to_sheet(ordersData.map((order, index) => ({
             'No': index + 1,
             'NAMA': order[2].toUpperCase(),
-            'JUMLAH': rupiah(order[3]),
             'SALES': order[5],
-            'SETORAN': "",
-            'KET': ""
+            'JUMLAH': rupiah(order[3]),
+            'SETOR 1': "",
+            'SETOR 2': "",
+            'SETOR 3': "",
+            'SETOR 4': "",
+            'KET': "",
         })))
 
         worksheet['!cols'] = [
             { wch: 5 }, 
-            { wch: 30 }, 
+            { wch: 20 }, 
             { wch: 10 }, 
             { wch: 10 }, 
-            { wch: 10 },
-            { wch: 10 }  
+            { wch: 10 }, 
+            { wch: 10 }, 
+            { wch: 10 }, 
+            { wch: 10 }, 
+            { wch: 5 }, 
         ];
 
         const range = XLSX.utils.decode_range(worksheet['!ref']);

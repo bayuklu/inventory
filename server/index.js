@@ -47,8 +47,8 @@ const init = async() => {
 init()
 
 app.use(cors({credentials: true, 
-    // origin: "http://localhost:5173",
-    origin: "https://abfrozen.vercel.app"
+    origin: "http://localhost:5173",
+    // origin: "https://abfrozen.vercel.app"
 }))
 
 app.use(cookieParser())
