@@ -255,7 +255,8 @@ export const getTodayOrdersData = async (req, res) => {
             const outlet = await Outlet.findOne({ where: { id: order.outlet } })
             // console.log(outlet)
             const profit = order.dataValues.profit
-            return [itemList, orderTime, outlet.dataValues.name, order.totalPayment, profit]
+            const sales = order.dataValues.sales
+            return [itemList, orderTime, outlet.dataValues.name, order.totalPayment, profit, sales]
         }))
         res.status(200).json(ordersData)
     } catch (error) {
