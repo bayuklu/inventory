@@ -24,9 +24,9 @@ const init = async() => {
     
         await db.query("SET TIME ZONE 'Asia/Makassar';")
     
-        // await Users.sync({
-        //     alter: true
-        // })
+        await Orders.sync({
+            alter: true
+        })
     
         // console.log("Migrasi...")
         // const [rows] = await mysqlDb.query('SELECT * FROM outlets');

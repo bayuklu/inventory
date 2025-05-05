@@ -28,6 +28,7 @@ const Cashier = () => {
   const [isStoreClicked, setIsStoreClicked] = useState(false); // State untuk tombol Store
   const [previousPrice, setPreviousPrice] = useState({});
   const [waitOutletSearch, setWaitOutletSearch] = useState(true)
+  const [sales, setSales] = useState("Eja")
   
   //jika menggunakan cash tanpa input manual (otomatis)
   //akan mengeset cash di store orders dengan nilai "cashTanpaInput"
@@ -297,6 +298,7 @@ const Cashier = () => {
           cash: cashTanpaInput,
           profit: totalProfit,
           outlet: outlet.id,
+          sales: sales,
         }
       );
       if (response) {
@@ -619,6 +621,11 @@ const Cashier = () => {
       setShowDropdownOutlet(false);
     }
   };
+
+  const handleSalesOnChange = (e) => {
+    const value = e.target.value
+    setSales(value)
+  }
 
   const handleSelectOutlet = (outlet) => {
     setOutlet({ id: outlet.id, name: outlet.name });
@@ -1006,11 +1013,12 @@ const Cashier = () => {
             <div
               style={{
                 display: "flex",
-                flexDirection: "column",
+                flexDirection: "row",
+                gap: "10px",
                 width: "100%",
                 marginLeft: "2px",
               }}
-            >
+            > 
               <input
                 type="text"
                 className="input"
@@ -1018,6 +1026,19 @@ const Cashier = () => {
                 value={outlet.name}
                 onChange={handleOutletChange}
               />
+              {/* <input
+                type="text"
+                className="input"
+                placeholder="Sales"
+                onChange={handleSalesOnChange}
+              /> */}
+              <select onChange={handleSalesOnChange} className="input" name="sales" id="sales" value={sales}>
+                <option value="Eja">Eja</option>
+                <option value="Uyung">Uyung</option>
+                <option value="Eva">Eva</option>
+                <option value="Uyun">Uyun</option>
+                <option value="Suhendri">Suhendri</option>
+              </select>
               {showDropdownOutlet && (
                 <ul className="dropdown" style={dropdownStyleOutlet}>
                   {outletList.map((outlet) => (

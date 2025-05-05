@@ -36,6 +36,10 @@ const Orders = db.define(
             type: DataTypes.STRING,
             allowNull: false
         },
+        sales: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
     }
 )
 
