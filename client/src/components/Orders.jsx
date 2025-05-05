@@ -15,6 +15,7 @@ const Orders = () => {
     const [expire, setExpire] = useState('')
     const [isNoLoggedIn, setIsNoLoggedIn] = useState(false)
     const [authCheck, setAuthCheck] = useState(true)  
+    const [isOrdersDataLoading, setIsOrdersDataLoading] = useState(false)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -100,8 +101,10 @@ const Orders = () => {
 
     const fetchData = async() => {
         try{
+            setIsOrdersDataLoading(true)
             const response = await axios.get(`${import.meta.env.VITE_BASEURL}/dashboard/orders`)
             setOrdersData(response.data)
+            setIsOrdersDataLoading(false)
         }catch(error){
             console.log(error.message)
         }
@@ -121,7 +124,7 @@ const Orders = () => {
         const worksheet = XLSX.utils.json_to_sheet(ordersData.map((order, index) => ({
             'No': index + 1,
             'NAMA': order[2].toUpperCase(),
-            'SALES': order[5],
+            'S': order[5],
             'JUMLAH': rupiah(order[3]),
             'SETOR 1': "",
             'SETOR 2': "",
@@ -131,14 +134,14 @@ const Orders = () => {
         })))
 
         worksheet['!cols'] = [
-            { wch: 5 }, 
+            { wch: 3 }, 
             { wch: 20 }, 
-            { wch: 10 }, 
-            { wch: 10 }, 
-            { wch: 10 }, 
-            { wch: 10 }, 
-            { wch: 10 }, 
-            { wch: 10 }, 
+            { wch: 3 }, 
+            { wch: 9 }, 
+            { wch: 8 }, 
+            { wch: 8 }, 
+            { wch: 8 }, 
+            { wch: 8 }, 
             { wch: 5 }, 
         ];
 
@@ -190,11 +193,14 @@ const Orders = () => {
                     <button className="button">Search</button>
                 </form>
             </div> */}
-            <a href="/" style={{marginLeft: '20px', marginTop: '20px', width: '20px'}}>
+            <a href="/" style={{marginLeft: '20px', marginTop: '20px', marginBottom: '20px', width: '20px'}}>
                 <i style={{color: 'black'}}><CIcon icon={icon.cilMediaStepBackward}/></i>
             </a>
-            <button className="button" style={{margin: "0px 20px"}} onClick={handlePrint}>Simpan Data Transaksi Hari Ini</button>
+            <button className="button" style={{margin: "0px 20px"}} disabled={isOrdersDataLoading} onClick={handlePrint}>Simpan Data Transaksi Hari Ini</button>
             <div className="viewOrders">
+              <div style={{width: "100%", display: "flex", justifyContent: "center"}}>
+                {isOrdersDataLoading && <><SpinnerLoader color={"black"}/></>}
+              </div>
                 {ordersData.map((data, index) => (
                     <div key={index} className='orders'>
                         <div className="infoOrders">

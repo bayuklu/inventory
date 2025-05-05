@@ -22,7 +22,7 @@ const init = async() => {
         await db.authenticate()
         console.log("Database connected")
     
-        await db.query("SET TIME ZONE 'Asia/Makassar';")
+        await db.query("SELECT now() AT TIME ZONE 'Asia/Makassar';")
     
         // await Orders.sync({
         //     alter: true
@@ -47,8 +47,8 @@ const init = async() => {
 init()
 
 app.use(cors({credentials: true, 
-    origin: "http://localhost:5173",
-    // origin: "https://abfrozen.vercel.app"
+    // origin: "http://localhost:5173",
+    origin: "https://abfrozen.vercel.app"
 }))
 
 app.use(cookieParser())
