@@ -288,6 +288,10 @@ const Cashier = () => {
     const storeOrders = async (e) => {
       e.preventDefault();
 
+      if(isStoreClicked) return
+
+      setIsStoreClicked(true)
+
       const totalProfit = records.reduce((acc, val) => acc + val.profit, 0);
 
       try {
@@ -304,7 +308,6 @@ const Cashier = () => {
         if (response) {
           setReturns(rupiah(response.data.data.cashReturn));
           setDiscount(rupiah(response.data.data.sumDiscount));
-          setIsStoreClicked(true);
           setMsg({ msg: response.data.msg, color: "green" });
 
           //menyimpan state cache [printan]
