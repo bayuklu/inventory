@@ -120,45 +120,90 @@ const Orders = () => {
     };
 
     const handlePrint = () => {
-        console.log('isi dari ordersData', ordersData)
-        const worksheet = XLSX.utils.json_to_sheet(ordersData.map((order, index) => ({
-            'No': index + 1,
-            'NAMA': order[2].toUpperCase(),
-            'S': order[5],
-            'JUMLAH': rupiah(order[3]),
-            'SETOR 1': "",
-            'SETOR 2': "",
-            'SETOR 3': "",
-            'SETOR 4': "",
-            'KET': "",
-        })))
+      console.log('isi dari ordersData', ordersData);
+  
+      // Membuat worksheet pertama dari ordersData
+      const worksheet1 = XLSX.utils.json_to_sheet(ordersData.map((order, index) => ({
+          'No': index + 1,
+          'NAMA': order[2].toUpperCase(),
+          'S': order[5],
+          'JUMLAH': rupiah(order[3]),
+          'SETOR 1': "",
+          'SETOR 2': "",
+          'SETOR 3': "",
+          'SETOR 4': "",
+          'KET': "",
+      })));
+  
+      // Tentukan lebar kolom untuk worksheet pertama
+      worksheet1['!cols'] = [
+          { wch: 3 }, 
+          { wch: 20 }, 
+          { wch: 3 }, 
+          { wch: 9 }, 
+          { wch: 8 }, 
+          { wch: 8 }, 
+          { wch: 8 }, 
+          { wch: 8 }, 
+          { wch: 5 },
+      ];
+  
+      // Data tabel kedua yang ingin ditambahkan
+      
+      const HitungBanyakOrderSales = (namaSales) => {
+        const countSales = ordersData.reduce((count, order) => {
+          if (order[5] === namaSales) {
+              count += 1;
+          }
+          return count;
+        }, 0);
+        
+        return countSales
+      }
 
-        console.log(worksheet)
-
-        worksheet['!cols'] = [
-            { wch: 3 }, 
-            { wch: 20 }, 
-            { wch: 3 }, 
-            { wch: 9 }, 
-            { wch: 8 }, 
-            { wch: 8 }, 
-            { wch: 8 }, 
-            { wch: 8 }, 
-            { wch: 5 }, 
-        ];
-
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, worksheet, 'Data Laporan');
-
-        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-        const excelBlob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-        const tanggal = String(new Date().getDate()).padStart(2, '0')
-        const bulan = String(new Date().getMonth()).padStart(2, '0')
-        const tahun = new Date().getFullYear()
-
-        FileSaver.saveAs(excelBlob, `${tanggal}-${bulan}-${tahun}.xlsx`);
-    }
+      const newOrdersData = [
+          { 'No': "", 'NAMA': '', 'S': 'Eja', 'JUMLAH': HitungBanyakOrderSales("Eja"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Eyung', 'JUMLAH': HitungBanyakOrderSales("Uyung"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Eva', 'JUMLAH': HitungBanyakOrderSales("Eva"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Dwik', 'JUMLAH': HitungBanyakOrderSales("Dwik"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Suhendri', 'JUMLAH': HitungBanyakOrderSales("Suhendri"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Eman', 'JUMLAH': HitungBanyakOrderSales("Eman"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Ana', 'JUMLAH': HitungBanyakOrderSales("Ana"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Dian', 'JUMLAH': HitungBanyakOrderSales("Dian"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Eyung', 'JUMLAH': HitungBanyakOrderSales("Eyung"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+      ];
+  
+      // Menambahkan data tabel kedua ke bawah tabel pertama
+      // Cari baris terakhir dari worksheet pertama
+      const lastRow = worksheet1['!ref'].split(':')[1].replace(/[A-Za-z]/g, '');
+      const startRowForSecondTable = parseInt(lastRow) + 2; // Menambahkan jarak 2 baris di bawah tabel pertama
+  
+      // Menambahkan data tabel kedua ke worksheet
+      XLSX.utils.sheet_add_json(worksheet1, newOrdersData, { 
+          skipHeader: true, 
+          origin: `A${startRowForSecondTable}` 
+      });
+  
+      // Buat workbook baru
+      const wb = XLSX.utils.book_new();
+  
+      // Menambahkan worksheet pertama (dengan kedua tabel) ke dalam workbook
+      XLSX.utils.book_append_sheet(wb, worksheet1, 'Data Laporan');
+  
+      // Generate file Excel
+      const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const excelBlob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  
+      // Format tanggal untuk nama file
+      const tanggal = String(new Date().getDate()).padStart(2, '0');
+      const bulan = String(new Date().getMonth()).padStart(2, '0');
+      const tahun = new Date().getFullYear();
+  
+      // Simpan file Excel
+      FileSaver.saveAs(excelBlob, `${tanggal}-${bulan}-${tahun}.xlsx`);
+  };
+  
+  
     // console.log(ordersData)
 
     return (
