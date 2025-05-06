@@ -120,22 +120,16 @@ const Orders = () => {
     };
 
     const handlePrint = () => {
-      console.log('isi dari ordersData', ordersData);
-    
       const today = new Date();
       const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getFullYear()}`;
     
-      // Baris tanggal sebagai array of arrays
-      const tanggalHeader = [
-        [`LAPORAN ANA BASALIM FROZEN`],
-        [`Tanggal: ${formattedDate}`]
-      ];
-    
-      // Buat worksheet kosong
       const worksheet1 = XLSX.utils.aoa_to_sheet([]);
     
-      // Tambahkan baris tanggal di A1
-      XLSX.utils.sheet_add_aoa(worksheet1, tanggalHeader, { origin: 'A1' });
+      // Baris 1: Tanggal
+      XLSX.utils.sheet_add_aoa(worksheet1, [[`Tanggal: ${formattedDate}`]], { origin: 'B1' });
+    
+      // Baris 3: Judul Data Penjualan
+      XLSX.utils.sheet_add_aoa(worksheet1, [['Data Penjualan']], { origin: 'B3' });
     
       // Format data ordersData
       const ordersFormatted = ordersData.map((order, index) => ({
@@ -150,15 +144,16 @@ const Orders = () => {
         'KET': "",
       }));
     
-      // Tambahkan data utama di A3 (setelah tanggal dan 1 baris kosong)
-      XLSX.utils.sheet_add_json(worksheet1, ordersFormatted, { origin: 'A3' });
+      // Tabel penjualan mulai di baris 5
+      XLSX.utils.sheet_add_json(worksheet1, ordersFormatted, { origin: 'B5' });
     
-      // Set kolom
+      // Kolom
       worksheet1['!cols'] = [
+        { wch: 2 }, // Kolom A kosong (jarak)
         { wch: 3 }, 
         { wch: 20 }, 
-        { wch: 3 }, 
-        { wch: 9 }, 
+        { wch: 6 }, 
+        { wch: 12 }, 
         { wch: 8 }, 
         { wch: 8 }, 
         { wch: 8 }, 
@@ -166,55 +161,56 @@ const Orders = () => {
         { wch: 5 },
       ];
     
-      // Fungsi menghitung banyak order
-      const HitungBanyakOrderSales = (namaSales) => {
-        return ordersData.reduce((count, order) => {
-          if (order[5] === namaSales) count += 1;
-          return count;
-        }, 0);
-      };
+      // Fungsi menghitung banyak order dan pendapatan
+      const HitungBanyakOrderSales = (namaSales) =>
+        ordersData.reduce((count, order) => (order[5] === namaSales ? count + 1 : count), 0);
     
-      // Fungsi menghitung jumlah pendapatan
-      const hitungJumlahPendapatan = (namaSales) => {
-        return ordersData.reduce((total, order) => {
+      const hitungJumlahPendapatan = (namaSales) =>
+        ordersData.reduce((total, order) => {
           if (order[5] === namaSales) {
-            console.log("order[3] : ", order[3], "order[5] : ", order[5]);
-            total += Number(order[3]) || 0;
+            const jumlah = Number(order[3]);
+            total += isNaN(jumlah) ? 0 : jumlah;
           }
           return total;
         }, 0);
-      };
     
+      // Data Sales
       const newOrdersData = [
         { 'No': "", 'NAMA': 'Jumlah Setoran Sales ==>', 'S': 'Sales', 'JUMLAH': "Jumlah Order", 'SETOR 1': 'Jumlah Uang', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-        { 'No': "", 'NAMA': '', 'S': 'Eja', 'JUMLAH': HitungBanyakOrderSales("Eja"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Eja")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-        { 'No': "", 'NAMA': '', 'S': 'Uyung', 'JUMLAH': HitungBanyakOrderSales("Uyung"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Uyung")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-        { 'No': "", 'NAMA': '', 'S': 'Eva', 'JUMLAH': HitungBanyakOrderSales("Eva"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Eva")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-        { 'No': "", 'NAMA': '', 'S': 'Dwik', 'JUMLAH': HitungBanyakOrderSales("Dwik"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Dwik")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-        { 'No': "", 'NAMA': '', 'S': 'Suhendri', 'JUMLAH': HitungBanyakOrderSales("Suhendri"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Suhendri")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-        { 'No': "", 'NAMA': '', 'S': 'Eman', 'JUMLAH': HitungBanyakOrderSales("Eman"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Eman")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-        { 'No': "", 'NAMA': '', 'S': 'Ana', 'JUMLAH': HitungBanyakOrderSales("Ana"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Ana")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-        { 'No': "", 'NAMA': '', 'S': 'Dian', 'JUMLAH': HitungBanyakOrderSales("Dian"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Dian")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-        { 'No': "", 'NAMA': '', 'S': 'Eyung', 'JUMLAH': HitungBanyakOrderSales("Eyung"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Eyung")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+        { 'No': "", 'NAMA': '', 'S': 'Eja', 'JUMLAH': HitungBanyakOrderSales("Eja"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Eja")) },
+        { 'No': "", 'NAMA': '', 'S': 'Uyung', 'JUMLAH': HitungBanyakOrderSales("Uyung"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Uyung")) },
+        { 'No': "", 'NAMA': '', 'S': 'Eva', 'JUMLAH': HitungBanyakOrderSales("Eva"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Eva")) },
+        { 'No': "", 'NAMA': '', 'S': 'Dwik', 'JUMLAH': HitungBanyakOrderSales("Dwik"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Dwik")) },
+        { 'No': "", 'NAMA': '', 'S': 'Suhendri', 'JUMLAH': HitungBanyakOrderSales("Suhendri"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Suhendri")) },
+        { 'No': "", 'NAMA': '', 'S': 'Eman', 'JUMLAH': HitungBanyakOrderSales("Eman"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Eman")) },
+        { 'No': "", 'NAMA': '', 'S': 'Ana', 'JUMLAH': HitungBanyakOrderSales("Ana"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Ana")) },
+        { 'No': "", 'NAMA': '', 'S': 'Dian', 'JUMLAH': HitungBanyakOrderSales("Dian"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Dian")) },
+        { 'No': "", 'NAMA': '', 'S': 'Eyung', 'JUMLAH': HitungBanyakOrderSales("Eyung"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Eyung")) },
       ];
     
-      // Hitung baris terakhir dari data pertama (plus 3 baris awal: tanggal, kosong, header)
-      const startRowForSecondTable = ordersFormatted.length + 4;
+      // Baris awal tabel sales = 5 (start table) + ordersData.length (jumlah data) + 2 (judul sales + spasi)
+      const startRowForSales = 5 + ordersFormatted.length + 2;
     
-      // Tambahkan tabel kedua
+      // Judul Data Sales
+      XLSX.utils.sheet_add_aoa(worksheet1, [['Data Sales']], { origin: `B${startRowForSales}` });
+    
+      // Tabel sales dimulai 1 baris setelah judul
       XLSX.utils.sheet_add_json(worksheet1, newOrdersData, {
         skipHeader: true,
-        origin: `A${startRowForSecondTable}`
+        origin: `B${startRowForSales + 1}`
       });
     
       // Buat dan simpan file Excel
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, worksheet1, 'Data Laporan');
       const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-      const excelBlob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const excelBlob = new Blob([excelBuffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
     
       FileSaver.saveAs(excelBlob, `${formattedDate}.xlsx`);
     };
+    
     
   
   
