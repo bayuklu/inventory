@@ -133,6 +133,8 @@ const Orders = () => {
             'KET': "",
         })))
 
+        console.log(worksheet)
+
         worksheet['!cols'] = [
             { wch: 3 }, 
             { wch: 20 }, 
@@ -144,32 +146,6 @@ const Orders = () => {
             { wch: 8 }, 
             { wch: 5 }, 
         ];
-
-        const range = XLSX.utils.decode_range(worksheet['!ref']);
-
-        for (let R = range.s.r; R <= range.e.r; ++R) {
-          for (let C = range.s.c; C <= range.e.c; ++C) {
-            const cell_address = { c: C, r: R };
-            const cell_ref = XLSX.utils.encode_cell(cell_address);
-            const cell = worksheet[cell_ref];
-      
-            if (cell) {
-              cell.s = {
-                border: {
-                  top:    { style: "thin", color: { auto: 1 } },
-                  right:  { style: "thin", color: { auto: 1 } },
-                  bottom: { style: "thin", color: { auto: 1 } },
-                  left:   { style: "thin", color: { auto: 1 } }
-                },
-                alignment: {
-                  vertical: "center",
-                  horizontal: "center",
-                  wrapText: true
-                }
-              };
-            }
-          }
-        }        
 
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, worksheet, 'Data Laporan');
