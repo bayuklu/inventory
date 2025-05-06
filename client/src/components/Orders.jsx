@@ -148,7 +148,6 @@ const Orders = () => {
           { wch: 5 },
       ];
   
-      // Data tabel kedua yang ingin ditambahkan
       
       const HitungBanyakOrderSales = (namaSales) => {
         const countSales = ordersData.reduce((count, order) => {
@@ -164,7 +163,7 @@ const Orders = () => {
       const newOrdersData = [
           { 'No': "", 'NAMA': 'Jumlah Setoran Sales ==>', 'S': 'Sales', 'JUMLAH': "Jumlah", 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
           { 'No': "", 'NAMA': '', 'S': 'Eja', 'JUMLAH': HitungBanyakOrderSales("Eja"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-          { 'No': "", 'NAMA': '', 'S': 'Eyung', 'JUMLAH': HitungBanyakOrderSales("Uyung"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Uyung', 'JUMLAH': HitungBanyakOrderSales("Uyung"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
           { 'No': "", 'NAMA': '', 'S': 'Eva', 'JUMLAH': HitungBanyakOrderSales("Eva"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
           { 'No': "", 'NAMA': '', 'S': 'Dwik', 'JUMLAH': HitungBanyakOrderSales("Dwik"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
           { 'No': "", 'NAMA': '', 'S': 'Suhendri', 'JUMLAH': HitungBanyakOrderSales("Suhendri"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
