@@ -162,6 +162,7 @@ const Orders = () => {
       }
 
       const newOrdersData = [
+          { 'No': "", 'NAMA': '', 'S': 'Sales', 'JUMLAH': "Jumlah", 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
           { 'No': "", 'NAMA': '', 'S': 'Eja', 'JUMLAH': HitungBanyakOrderSales("Eja"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
           { 'No': "", 'NAMA': '', 'S': 'Eyung', 'JUMLAH': HitungBanyakOrderSales("Uyung"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
           { 'No': "", 'NAMA': '', 'S': 'Eva', 'JUMLAH': HitungBanyakOrderSales("Eva"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
