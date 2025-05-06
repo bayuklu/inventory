@@ -163,6 +163,7 @@ const Orders = () => {
       const hitungJumlahPendapatan = (namaSales) => {
         const countPendapatan = ordersData.reduce((count, order) => {
           if(order[5] === namaSales) {
+            console.log(order[3])
             count += order[3]
           }
           return count
