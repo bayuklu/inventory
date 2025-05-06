@@ -285,42 +285,42 @@ const Cashier = () => {
     }
   };
 
-  const storeOrders = async (e) => {
-    e.preventDefault();
+    const storeOrders = async (e) => {
+      e.preventDefault();
 
-    const totalProfit = records.reduce((acc, val) => acc + val.profit, 0);
+      const totalProfit = records.reduce((acc, val) => acc + val.profit, 0);
 
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASEURL}/orders`,
-        {
-          turnCode: recordCode,
-          cash: cashTanpaInput,
-          profit: totalProfit,
-          outlet: outlet.id,
-          sales: sales,
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_BASEURL}/orders`,
+          {
+            turnCode: recordCode,
+            cash: cashTanpaInput,
+            profit: totalProfit,
+            outlet: outlet.id,
+            sales: sales,
+          }
+        );
+        if (response) {
+          setReturns(rupiah(response.data.data.cashReturn));
+          setDiscount(rupiah(response.data.data.sumDiscount));
+          setIsStoreClicked(true);
+          setMsg({ msg: response.data.msg, color: "green" });
+
+          //menyimpan state cache [printan]
+          setPrintData({
+            datas: response.data.recipt,
+            transCode: response.data.data.transCode,
+          });
+
+          //membuat recipt
+          // createRecipt(response.data.recipt, response.data.data.transCode, response.data.unitTotal)
         }
-      );
-      if (response) {
-        setReturns(rupiah(response.data.data.cashReturn));
-        setDiscount(rupiah(response.data.data.sumDiscount));
-        setIsStoreClicked(true);
-        setMsg({ msg: response.data.msg, color: "green" });
-
-        //menyimpan state cache [printan]
-        setPrintData({
-          datas: response.data.recipt,
-          transCode: response.data.data.transCode,
-        });
-
-        //membuat recipt
-        // createRecipt(response.data.recipt, response.data.data.transCode, response.data.unitTotal)
+      } catch (error) {
+        console.log(error.response);
+        setMsg({ msg: error.response.data.msg, color: "red" });
       }
-    } catch (error) {
-      console.log(error.response);
-      setMsg({ msg: error.response.data.msg, color: "red" });
-    }
-  };
+    };
 
   const createRecipt = async (datas, transCode, unitTotal) => {
     // datas.forEach(data => {
@@ -1061,6 +1061,7 @@ const Cashier = () => {
               style={addButtonStyle}
               className="button is-success"
               disabled={isStoreClicked}
+              type="submit"
             >
               Create Order
             </button>
