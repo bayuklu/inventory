@@ -129,7 +129,7 @@ const Orders = () => {
       XLSX.utils.sheet_add_aoa(worksheet1, [[`Tanggal: ${formattedDate}`]], { origin: 'B1' });
     
       // Baris 3: Judul Data Penjualan
-      XLSX.utils.sheet_add_aoa(worksheet1, [['Data Penjualan']], { origin: 'B3' });
+      XLSX.utils.sheet_add_aoa(worksheet1, [['ANA BASALIM FROZEN']], { origin: 'B3' });
     
       // Format data ordersData
       const ordersFormatted = ordersData.map((order, index) => ({
