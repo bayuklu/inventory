@@ -160,17 +160,28 @@ const Orders = () => {
         return countSales
       }
 
+      const hitungJumlahPendapatan = (namaSales) => {
+        const countPendapatan = ordersData.reduce((count, order) => {
+          if(order[5] === namaSales) {
+            count += order[3]
+          }
+          return count
+        })
+
+        return countPendapatan
+      }
+
       const newOrdersData = [
-          { 'No': "", 'NAMA': 'Jumlah Setoran Sales ==>', 'S': 'Sales', 'JUMLAH': "Jumlah", 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-          { 'No': "", 'NAMA': '', 'S': 'Eja', 'JUMLAH': HitungBanyakOrderSales("Eja"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-          { 'No': "", 'NAMA': '', 'S': 'Uyung', 'JUMLAH': HitungBanyakOrderSales("Uyung"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-          { 'No': "", 'NAMA': '', 'S': 'Eva', 'JUMLAH': HitungBanyakOrderSales("Eva"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-          { 'No': "", 'NAMA': '', 'S': 'Dwik', 'JUMLAH': HitungBanyakOrderSales("Dwik"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-          { 'No': "", 'NAMA': '', 'S': 'Suhendri', 'JUMLAH': HitungBanyakOrderSales("Suhendri"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-          { 'No': "", 'NAMA': '', 'S': 'Eman', 'JUMLAH': HitungBanyakOrderSales("Eman"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-          { 'No': "", 'NAMA': '', 'S': 'Ana', 'JUMLAH': HitungBanyakOrderSales("Ana"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-          { 'No': "", 'NAMA': '', 'S': 'Dian', 'JUMLAH': HitungBanyakOrderSales("Dian"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
-          { 'No': "", 'NAMA': '', 'S': 'Eyung', 'JUMLAH': HitungBanyakOrderSales("Eyung"), 'SETOR 1': '', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': 'Jumlah Setoran Sales ==>', 'S': 'Sales', 'JUMLAH': "Jumlah Order", 'SETOR 1': 'Jumlah Uang', 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Eja', 'JUMLAH': HitungBanyakOrderSales("Eja"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Eja")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Uyung', 'JUMLAH': HitungBanyakOrderSales("Uyung"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Uyung")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Eva', 'JUMLAH': HitungBanyakOrderSales("Eva"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Eva")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Dwik', 'JUMLAH': HitungBanyakOrderSales("Dwik"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Dwik")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Suhendri', 'JUMLAH': HitungBanyakOrderSales("Suhendri"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Suhendri")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Eman', 'JUMLAH': HitungBanyakOrderSales("Eman"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Eman")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Ana', 'JUMLAH': HitungBanyakOrderSales("Ana"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Ana")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Dian', 'JUMLAH': HitungBanyakOrderSales("Dian"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Dian")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
+          { 'No': "", 'NAMA': '', 'S': 'Eyung', 'JUMLAH': HitungBanyakOrderSales("Eyung"), 'SETOR 1': rupiah(hitungJumlahPendapatan("Eyung")), 'SETOR 2': '', 'SETOR 3': '', 'SETOR 4': '', 'KET': '' },
       ];
   
       // Menambahkan data tabel kedua ke bawah tabel pertama
