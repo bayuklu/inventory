@@ -28,7 +28,7 @@ const Cashier = () => {
   const [isStoreClicked, setIsStoreClicked] = useState(false); // State untuk tombol Store
   const [previousPrice, setPreviousPrice] = useState({});
   const [waitOutletSearch, setWaitOutletSearch] = useState(true)
-  const [sales, setSales] = useState("Eja")
+  const [sales, setSales] = useState("Ana")
   
   //jika menggunakan cash tanpa input manual (otomatis)
   //akan mengeset cash di store orders dengan nilai "cashTanpaInput"
@@ -1036,13 +1036,13 @@ const Cashier = () => {
                 onChange={handleSalesOnChange}
               /> */}
               <select onChange={handleSalesOnChange} className="input" name="sales" id="sales" value={sales}>
-                <option value="Eja">Eja</option>
-                <option value="Uyung">Uyung</option>
+                <option value="Ana">Ana</option>
+                <option value="Eman">Eman</option>
                 <option value="Eva">Eva</option>
+                <option value="Uyung">Uyung</option>
                 <option value="Dwik">Dwik</option>
                 <option value="Suhendri">Suhendri</option>
-                <option value="Eman">Eman</option>
-                <option value="Ana">Ana</option>
+                <option value="Eja">Eja</option>
                 <option value="Dian">Dian</option>
                 <option value="Eyung">Eyung</option>
               </select>
