@@ -63,7 +63,7 @@ export const addItem = async(req, res) => {
             price: price,
             stock: stock,
             unitTotal: unit,
-            unitTotalPack: unitPack,
+            unitTotalPack: unitPack || 0,
             discount: convDiscount || 0.0,
             capitalPrice: parseCapitalPrice
         })
