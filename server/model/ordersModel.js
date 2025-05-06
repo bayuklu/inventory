@@ -40,6 +40,10 @@ const Orders = db.define(
             type: DataTypes.STRING,
             allowNull: false
         },
+        turnCode: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
     }
 )
 

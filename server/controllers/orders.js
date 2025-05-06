@@ -1,7 +1,7 @@
 import Orders from '../model/ordersModel.js'
 import OrderRecordModel from '../model/orderRecordModel.js'
 import Items from '../model/ItemsModel.js'
-import {Op} from 'sequelize'
+import {Op, where} from 'sequelize'
 import orderRecords from '../model/orderRecordModel.js'
 
 export const getTurnCode = async(req, res) => {
@@ -179,6 +179,21 @@ export const createFinalOrder = async(req, res) => {
     if(!cash || !outlet || !sales) return res.status(400).json({msg: "Cash, Outlet or Sales required"})
     
 try {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date();
+
+    const checkDuplicateOrders = await Orders.findOne({
+    where: {
+        turnCode,
+        createdAt: {
+        [Op.between]: [start, end],
+        },
+    },
+    });
+    if(checkDuplicateOrders) return res.status(402).json({msg: "Duplicate Orders Detected"})
+
     const recordsOrdered = await OrderRecordModel.findAll({
         where: {
             turnCode: turnCode
@@ -281,6 +296,7 @@ try {
         return: cashReturn,
         outlet: outlet,
         sales: sales,
+        turnCode: turnCode,
     })
     //membuat orderan (end)
 
