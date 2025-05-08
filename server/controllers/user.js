@@ -96,7 +96,7 @@ export const Register = async(req, res) => {
         await Users.create({
             username: `${firstName}${lastName}`,
             password: hashPassword,
-            role: 'kasir'
+            role: 'admin'
         })
         res.status(200).json({msg: "Register Successfully!"})
     } catch (error) { 

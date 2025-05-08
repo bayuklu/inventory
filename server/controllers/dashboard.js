@@ -260,7 +260,7 @@ export const getTodayOrdersData = async (req, res) => {
             const hours = orderTime.get('hour')   // Mengambil jam
             const minutes = orderTime.get('minute')  // Mengambil menit
 
-            const formattedOrderTime = `${hours}.${minutes}`  // Format waktu
+            const formattedOrderTime = `${hours}.${minutes}`  // Format waktu contoh "16.40"
 
             const outlet = await Outlet.findOne({ where: { id: order.outlet } })
             // console.log(outlet)
