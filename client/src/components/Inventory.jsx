@@ -187,7 +187,9 @@ const Inventory = () => {
 
   const fetchItemsData = async(category) => {
     try {
-      if(!category) {
+      setDataView(category)
+
+      if(category === "") {
         return handleSearch(search)
       }
 
@@ -197,7 +199,6 @@ const Inventory = () => {
       })
 
         setItems(response.data.data)
-        setDataView(category)
         setActiveButton(category)
     } catch (error) {
       console.log(error)
