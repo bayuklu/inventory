@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { addItem, getAllItem, getFoods, getDrinks, getBathroom, getKitchen, updateItem, deleteItem, addStock, searchItem } from "../controllers/Items.js";
+import { addItem, getAllItem, getFoods, getDrinks, getBathroom, getKitchen, updateItem, deleteItem, addStock, searchItem, updateDus, updatePack } from "../controllers/Items.js";
 import {getTurnCode, getRecordsByTurnCode, createRecordOrder, createFinalOrder, changePriceForSelectedItem, deleteRecordOrder} from "../controllers/orders.js"
 import {getTotalOfItemsStock, getTotalOFItemsProduct, getTodayOrders, getTodayIncomes, getLast7DaysIncomes, getBestSeller, getTodayBestSeller, getTodayOrdersData, getTodayProfit, deleteTransaction, changeSalesName} from "../controllers/dashboard.js"
 import { addOutlet, deleteOutlet, getOutlet, searchOutlet, updateOutlet } from "../controllers/outlet.js";
@@ -18,16 +18,15 @@ router.post('/items', addItem)
 router.put('/items/:kode', updateItem)
 router.delete('/items/:kode', deleteItem)
 router.get('/items', getAllItem)
-
 router.put('/items/stock/:kode', addStock)
-
 //get item berdasarkan kategori
 router.get('/items/foods', getFoods)
 router.get('/items/drinks', getDrinks)
 router.get('/items/bathroom', getBathroom)
 router.get('/items/kitchen', getKitchen)
-
 router.post('/items/search', searchItem)
+router.put('/items/update/dus', updateDus)
+router.put('/items/update/pack', updatePack)
 
 router.get('/record/code', getTurnCode)
 router.get('/record/turncode/:turnCode', getRecordsByTurnCode)

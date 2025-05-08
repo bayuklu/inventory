@@ -69,12 +69,12 @@ export const addItem = async(req, res) => {
         })
 
         const itemData = await Items.findAll({
-            where: {category: category}
+            where: {category: category},
+            attributes: ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
         })
         res.status(200).json({
             msg: `${name.toUpperCase()} Successfully added`,
-            dataView: itemData,
-            activeButton: toUpperCaseFirstStr(category)
+            dataView: [...itemData],
 
         })
     } catch (error) {
@@ -87,7 +87,8 @@ export const getAllItem = async(req, res) => {
     console.log(req.headers.origin)
     try {
         const get = await Items.findAll({
-            attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
+            attributes: ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice'],
+            limit: 100
         })
         return res.status(200).json({data: [...get]})
     } catch (error) {
@@ -102,7 +103,7 @@ export const getFoods = async(req, res) => {
             where: {
                 category: 'foods'
             },
-            attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
+            attributes: ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
         })
         return res.status(200).json({data: [...get]})
     } catch (error) {
@@ -117,7 +118,7 @@ export const getDrinks = async(req, res) => {
             where: {
                 category: 'drinks'
             },
-            attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
+            attributes: ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
         })
         return res.status(200).json({data: [...get]})
     } catch (error) {
@@ -132,7 +133,7 @@ export const getBathroom = async(req, res) => {
             where: {
                 category: 'bathroom'
             },
-            attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
+            attributes: ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
         })
         return res.status(200).json({data: [...get]})
     } catch (error) {
@@ -147,7 +148,7 @@ export const getKitchen = async(req, res) => {
             where: {
                 category: 'kitchen'
             },
-            attributes: ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
+            attributes: ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
         })
         return res.status(200).json({data: [...get]})
     } catch (error) {
@@ -188,7 +189,7 @@ export const deleteItem = async(req, res) => {
     const {dataView} = req.body
     console.log(dataView)
     if(!itemCode || !dataView) return res.status(400).json({msg: "error"})
-    const attr = ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'discount']
+    const attr = ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
 
     try {
         const item = await Items.findOne({
@@ -228,7 +229,7 @@ export const deleteItem = async(req, res) => {
 
         res.status(200).json({
             msg: `"${item.name.toUpperCase()}" Deleted`,
-            dataView: itemData
+            dataView: [...itemData]
         })
     } catch (error) {
         console.log(error)
@@ -282,7 +283,7 @@ export const addStock = async(req, res) => {
         res.status(200).json({
             msg: `"${item.name.toUpperCase()}" Stock Changed to ${item.stock}`,
             data: item.stock,
-            dataView : itemData
+            dataView : [...itemData]
         })
     } catch (error) {
         console.log(error)
@@ -295,7 +296,7 @@ export const searchItem = async(req, res) => {
     if(!value) return res.status(400).json({msg: "Must insert a value"})
     try {
         const item = await Items.findAll({
-            attributes: ['code', 'name', 'category', 'stock', 'unitTotal', 'discount', 'price', 'capitalPrice', 'unitTotalPack'],
+            attributes: ['id', 'code', 'name', 'category', 'stock', 'unitTotal', 'discount', 'price', 'capitalPrice', 'unitTotalPack'],
             where: {
                 [Op.or] : {
                     name : {
@@ -310,6 +311,48 @@ export const searchItem = async(req, res) => {
         if(item.length < 1) return res.status(404).json({msg: "Item not found"})
         res.status(200).json({data: item})
    } catch (error) {
+        console.log(error)
+        res.status(500).json({error: error.message})
+    }
+}
+
+export const updateDus = async(req, res) => {
+    const {itemId, newDusValue} = req.body
+    if(!itemId || !newDusValue) return res.status(400).json({msg: "All field required!"})
+
+    try {
+        const item = await Items.findOne({
+            where: {id: itemId}
+        })
+        if(!item) return res.status(404).json({msg: "Item not found!"})
+
+        await item.update({
+            unitTotal: newDusValue || item.unitTotal
+        })
+
+        res.status(200).json({msg: "Unit Total Dus Changed Successfully"})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({error: error.message})
+    }
+}
+
+export const updatePack = async(req, res) => {
+    const {itemId, newPackValue} = req.body
+    if(!itemId || !newPackValue) return res.status(400).json({msg: "All field required!"})
+
+    try {
+        const item = await Items.findOne({
+            where: {id: itemId}
+        })
+        if(!item) return res.status(404).json({msg: "Item not found!"})
+
+        await item.update({
+            unitTotalPack: newPackValue || item.unitTotalPack
+        })
+
+        res.status(200).json({msg: "Unit Total Pack Changed Successfully"})
+    } catch (error) {
         console.log(error)
         res.status(500).json({error: error.message})
     }

@@ -10,7 +10,7 @@ import { jwtDecode } from 'jwt-decode'
 import SpinnerLoader from "./SpinnerLoader";
 
 const Inventory = () => {
-  const [msg, setMsg] = useState(null)
+  const [msg, setMsg] = useState({})
   const [items, setItems] = useState([])
   const [activeButton, setActiveButton] = useState('All Category')
   const [dataView, setDataView] = useState('')
@@ -38,6 +38,9 @@ const Inventory = () => {
   const [isNoLoggedIn, setIsNoLoggedIn] = useState(false)
   const [authCheck, setAuthCheck] = useState(true)  
 
+  const [previousDus, setPreviousDus] = useState({})
+  const [previousPack, setPreviousPack] = useState({})
+
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -49,7 +52,7 @@ const Inventory = () => {
       try {
         const decoded = jwtDecode(token)
         if (decoded.role === "admin") {
-          handleButtonClick('All Category')
+          fetchItemsData("All Category")
         }
       } catch (error) {
         console.error("Token decoding failed:", error)
@@ -182,37 +185,20 @@ const Inventory = () => {
     }
   }
 
-  const handleButtonClick = async(category) => {
-    setActiveButton(category)
+  const fetchItemsData = async(category) => {
     try {
-      let response
-      switch (category) {
-        case 'Foods':
-          response = await axiosJWT.get(`${import.meta.env.VITE_BASEURL}/items/foods`)
-          setItems(response.data.data)
-          setDataView(category)
-          break;
-        case 'Drinks':
-          response = await axiosJWT.get(`${import.meta.env.VITE_BASEURL}/items/drinks`)
-          setItems(response.data.data)
-          setDataView(category)
-          break;
-        case 'Bathroom':
-          response = await axiosJWT.get(`${import.meta.env.VITE_BASEURL}/items/bathroom`)
-          setItems(response.data.data)
-          setDataView(category)
-          break;
-        case 'Kitchen':
-          response = await axiosJWT.get(`${import.meta.env.VITE_BASEURL}/items/kitchen`)
-          setItems(response.data.data)
-          setDataView(category)
-          break;
-        default:
-          response = await axiosJWT.get(`${import.meta.env.VITE_BASEURL}/items`)
-          setItems(response.data.data)
-          setDataView(category)
-          break;
+      if(!category) {
+        return handleSearch(search)
       }
+
+      const url = category === "All Category" ? `${import.meta.env.VITE_BASEURL}/items` : `${import.meta.env.VITE_BASEURL}/items/${category}`
+      let response = await axiosJWT.get(url, {
+        withCredentials: true
+      })
+
+        setItems(response.data.data)
+        setDataView(category)
+        setActiveButton(category)
     } catch (error) {
       console.log(error)
       setMsg({msg: error.response.data.msg, color: 'red'})
@@ -258,7 +244,7 @@ const Inventory = () => {
       const response = await axiosJWT.post(`${import.meta.env.VITE_BASEURL}/items/search`, {
         value: search
       })
-      setDataView(search)
+      setDataView("")
       setItems(response.data.data)
       setActiveButton('')
     } catch (error) {
@@ -267,10 +253,100 @@ const Inventory = () => {
     }
   }
 
+  const handleDusFormattedNumberChange = (e, id) => {
+    const rawValue = e.target.value.replace(/\D/g, "");
+
+    // console.log('Id di handler change: ' + id)
+
+    setPreviousDus((prev) => {
+      if(!prev[id]) {
+        return {
+          ...prev,
+          [id]: items.find((item) => item.id === id).unitTotal
+        }
+      }
+      return prev
+    })
+
+    setItems((prevItems) => 
+      prevItems.map((item) => 
+        item.id === id
+        ? { ...item, unitTotal: rawValue }
+        : item
+      )
+    )
+  }
+
+  const handlePackFormattedNumberChange = (e, id) => {
+    const rawValue = e.target.value.replace(/\D/g, "");
+
+    // console.log('Id di handler change: ' + id)
+
+    setPreviousPack((prev) => {
+      if(!prev[id]) {
+        return {
+          ...prev,
+          [id]: items.find((item) => item.id === id).unitTotalPack
+        }
+      }
+      return prev
+    })
+
+    setItems((prevItems) => 
+      prevItems.map((item) => 
+        item.id === id
+        ? { ...item, unitTotalPack: rawValue }
+        : item
+      )
+    )
+  }
+
+  const handleDusChanged = async(e, itemId) => {
+    const rawValue = e.target.value.replace(/\D/g, "");
+    const newDusValue = Number(rawValue)
+
+    try {
+      const response = await axiosJWT.put(`${import.meta.env.VITE_BASEURL}/items/update/dus`, {
+        withCredentials: true,
+        itemId,
+        newDusValue
+      })
+
+      if(response) {
+        setMsg({msg: response.data.msg, color: 'green'})
+        fetchItemsData(dataView)
+      }
+    } catch (error) {
+      console.error(error.message, error)
+    }
+  }
+  
+  const handlePackChanged = async(e, itemId) => {
+    const rawValue = e.target.value.replace(/\D/g, "");
+    const newPackValue = Number(rawValue)
+
+    try {
+      const response = await axiosJWT.put(`${import.meta.env.VITE_BASEURL}/items/update/pack`, {
+        withCredentials: true,
+        itemId,
+        newPackValue
+      })
+
+      if(response) {
+        setMsg({msg: response.data.msg, color: 'green'})
+        fetchItemsData(dataView)
+      }
+    } catch (error) {
+      console.error(error.message, error)
+    }
+  }
+
+  // console.log(items)
+
   const tableStyle = {
     width: '100%'
   }
-  console.log(items)
+
   return (
     <div className='is-flex'>
         <Sidebar role={userRole}/>
@@ -295,26 +371,26 @@ const Inventory = () => {
             <div className="inventoryMenu">
                 <ul>
                   <li>
-                    <button className={activeButton === 'All Category' ? 'is-active-btn' : ''} onClick={() => handleButtonClick('All Category')}>All Category</button>
+                    <button className={activeButton === 'All Category' ? 'is-active-btn' : ''} onClick={() => fetchItemsData('All Category')}>All Category</button>
                   </li>
                   <li>
-                    <button className={activeButton === 'Foods' ? 'is-active-btn' : ''} onClick={() => handleButtonClick('Foods')}>Foods</button>
+                    <button className={activeButton === 'Foods' ? 'is-active-btn' : ''} onClick={() => fetchItemsData('Foods')}>Foods</button>
                   </li>
                   <li>
-                    <button className={activeButton === 'Drinks' ? 'is-active-btn' : ''} onClick={() => handleButtonClick('Drinks')}>Drinks</button>
+                    <button className={activeButton === 'Drinks' ? 'is-active-btn' : ''} onClick={() => fetchItemsData('Drinks')}>Drinks</button>
                   </li>
                   <li>
-                    <button className={activeButton === 'Bathroom' ? 'is-active-btn' : ''} onClick={() => handleButtonClick('Bathroom')}>Bathrooms</button>
+                    <button className={activeButton === 'Bathroom' ? 'is-active-btn' : ''} onClick={() => fetchItemsData('Bathroom')}>Bathrooms</button>
                   </li>
                   <li>
-                    <button className={activeButton === 'Kitchen' ? 'is-active-btn' : ''} onClick={() => handleButtonClick('Kitchen')}>Kithcens</button>
+                    <button className={activeButton === 'Kitchen' ? 'is-active-btn' : ''} onClick={() => fetchItemsData('Kitchen')}>Kithcens</button>
                   </li>
                   <li>
                     <button onClick={handleShowFormAddProduct}>Add Product</button>
                   </li>
                   <li>
                     <form onSubmit={handleSearch} style={{display: 'flex', alignItems: 'center', gap: '2px'}}>
-                      <input placeholder='Search' type="text" className="searchItem" onChange={(e) => setSearch(e.target.value)} />
+                      <input placeholder='Search' type="text" className="searchItem" value={search} onChange={(e) => setSearch(e.target.value)} />
                       <button style={{width: '50px', height: '41px', border: 'none', color: 'white', display: 'flex', alignItems: 'center'}} type='submit' className='button'><i style={{lineHeight: '10px'}}><CIcon icon={icon.cilSearch}/></i></button>
                     </form>
                   </li>
@@ -338,20 +414,30 @@ const Inventory = () => {
                     </thead>
                     <tbody>
                       {
-                        items.map((item, index) => (
+                        items.length > 0 && items.map((item, index) => (
                           <tr key={index} className={item.stock <= 0 ? 'stockHabis' : ''}>
                             <td>{index + 1}</td>
                             <td>{item.code}</td>
                             <td>{item.name.toUpperCase()}</td>
-                            <td>{item.stock} pcs</td>
-                            <td>{item.unitTotal || 0} pcs</td>
-                            <td>{item.unitTotalPack || 0} pcs</td>
+                            <td>{item.stock} <span style={{fontSize: '12px', color: "grey"}}>pcs</span></td>
+                            <td>
+                              <div style={{position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                <input onKeyDown={(e) => {if(e.key === "Enter") handleDusChanged(e, item.id)}} onBlur={(e) => handleDusChanged(e, item.id)} onChange={(e) => handleDusFormattedNumberChange(e, item.id)} type="text" style={{paddingRight: '45px', marginLeft: '-25px',width: '100px', textAlign: 'center'}} className='input' value={item.unitTotal}/>
+                                <span style={{pointerEvents: 'none', position: 'absolute', left: '50%', fontSize: '12px', color: 'grey', marginLeft: '-5px', zIndex: '10'}}>pcs</span>
+                              </div >
+                            </td>
+                            <td>
+                              <div style={{position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                  <input type="text" style={{paddingRight: '45px', marginLeft: '-25px',width: '100px', textAlign: 'center'}} className='input' value={item.unitTotalPack} onKeyDown={(e) => {if(e.key === "Enter") handlePackChanged(e, item.id)}} onBlur={(e) => handlePackChanged(e, item.id)} onChange={(e) => handlePackFormattedNumberChange(e, item.id)}/>
+                                  <span style={{pointerEvents: 'none', position: 'absolute', left: '50%', fontSize: '12px', color: 'grey', marginLeft: '-5px', zIndex: '10'}}>pcs</span>
+                              </div >
+                            </td>
                             <td>{item.discount * 100}%</td>
                             <td>{rupiah(item.price)}</td>
                             <td>{rupiah(item.capitalPrice)}</td>
                             <td>
                               <button style={{border: 'none', color: 'white', backgroundColor: 'darkgreen'}} onClick={() => handleAddStock(item.code, item.name, item.stock)} className='button is-small'>+ Stock</button>
-                              <button style={{border: 'none', color: 'white', backgroundColor: 'darkred'}} onClick={() => handleDeleteItems(item.code, item.name)} className='button ml-3 is-small'>x</button>
+                              <button style={{border: 'none', color: 'white', backgroundColor: 'darkred'}} onClick={() => handleDeleteItems(item.code, item.name)} className='button ml-3 is-small'><i><CIcon icon={icon.cilTrash}/></i></button>
                             </td>
                           </tr>
                         ))
@@ -429,21 +515,21 @@ const Inventory = () => {
                   </div>
                   <p style={{color: 'white'}} className="help">Tambahkan diskon (jika perlu)</p>
                 </div>
-                <button className='button is-success is-fullwidth'>Add</button>
+                <button type='submit' className='button is-success is-fullwidth'>Add</button>
               </form>
             </div>
 
             {/* form tambah stock */}
             <div onClick={handleHideFormAddStock} className={`formAddStock ${hideFormAddStock}`}>
-              <form onSubmit={addstock} onClick={stopPropagation} action="">
-              <div style={{color: 'white'}} className="label stockNameInfo">{nameAddStock.toUpperCase()}</div>
+              <form onSubmit={addstock} onClick={stopPropagation}>
+              <h1 style={{color: 'white'}} className="label stockNameInfo">{nameAddStock.toUpperCase()}</h1>
                 <div className="field">
-                  <div style={{color: 'white'}} className="label">Current Stock: {stockAddStock}</div>
+                  <h1 style={{color: 'white'}} className="label">Current Stock: {stockAddStock}</h1>
                   <div className="control is-flex has-icons-left">
                     <input type="hidden" className='input' value={codeAddStock}/>
                     <input type="number" className='input' value={totalAddStock} onChange={(e) => setTotalAddStock(e.target.value)}/>
                     <span className='icon is-left is-small'>+</span>
-                    <button className='button ml-3 is-primary'>Add Stock</button>
+                    <button type='submit' className='button ml-3 is-primary'>Add Stock</button>
                   </div>
                 </div>
               </form>
