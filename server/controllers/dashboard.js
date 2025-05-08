@@ -34,14 +34,12 @@ export const getTotalOFItemsProduct = async(req, res) => {
 }
 
 export const getTodayOrders = async(req, res) => {
-    const TODAY_START = new Date().setHours(0,0,0,0)
     const NOW = new Date()
     try {
         const todayOrders = await Orders.findAll({
             where: {
                 createdAt: {
-                    [Op.gt]: TODAY_START,
-                    [Op.lt]: NOW
+                    [Op.gt]: TODAY_START
                 }
             }
         })
@@ -53,15 +51,13 @@ export const getTodayOrders = async(req, res) => {
 }
 
 export const getTodayIncomes = async(req, res) => {
-    const TODAY_START = new Date().setHours(0,0,0,0)
     const NOW = new Date()
     try {
         const todayIncomes = await Orders.findAll({
             attributes: ['totalPayment'],
             where: {
                 createdAt: {
-                    [Op.gt]: TODAY_START,
-                    [Op.lt]: NOW
+                    [Op.gt]: TODAY_START
                 }
             }
         })
@@ -78,15 +74,13 @@ export const getTodayIncomes = async(req, res) => {
 }
 
 export const getTodayProfit = async(req, res) => {
-    const TODAY_START = new Date().setHours(0,0,0,0)
     const NOW = new Date()
     try {
         const todayProfit = await Orders.findAll({
             attributes: ['profit'],
             where: {
                 createdAt: {
-                    [Op.gt]: TODAY_START,
-                    [Op.lt]: NOW
+                    [Op.gt]: TODAY_START
                 }
             }
         })
@@ -151,7 +145,6 @@ export const getBestSeller = async(req, res) => {
 export const getTodayBestSeller = async(req, res) => {
     try {
         const NOW = new Date()
-        const TODAY_START = new Date(NOW.setHours(0,0,0,0))
 
         const bestSellers = await Orders.findAll({
             where: {
