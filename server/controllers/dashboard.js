@@ -242,6 +242,7 @@ export const getTodayOrdersData = async (req, res) => {
                 }
             }
         })
+
         const ordersData = await Promise.all(orders.map(async (order) => {
             const items = order.dataValues.items.split(',')
             const itemList = await Promise.all(items.map(async (i) => {
@@ -266,7 +267,7 @@ export const getTodayOrdersData = async (req, res) => {
             // console.log(outlet)
             const profit = order.dataValues.profit
             const sales = order.dataValues.sales
-            return [itemList, formattedOrderTime, outlet.dataValues.name, order.totalPayment, profit, sales]
+            return [itemList, formattedOrderTime, outlet.dataValues.name, order.totalPayment, profit, sales, order.id]
         }))
         res.status(200).json(ordersData)
     } catch (error) {
