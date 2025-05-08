@@ -4,6 +4,7 @@ import Items from '../model/ItemsModel.js'
 import {Op} from 'sequelize'
 import Outlet from '../model/outletModels.js'
 import { convertToWita, TODAY_START } from './convertToWita.js'
+import dayjs from 'dayjs'
 
 export const getTotalOfItemsStock = async(req, res) => {
     try {
@@ -252,7 +253,8 @@ export const getTodayOrdersData = async (req, res) => {
                 }
             }))
             const convertedTime = convertToWita(order.createdAt)
-            const orderTime = `${convertedTime.getHours()}.${convertedTime.getMinutes()}`
+            const timeStringToObject = dayjs(convertedTime, "YYYY-MM-DD HH:mm:ss")
+            const orderTime = `${timeStringToObject.getHours()}.${timeStringToObject.getMinutes()}`
             const outlet = await Outlet.findOne({ where: { id: order.outlet } })
             // console.log(outlet)
             const profit = order.dataValues.profit
