@@ -240,7 +240,7 @@ const Inventory = () => {
 
   const handleSearch = async(e) => {
     e.preventDefault()
-
+    
     try {
       const response = await axiosJWT.post(`${import.meta.env.VITE_BASEURL}/items/search`, {
         value: search
@@ -310,7 +310,7 @@ const Inventory = () => {
       const response = await axiosJWT.put(`${import.meta.env.VITE_BASEURL}/items/update/dus`, {
         withCredentials: true,
         itemId,
-        newDusValue: parseInt(newDusValue)
+        newDusValue
       })
 
       if(response) {
@@ -326,11 +326,13 @@ const Inventory = () => {
     const rawValue = e.target.value.replace(/\D/g, "");
     const newPackValue = Number(rawValue)
 
+    console.log(typeof(newPackValue))
+
     try {
       const response = await axiosJWT.put(`${import.meta.env.VITE_BASEURL}/items/update/pack`, {
         withCredentials: true,
         itemId,
-        newPackValue: parseInt(newPackValue)
+        newPackValue
       })
 
       if(response) {

@@ -318,7 +318,7 @@ export const searchItem = async(req, res) => {
 
 export const updateDus = async(req, res) => {
     const {itemId, newDusValue} = req.body
-    if(!itemId || !newDusValue) return res.status(400).json({msg: "All field required!"})
+    if(!itemId || (!newDusValue && newDusValue !== 0)) return res.status(400).json({msg: "All field required!"})
 
     try {
         const item = await Items.findOne({
@@ -327,7 +327,7 @@ export const updateDus = async(req, res) => {
         if(!item) return res.status(404).json({msg: "Item not found!"})
 
         await item.update({
-            unitTotal: newDusValue || item.unitTotal
+            unitTotal: newDusValue ?? item.unitTotal
         })
 
         res.status(200).json({msg: "Unit Total Dus Changed Successfully"})
@@ -339,16 +339,16 @@ export const updateDus = async(req, res) => {
 
 export const updatePack = async(req, res) => {
     const {itemId, newPackValue} = req.body
-    if(!itemId || !newPackValue) return res.status(400).json({msg: "All field required!"})
+    if(!itemId || (!newPackValue && newPackValue !== 0)) return res.status(400).json({msg: "All field required!"})
 
     try {
         const item = await Items.findOne({
             where: {id: itemId}
         })
         if(!item) return res.status(404).json({msg: "Item not found!"})
-
+        // console.log(typeof(item.unitTotalPack))
         await item.update({
-            unitTotalPack: newPackValue || item.unitTotalPack
+            unitTotalPack: newPackValue ?? item.unitTotalPack
         })
 
         res.status(200).json({msg: "Unit Total Pack Changed Successfully"})
