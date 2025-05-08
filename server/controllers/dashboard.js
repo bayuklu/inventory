@@ -3,6 +3,7 @@ import OrderRecordModel from '../model/orderRecordModel.js'
 import Items from '../model/ItemsModel.js'
 import {Op} from 'sequelize'
 import Outlet from '../model/outletModels.js'
+import { convertToWita, TODAY_START } from './convertToWita.js'
 
 export const getTotalOfItemsStock = async(req, res) => {
     try {
@@ -229,7 +230,6 @@ export const getLast7DaysIncomes = async(req, res) => {
 
 export const getTodayOrdersData = async (req, res) => {
     const NOW = new Date()
-    const TODAY_START = new Date(NOW.setHours(0, 0, 0, 0))
     try {
         const orders = await Orders.findAll({
             order: [
@@ -251,7 +251,8 @@ export const getTodayOrdersData = async (req, res) => {
                     quantity
                 }
             }))
-            const orderTime = `${order.createdAt.getHours()}.${order.createdAt.getMinutes()}`
+            const convertedTime = convertToWita(order.createdAt)
+            const orderTime = `${convertedTime.getHours()}.${convertedTime.getMinutes()}`
             const outlet = await Outlet.findOne({ where: { id: order.outlet } })
             // console.log(outlet)
             const profit = order.dataValues.profit
