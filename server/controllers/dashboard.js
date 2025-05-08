@@ -1,7 +1,7 @@
 import Orders from '../model/ordersModel.js'
 import OrderRecordModel from '../model/orderRecordModel.js'
 import Items from '../model/ItemsModel.js'
-import {Op} from 'sequelize'
+import {Op, where} from 'sequelize'
 import Outlet from '../model/outletModels.js'
 import { convertToWita, TODAY_START } from './convertToWita.js'
 import dayjs from 'dayjs'
@@ -229,6 +229,20 @@ export const getLast7DaysIncomes = async(req, res) => {
     }
 }
 
+//==============================================================================================================
+
+
+
+
+
+// FUNGSI HALAMAN DASHBOARD DIBAWAH
+
+
+
+
+
+//==============================================================================================================
+
 export const getTodayOrdersData = async (req, res) => {
     const NOW = new Date()
     try {
@@ -276,5 +290,45 @@ export const getTodayOrdersData = async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({ msg: "Internal server error", error })
+    }
+}
+
+export const deleteTransaction = async(req, res) => {
+    const transactionId = req.params['transactionId']
+    if(!transactionId) return res.status(400).json({msg: "Id transaction required!"})
+
+    try {
+        const transaction = await Orders.findOne({
+            where: {id: transactionId}
+        })
+        if(!transaction) return res.status(404).json({msg: "Transaksi not found!"})
+
+        await transaction.destroy()
+
+        res.status(200).json({
+            msg: `Order deleted successfully!`
+        })
+    } catch (error) {
+        res.status(500).json({msg: "internal server error", error})
+    }
+}
+
+export const changeSalesName = async(req, res) => {
+    const {transactionId, salesName} = req.body
+    if(!transactionId || !salesName) return res.status(400).json({msg: "All field required!"})
+
+    try {
+        const transaction = await Orders.findOne({where: {id: transactionId}})
+        if(!transaction) return res.status(404).json({msg: "Transaction order not found!"})
+
+        await transaction.update({
+            sales: salesName || transaction.sales
+        })
+
+        console.log(transaction)
+
+        res.status(200).json({msg: "Sales transaction changed successfully"})
+    } catch (error) {
+        res.status(500).json({msg: "internal server error", error})
     }
 }

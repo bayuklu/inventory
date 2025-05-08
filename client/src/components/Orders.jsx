@@ -16,6 +16,11 @@ const Orders = () => {
     const [isNoLoggedIn, setIsNoLoggedIn] = useState(false)
     const [authCheck, setAuthCheck] = useState(true)  
     const [isOrdersDataLoading, setIsOrdersDataLoading] = useState(false)
+    const [changeSalesView, setChangeSalesView] = useState(false)
+    const [salesBefore, setSalesBefore] = useState("")
+    const [salesName, setSalesName] = useState("")
+    const [outletName, setOutletName] = useState("")
+    const [selectedTransactionSalesChange, setSelectedTransactionSalesChange] = useState(null)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -103,7 +108,6 @@ const Orders = () => {
         try{
             setIsOrdersDataLoading(true)
             const response = await axios.get(`${import.meta.env.VITE_BASEURL}/dashboard/orders`)
-            console.log(response)
             setOrdersData(response.data)
             setIsOrdersDataLoading(false)
         }catch(error){
@@ -211,20 +215,90 @@ const Orders = () => {
     
       FileSaver.saveAs(excelBlob, `${formattedDate}.xlsx`);
     };
+
+    const handleHapusTransaksi = async (idTransaksi) => {
+      if(confirm("Yakin ingin Menghapus Transaksi Ini?") === true) {
+        try {
+          const response = await axios.delete(`${import.meta.env.VITE_BASEURL}/dashboard/orders/${idTransaksi}`, {
+            withCredentials: true
+          })
+
+          if(response) {
+            await fetchData()
+          }
+        } catch (error) {
+          console.error(error.message)
+        }
+      }
+    }
     
-    
-  
-  
-    // console.log(ordersData)
+    const handleSalesChange = async() => {
+      try {
+        if(changeSalesView) {
+          const response = await axios.put(`${import.meta.env.VITE_BASEURL}/dashboard/orders/sales`, {
+            withCredentials: true,
+            transactionId: selectedTransactionSalesChange,
+            salesName: salesName
+          })
+
+          if(response) {
+            fetchData()
+            setChangeSalesView(!changeSalesView)
+          }
+        }
+      } catch (error) {
+        console.error(error.message)
+      }
+    }
 
     return (
         <div className='orders-container'>
-            {/* <div className="formOrders">
-                <form >
-                    <input type="date" style={{width: '300px'}} />
-                    <button className="button">Search</button>
-                </form>
-            </div> */}
+            <div className='tampilan-ganti-sales'
+              style={{
+                width: '100%',
+                height: '100vh',
+                position: 'fixed',
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                zIndex: '10',
+                display: changeSalesView ? 'flex' : 'none',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+              onClick={(e) => {
+                setChangeSalesView(!changeSalesView)
+              }}
+            >
+              <div
+                style={{
+                  width: '400px',
+                  backgroundColor: 'white',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  flexDirection: 'column',
+                  padding: '20px',
+                  gap: '10px'
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h2 style={{color: "darkorange", fontWeight: 'bold'}}>{outletName.toUpperCase()}{` (${salesBefore})`}</h2>
+                <div style={{display: 'flex', gap: '10px'}}>
+                  <select name="" id="" className='input' onChange={(e) => {setSalesName(e.target.value)}}>
+                    {
+                      (() => {
+                        const salesList = ['Ana', 'Eman', 'Eva', 'Uyung', 'Dwik', 'Suhendri', 'Eja', 'Dian', 'Eyung']
+                        const newSalesList = salesList.filter((sales) => sales !== salesBefore && sales !== "")
+
+                        return newSalesList.map((sales, index) => (
+                          <option key={index} value={sales}>{sales}</option>
+                        ))
+                      })()
+                    }
+                  </select>
+                  <button className='button' style={{backgroundColor: 'green', outline: 'none'}} onClick={handleSalesChange}>Ubah</button>
+                </div>
+              </div>
+            </div>
             <a href="/" style={{marginLeft: '20px', marginTop: '20px', marginBottom: '20px', width: '20px'}}>
                 <i style={{color: 'black'}}><CIcon icon={icon.cilMediaStepBackward}/></i>
             </a>
@@ -236,8 +310,19 @@ const Orders = () => {
                 {ordersData.map((data, index) => (
                     <div key={index} className='orders'>
                         <div className="infoOrders">
-                            <p style={{fontWeight: 'bold', color: 'darkorange'}}>{`${data[2].toUpperCase()} ~ [${rupiah(data[3])}] ~ Profit = ${rupiah(data[4])} ====>>> Sales: ${data[5]}`}</p>
+                            <p style={{fontWeight: 'bold', color: 'darkorange'}}>{`${data[2].toUpperCase()} ~ [${rupiah(data[3])}] ~ Profit = ${rupiah(data[4])} ====>>> Sales: `} 
+                              <span style={{color: "lightgreen"}}> 
+                                {`${data[5]}`} 
+                                <i style={{color: 'lightgreen', marginLeft: '0px', cursor: 'pointer'}} onClick={(e) => {setChangeSalesView(!changeSalesView); setSalesBefore(data[5]); setOutletName(data[2]); setSelectedTransactionSalesChange(data[6])}}><CIcon style={{transform: 'scale(0.7)'}} icon={icon.cilPen}/></i>
+                              </span>
+                            </p>
                             <div style={{display: 'flex', gap: '5px'}}>
+                              <i 
+                                style={{ color: 'red', cursor: 'pointer'}} 
+                                onClick={() => handleHapusTransaksi(data[6])}
+                              >
+                                <CIcon icon={icon.cilTrash} />
+                              </i>
                                 <i style={{color: 'white'}}><CIcon icon={icon.cilClock}/></i>
                                 <p style={{color: '#fff'}}>{data[1]}</p>
                             </div>
