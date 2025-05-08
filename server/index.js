@@ -22,7 +22,7 @@ const init = async() => {
         await db.authenticate()
         console.log("Database connected")
     
-        await db.query("SELECT now() AT TIME ZONE 'Asia/Makassar';")
+        await db.query("SET TIME ZONE 'Asia/Makassar';")
     
         // await Orders.sync({
         //     alter: true
@@ -46,10 +46,27 @@ const init = async() => {
 
 init()
 
-app.use(cors({credentials: true, 
-    // origin: "http://localhost:5173",
-    origin: "https://abfrozen.vercel.app"
-}))
+
+
+const allowedOrigins = [
+    'http://localhost:5173',
+    'https://abfrozen.vercel.app'
+  ]
+  
+  const corsOptions = {
+    credentials: true,
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true)
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    }
+  }
+  
+app.use(cors(corsOptions))
 
 app.use(cookieParser())
 app.use(express.json())
