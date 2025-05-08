@@ -256,6 +256,8 @@ const Orders = () => {
       }
     }
 
+    const newSalesList = salesList.filter((sales) => sales !== salesBefore)
+
     return (
         <div className='orders-container'>
           {msg ? (
@@ -303,17 +305,11 @@ const Orders = () => {
                 <h2 style={{color: "darkorange", fontWeight: 'bold'}}>{outletName.toUpperCase()}{` (${salesBefore})`}</h2>
                 <div style={{display: 'flex', gap: '10px'}}>
                   <select name="" id="" className='input' onChange={(e) => {setSalesName(e.target.value)}}>
-                    {/* fungsi langsung */}
-                    {
-                      (() => {
-                        // const salesList = ['--Ganti Sales--', 'Ana', 'Eman', 'Eva', 'Uyung', 'Dwik', 'Suhendri', 'Eja', 'Dian', 'Eyung']
-                        const newSalesList = salesList.filter((sales) => sales !== salesBefore)
-
-                        return newSalesList.map((sales, index) => (
-                          <option key={index} value={sales === "--Ganti Sales--" ? "" : sales[index]}>{sales[index]}</option>
-                        ))
-                      })()
-                    }
+                    {newSalesList.map((sales, index) => (
+                      <option key={index} value={sales === "--Ganti Sales--" ? "" : sales}>
+                        {sales}
+                      </option>
+                    ))}
                   </select>
                   <button className='button' style={{backgroundColor: 'green', outline: 'none'}} onClick={handleSalesChange}>Ubah</button>
                 </div>
