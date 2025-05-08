@@ -243,6 +243,7 @@ export const getTodayOrdersData = async (req, res) => {
             }
         })
 
+        console.log(TODAY_START)
         console.log(orders)
 
         const ordersData = await Promise.all(orders.map(async (order) => {
