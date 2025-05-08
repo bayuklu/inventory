@@ -5,7 +5,7 @@ import timezone from 'dayjs/plugin/timezone.js'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-const convertToWita = (date) => {
+export const convertToWita = (date) => {
     return dayjs.utc(date).tz(`Asia/Makassar`).format(`YYYY-MM-DD HH:mm:ss`)
 }
 
