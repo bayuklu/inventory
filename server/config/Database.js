@@ -14,12 +14,13 @@ dotenv.config()
 const db = new Sequelize(process.env.PSQL, {
     dialect: "postgres",
     protocol: "postgres",
-    timezone: "+08:00",
+    timezone: "UTC",
     dialectOptions: {
         ssl: {
             require: true,
             rejectUnauthorized: false
         },
+        useUTC: true
     },
     pool: {
         max: 5,
