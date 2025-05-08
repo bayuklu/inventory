@@ -310,7 +310,7 @@ const Inventory = () => {
       const response = await axiosJWT.put(`${import.meta.env.VITE_BASEURL}/items/update/dus`, {
         withCredentials: true,
         itemId,
-        newDusValue
+        newDusValue: parseInt(newDusValue)
       })
 
       if(response) {
@@ -330,7 +330,7 @@ const Inventory = () => {
       const response = await axiosJWT.put(`${import.meta.env.VITE_BASEURL}/items/update/pack`, {
         withCredentials: true,
         itemId,
-        newPackValue
+        newPackValue: parseInt(newPackValue)
       })
 
       if(response) {
