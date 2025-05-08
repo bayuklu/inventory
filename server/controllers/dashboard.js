@@ -243,6 +243,8 @@ export const getTodayOrdersData = async (req, res) => {
             }
         })
 
+        console.log(orders)
+
         const ordersData = await Promise.all(orders.map(async (order) => {
             const items = order.dataValues.items.split(',')
             const itemList = await Promise.all(items.map(async (i) => {

@@ -49,8 +49,7 @@ init()
 
 
 const allowedOrigins = [
-    'http://localhost:5173',
-    'https://abfrozen.vercel.app'
+    process.env.FRONTEND_ORIGIN
   ]
   
   const corsOptions = {

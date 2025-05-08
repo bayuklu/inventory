@@ -103,6 +103,7 @@ const Orders = () => {
         try{
             setIsOrdersDataLoading(true)
             const response = await axios.get(`${import.meta.env.VITE_BASEURL}/dashboard/orders`)
+            console.log(response)
             setOrdersData(response.data)
             setIsOrdersDataLoading(false)
         }catch(error){
