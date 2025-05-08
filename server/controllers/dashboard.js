@@ -325,7 +325,6 @@ export const changeSalesName = async(req, res) => {
             sales: salesName || transaction.sales
         })
 
-        console.log(transaction)
 
         res.status(200).json({msg: "Sales transaction changed successfully"})
     } catch (error) {

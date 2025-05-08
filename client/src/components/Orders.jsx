@@ -10,6 +10,7 @@ import SpinnerLoader from "./SpinnerLoader";
 import { jwtDecode } from 'jwt-decode';
 
 const Orders = () => {
+    const [msg, setMsg] = useState(null);
     const [ordersData, setOrdersData] = useState([])
     const [token, setToken] = useState('')
     const [expire, setExpire] = useState('')
@@ -235,6 +236,7 @@ const Orders = () => {
     const handleSalesChange = async() => {
       try {
         if(changeSalesView) {
+          if(!salesName) return setMsg({ msg: "Pilih nama sales terlebih dahulu!", color: "red" });
           const response = await axios.put(`${import.meta.env.VITE_BASEURL}/dashboard/orders/sales`, {
             withCredentials: true,
             transactionId: selectedTransactionSalesChange,
@@ -253,6 +255,20 @@ const Orders = () => {
 
     return (
         <div className='orders-container'>
+          {msg ? (
+            <>
+              <div className="messages" style={{ backgroundColor: msg.color }}>
+                <p>{msg.msg}</p>
+                <p style={{ display: "none" }}>
+                  {setTimeout(() => {
+                    setMsg(null);
+                  }, 3000)}
+                </p>
+              </div>
+            </>
+          ) : (
+            ""
+          )}
             <div className='tampilan-ganti-sales'
               style={{
                 width: '100%',
@@ -284,13 +300,14 @@ const Orders = () => {
                 <h2 style={{color: "darkorange", fontWeight: 'bold'}}>{outletName.toUpperCase()}{` (${salesBefore})`}</h2>
                 <div style={{display: 'flex', gap: '10px'}}>
                   <select name="" id="" className='input' onChange={(e) => {setSalesName(e.target.value)}}>
+                    {/* fungsi langsung */}
                     {
                       (() => {
-                        const salesList = ['Ana', 'Eman', 'Eva', 'Uyung', 'Dwik', 'Suhendri', 'Eja', 'Dian', 'Eyung']
+                        const salesList = ['--Ganti Sales--', 'Ana', 'Eman', 'Eva', 'Uyung', 'Dwik', 'Suhendri', 'Eja', 'Dian', 'Eyung']
                         const newSalesList = salesList.filter((sales) => sales !== salesBefore && sales !== "")
 
                         return newSalesList.map((sales, index) => (
-                          <option key={index} value={sales}>{sales}</option>
+                          <option key={index} value={sales === "--Ganti Sales--" ? "" : sales}>{sales}</option>
                         ))
                       })()
                     }
