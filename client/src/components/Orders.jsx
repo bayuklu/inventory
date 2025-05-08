@@ -21,8 +21,10 @@ const Orders = () => {
     const [salesBefore, setSalesBefore] = useState("")
     const [salesName, setSalesName] = useState("")
     const [outletName, setOutletName] = useState("")
-    const [salesList, setSalesList] = useState(['--Ganti Sales--', 'Ana', 'Eman', 'Eva', 'Uyung', 'Dwik', 'Suhendri', 'Eja', 'Dian', 'Eyung'])
     const [selectedTransactionSalesChange, setSelectedTransactionSalesChange] = useState(null)
+    
+    const salesList = ['--Ganti Sales--', 'Ana', 'Eman', 'Eva', 'Uyung', 'Dwik', 'Suhendri', 'Eja', 'Dian', 'Eyung']
+
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -234,8 +236,9 @@ const Orders = () => {
       }
     }
     
-    const handleSalesChange = async() => {
+    const handleSalesChangeOnClick = async() => {
       try {
+
         if(changeSalesView) {
           if(!salesName) return setMsg({ msg: "Pilih nama sales terlebih dahulu!", color: "red" });
           const response = await axios.put(`${import.meta.env.VITE_BASEURL}/dashboard/orders/sales`, {
@@ -247,16 +250,12 @@ const Orders = () => {
           if(response) {
             fetchData()
             setChangeSalesView(!changeSalesView)
-            console.log(salesList)
-            setSalesList(salesList.filter(sales => sales !== salesName))
           }
         }
       } catch (error) {
         console.error(error.message)
       }
     }
-
-    const newSalesList = salesList.filter((sales) => sales !== salesBefore)
 
     return (
         <div className='orders-container'>
@@ -305,13 +304,13 @@ const Orders = () => {
                 <h2 style={{color: "darkorange", fontWeight: 'bold'}}>{outletName.toUpperCase()}{` (${salesBefore})`}</h2>
                 <div style={{display: 'flex', gap: '10px'}}>
                   <select name="" id="" className='input' onChange={(e) => {setSalesName(e.target.value)}}>
-                    {newSalesList.map((sales, index) => (
-                      <option key={index} value={sales === "--Ganti Sales--" ? "" : sales}>
+                    {salesList.map((sales, index) => (
+                      <option key={index} value={salesList === "--Ganti Sales--" ? "" : `${sales}`}>
                         {sales}
                       </option>
                     ))}
                   </select>
-                  <button className='button' style={{backgroundColor: 'green', outline: 'none'}} onClick={handleSalesChange}>Ubah</button>
+                  <button className='button' style={{backgroundColor: 'green', outline: 'none'}} onClick={handleSalesChangeOnClick}>Ubah</button>
                 </div>
               </div>
             </div>
