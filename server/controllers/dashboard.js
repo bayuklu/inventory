@@ -316,7 +316,7 @@ export const deleteTransaction = async(req, res) => {
 export const changeSalesName = async(req, res) => {
     const {transactionId, salesName} = req.body
     if(!transactionId || !salesName) return res.status(400).json({msg: "All field required!"})
-
+    console.log(salesName)
     try {
         const transaction = await Orders.findOne({where: {id: transactionId}})
         if(!transaction) return res.status(404).json({msg: "Transaction order not found!"})

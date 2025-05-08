@@ -21,6 +21,7 @@ const Orders = () => {
     const [salesBefore, setSalesBefore] = useState("")
     const [salesName, setSalesName] = useState("")
     const [outletName, setOutletName] = useState("")
+    const [salesList, setSalesList] = useState(['--Ganti Sales--', 'Ana', 'Eman', 'Eva', 'Uyung', 'Dwik', 'Suhendri', 'Eja', 'Dian', 'Eyung'])
     const [selectedTransactionSalesChange, setSelectedTransactionSalesChange] = useState(null)
     const navigate = useNavigate()
 
@@ -246,6 +247,8 @@ const Orders = () => {
           if(response) {
             fetchData()
             setChangeSalesView(!changeSalesView)
+            console.log(salesList)
+            setSalesList(salesList.filter(sales => sales !== salesName))
           }
         }
       } catch (error) {
@@ -303,11 +306,11 @@ const Orders = () => {
                     {/* fungsi langsung */}
                     {
                       (() => {
-                        const salesList = ['--Ganti Sales--', 'Ana', 'Eman', 'Eva', 'Uyung', 'Dwik', 'Suhendri', 'Eja', 'Dian', 'Eyung']
-                        const newSalesList = salesList.filter((sales) => sales !== salesBefore && sales !== "")
+                        // const salesList = ['--Ganti Sales--', 'Ana', 'Eman', 'Eva', 'Uyung', 'Dwik', 'Suhendri', 'Eja', 'Dian', 'Eyung']
+                        const newSalesList = salesList.filter((sales) => sales !== salesBefore)
 
                         return newSalesList.map((sales, index) => (
-                          <option key={index} value={sales === "--Ganti Sales--" ? "" : sales}>{sales}</option>
+                          <option key={index} value={sales === "--Ganti Sales--" ? "" : sales[index]}>{sales[index]}</option>
                         ))
                       })()
                     }
