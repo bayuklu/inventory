@@ -10,3 +10,5 @@ export const convertToWita = (date) => {
 }
 
 export const TODAY_START = dayjs().tz('Asia/Makassar').startOf('day').utc().toDate()
+
+export const SIX_DAYS_AGO = dayjs().tz('Asia/Makassar').subtract(7, 'day').startOf('day')

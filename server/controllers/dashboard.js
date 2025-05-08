@@ -3,7 +3,7 @@ import OrderRecordModel from '../model/orderRecordModel.js'
 import Items from '../model/ItemsModel.js'
 import {Op, where} from 'sequelize'
 import Outlet from '../model/outletModels.js'
-import { convertToWita, TODAY_START } from './convertToWita.js'
+import { convertToWita, SIX_DAYS_AGO, TODAY_START } from './convertToWita.js'
 import dayjs from 'dayjs'
 
 export const getTotalOfItemsStock = async(req, res) => {
@@ -191,11 +191,6 @@ export const getLast7DaysIncomes = async(req, res) => {
     try {
         // Create an array to hold income data for the last 6 days excluding today
         let incomes = new Array(6).fill(0);
-        const NOW = new Date();
-    
-        // Get the date range for the last 6 days excluding today
-        const SIX_DAYS_AGO = new Date(new Date().setDate(NOW.getDate() - 7)).setHours(0,0,0,0);
-        const TODAY_START = new Date(NOW.setHours(0, 0, 0, 0));
     
         // Fetch all orders from the last 6 days excluding today
         const orders = await Orders.findAll({
