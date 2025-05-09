@@ -43,6 +43,7 @@ const Dashboard = () => {
     const days = [];
     for (let i = 1; i <= 7; i++) {
       const date = new Date();
+      // console.log(date)
       date.setDate(date.getDate() - i);
       const day = date.toLocaleDateString("id-ID", {
         weekday: "long",

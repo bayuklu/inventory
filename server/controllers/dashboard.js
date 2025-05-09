@@ -207,6 +207,8 @@ export const getLast7DaysIncomes = async(req, res) => {
             },
             raw: true
         });
+
+        console.log(orders.length)
     
         // Iterate over each order and add the income to the corresponding day
         orders.forEach(order => {
