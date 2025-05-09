@@ -303,6 +303,7 @@ const Cashier = () => {
             profit: totalProfit,
             outlet: outlet.id,
             sales: sales,
+            isBon: isBon,
           }
         );
         if (response) {

@@ -174,7 +174,7 @@ export const deleteRecordOrder = async(req, res) => {
 
 
 export const createFinalOrder = async(req, res) => {
-    const {turnCode, cash, profit, outlet, sales} = req.body
+    const {turnCode, cash, profit, outlet, sales, isBon} = req.body
     console.log(req.body)
     if(!cash || !outlet || !sales) return res.status(400).json({msg: "Cash, Outlet or Sales required"})
     
@@ -297,6 +297,7 @@ try {
         outlet: outlet,
         sales: sales,
         turnCode: turnCode,
+        isBon: isBon,
     })
     //membuat orderan (end)
 

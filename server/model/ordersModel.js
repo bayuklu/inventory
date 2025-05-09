@@ -44,6 +44,10 @@ const Orders = db.define(
             type: DataTypes.STRING,
             allowNull: true
         },
+        isBon: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true
+        },
     }
 )
 
