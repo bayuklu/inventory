@@ -43,13 +43,15 @@ const Dashboard = () => {
     const days = [];
     for (let i = 1; i <= 7; i++) {
       const date = new Date();
-      // console.log(date)
+      console.log(date)
       date.setDate(date.getDate() - i);
       const day = date.toLocaleDateString("id-ID", {
         weekday: "long",
         day: "numeric",
         month: "short",
       });
+
+      console.log(date)
       days.push(day);
     }
     return days.reverse();
