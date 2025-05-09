@@ -21,6 +21,7 @@ import 'dayjs/locale/id';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.locale("id")
 
 ChartJS.register(
   CategoryScale,
@@ -49,11 +50,11 @@ const Dashboard = () => {
 
   const getLast7Days = () => {
     const days = [];
-    const tz = "Asia/Makassar";
+    const tz = 'Asia/Makassar';
   
     for (let i = 1; i <= 7; i++) {
-      const date = dayjs().tz(tz).subtract(i, "day");
-      const formatted = date.locale("id").format("dddd, D MMM");
+      const date = dayjs().tz(tz).subtract(i, 'day');
+      const formatted = date.format('dddd, D MMM'); // Hasil: "Kamis, 8 Mei"
       days.push(formatted);
     }
   
@@ -72,6 +73,7 @@ const Dashboard = () => {
   useEffect(() => {
     document.title = "Dashboard"
     refreshToken()
+    console.log(chartData)
   }, []);
 
   useEffect(() => {
