@@ -73,8 +73,10 @@ const Dashboard = () => {
   useEffect(() => {
     document.title = "Dashboard"
     refreshToken()
+
+    if(chartData) console.log(chartData)
     console.log(chartData)
-  }, []);
+  }, [chartData]);
 
   useEffect(() => {
     if (token) {
