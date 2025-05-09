@@ -3,7 +3,7 @@ import OrderRecordModel from '../model/orderRecordModel.js'
 import Items from '../model/ItemsModel.js'
 import {Op, where} from 'sequelize'
 import Outlet from '../model/outletModels.js'
-import { convertToWita, SEVEN_DAYS_AGO, TODAY_START } from './convertToWita.js'
+import { convertToWita, SEVEN_DAYS_AGO_WITA_CONVERT_UTC, TODAY_START_WITA_CONVERT_UTC } from './convertToWita.js'
 import dayjs from 'dayjs'
 
 export const getTotalOfItemsStock = async(req, res) => {
@@ -39,7 +39,7 @@ export const getTodayOrders = async(req, res) => {
         const todayOrders = await Orders.findAll({
             where: {
                 createdAt: {
-                    [Op.gt]: TODAY_START
+                    [Op.gt]: TODAY_START_WITA_CONVERT_UTC
                 }
             }
         })
@@ -57,7 +57,7 @@ export const getTodayIncomes = async(req, res) => {
             attributes: ['totalPayment'],
             where: {
                 createdAt: {
-                    [Op.gt]: TODAY_START
+                    [Op.gt]: TODAY_START_WITA_CONVERT_UTC
                 }
             }
         })
@@ -80,7 +80,7 @@ export const getTodayProfit = async(req, res) => {
             attributes: ['profit'],
             where: {
                 createdAt: {
-                    [Op.gt]: TODAY_START
+                    [Op.gt]: TODAY_START_WITA_CONVERT_UTC
                 }
             }
         })
@@ -99,12 +99,12 @@ export const getTodayProfit = async(req, res) => {
 export const getBestSeller = async(req, res) => {
     try {
         const NOW = new Date()
-        const SEVEN_DAYS_AGO = new Date(new Date(NOW.setDate(NOW.getDate() - 7)).setHours(0,0,0,0))
+        const SEVEN_DAYS_AGO_WITA_CONVERT_UTC = new Date(new Date(NOW.setDate(NOW.getDate() - 7)).setHours(0,0,0,0))
 
         const bestSellers = await Orders.findAll({
             where: {
                 createdAt: {
-                    [Op.gt] : SEVEN_DAYS_AGO
+                    [Op.gt] : SEVEN_DAYS_AGO_WITA_CONVERT_UTC
                 }
             }
         })
@@ -149,7 +149,7 @@ export const getTodayBestSeller = async(req, res) => {
         const bestSellers = await Orders.findAll({
             where: {
                 createdAt: {
-                    [Op.gt] : TODAY_START
+                    [Op.gt] : TODAY_START_WITA_CONVERT_UTC
                 }
             }
         })
@@ -193,16 +193,16 @@ export const getLast7DaysIncomes = async(req, res) => {
         let incomes = new Array(7).fill(0);
 
 
-        console.log(TODAY_START)
-        console.log(SEVEN_DAYS_AGO)
+        console.log(TODAY_START_WITA_CONVERT_UTC)
+        console.log(SEVEN_DAYS_AGO_WITA_CONVERT_UTC)
     
         // Fetch all orders from the last 7 days excluding today
         const orders = await Orders.findAll({
             attributes: ['totalPayment', 'createdAt'],
             where: {
             createdAt: {
-                [Op.gt]: SEVEN_DAYS_AGO,
-                [Op.lt]: TODAY_START
+                [Op.gt]: SEVEN_DAYS_AGO_WITA_CONVERT_UTC,
+                [Op.lt]: TODAY_START_WITA_CONVERT_UTC
             }
             },
             raw: true
@@ -211,7 +211,7 @@ export const getLast7DaysIncomes = async(req, res) => {
         // Iterate over each order and add the income to the corresponding day
         orders.forEach(order => {
             const orderDate = dayjs(order.createdAt)
-            const dayIndex = Math.floor((TODAY_START - orderDate) / (1000 * 60 * 60 * 24));
+            const dayIndex = Math.floor((TODAY_START_WITA_CONVERT_UTC - orderDate) / (1000 * 60 * 60 * 24));
             incomes[6 - dayIndex] += order.totalPayment;
         });
     
@@ -245,12 +245,12 @@ export const getTodayOrdersData = async (req, res) => {
             ],
             where: {
                 createdAt: {
-                    [Op.gt]: TODAY_START
+                    [Op.gt]: TODAY_START_WITA_CONVERT_UTC
                 }
             }
         })
 
-        // console.log(TODAY_START)
+        // console.log(TODAY_START_WITA_CONVERT_UTC)
         // console.log(orders)
 
         const ordersData = await Promise.all(orders.map(async (order) => {
