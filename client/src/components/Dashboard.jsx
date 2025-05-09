@@ -14,6 +14,14 @@ import {
   Legend,
 } from "chart.js";
 import SpinnerLoader from "./SpinnerLoader";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import 'dayjs/locale/id';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -41,19 +49,14 @@ const Dashboard = () => {
 
   const getLast7Days = () => {
     const days = [];
+    const tz = "Asia/Makassar";
+  
     for (let i = 1; i <= 7; i++) {
-      const date = new Date();
-      console.log(date)
-      date.setDate(date.getDate() - i);
-      const day = date.toLocaleDateString("id-ID", {
-        weekday: "long",
-        day: "numeric",
-        month: "short",
-      });
-
-      console.log(date)
-      days.push(day);
+      const date = dayjs().tz(tz).subtract(i, "day");
+      const formatted = date.locale("id").format("dddd, D MMM");
+      days.push(formatted);
     }
+  
     return days.reverse();
   };
 
