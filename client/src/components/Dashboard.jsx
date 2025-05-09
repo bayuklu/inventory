@@ -210,7 +210,9 @@ const Dashboard = () => {
         `${import.meta.env.VITE_BASEURL}/dashboard/last6DaysIncome`,
         {
           headers: {
-            'Cache-Control': 'no-cache'
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'If-None-Match': 'etag_value'
           }
         }
       );
