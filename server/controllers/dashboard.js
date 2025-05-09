@@ -207,16 +207,12 @@ export const getLast7DaysIncomes = async(req, res) => {
             },
             raw: true
         });
-
-        console.log(orders.length)
     
         // Iterate over each order and add the income to the corresponding day
         orders.forEach(order => {
             const orderDate = dayjs(order.createdAt)
-            // console.log(Math.floor((TODAY_START - orderDate) / (1000 * 60 * 60 * 24)))
             const dayIndex = Math.floor((TODAY_START - orderDate) / (1000 * 60 * 60 * 24));
             incomes[6 - dayIndex] += order.totalPayment;
-            console.log(order.totalPayment)
         });
     
         res.status(200).json({ incomes });
