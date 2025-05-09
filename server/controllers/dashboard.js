@@ -3,7 +3,7 @@ import OrderRecordModel from '../model/orderRecordModel.js'
 import Items from '../model/ItemsModel.js'
 import {Op, where} from 'sequelize'
 import Outlet from '../model/outletModels.js'
-import { convertToWita, SIX_DAYS_AGO, TODAY_START } from './convertToWita.js'
+import { convertToWita, SEVEN_DAYS_AGO, TODAY_START } from './convertToWita.js'
 import dayjs from 'dayjs'
 
 export const getTotalOfItemsStock = async(req, res) => {
@@ -189,15 +189,15 @@ export const getTodayBestSeller = async(req, res) => {
 
 export const getLast7DaysIncomes = async(req, res) => {
     try {
-        // Create an array to hold income data for the last 6 days excluding today
-        let incomes = new Array(6).fill(0);
+        // Create an array to hold income data for the last 7 days excluding today
+        let incomes = new Array(7).fill(0);
     
-        // Fetch all orders from the last 6 days excluding today
+        // Fetch all orders from the last 7 days excluding today
         const orders = await Orders.findAll({
             attributes: ['totalPayment', 'createdAt'],
             where: {
             createdAt: {
-                [Op.gt]: SIX_DAYS_AGO,
+                [Op.gt]: SEVEN_DAYS_AGO,
                 [Op.lt]: TODAY_START
             }
             }
@@ -205,9 +205,10 @@ export const getLast7DaysIncomes = async(req, res) => {
     
         // Iterate over each order and add the income to the corresponding day
         orders.forEach(order => {
-            const orderDate = new Date(convertToWita(order.createdAt))
+            const orderDate = dayjs(convertToWita(order.createdAt))
+            console.log(Math.floor((TODAY_START - orderDate) / (1000 * 60 * 60 * 24)))
             const dayIndex = Math.floor((TODAY_START - orderDate) / (1000 * 60 * 60 * 24));
-            incomes[5 - dayIndex] += order.totalPayment;
+            incomes[6 - dayIndex] += order.totalPayment;
         });
     
         res.status(200).json({ incomes });
