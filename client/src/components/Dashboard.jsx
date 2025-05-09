@@ -207,7 +207,12 @@ const Dashboard = () => {
   const getLast6DaysIncomes = async () => {
     try {
       const response = await axiosJWT.get(
-        `${import.meta.env.VITE_BASEURL}/dashboard/last6DaysIncome`
+        `${import.meta.env.VITE_BASEURL}/dashboard/last6DaysIncome`,
+        {
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        }
       );
       setChartData(response.data.incomes);
     } catch (error) {
