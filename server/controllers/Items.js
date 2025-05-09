@@ -186,10 +186,7 @@ export const updateItem = async(req, res) => {
 
 export const deleteItem = async(req, res) => {
     const itemCode = req.params['kode']
-    const {dataView} = req.body
-    console.log(dataView)
-    if(!itemCode || !dataView) return res.status(400).json({msg: "error"})
-    const attr = ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
+    if(!itemCode) return res.status(400).json({msg: "error"})
 
     try {
         const item = await Items.findOne({
@@ -201,35 +198,8 @@ export const deleteItem = async(req, res) => {
         
         await item.destroy()
 
-        let itemData = []
-        if(dataView == 'All Category'){
-            itemData = await Items.findAll({
-                attributes: attr
-            })
-        }else if(dataView != 'All Category' && dataView != 'Foods' && dataView != 'Drinks' && dataView != 'Kitchen' && dataView != 'Bathroom') {
-            itemData = await Items.findAll({
-                where: {
-                    [Op.or] : {
-                        name : {
-                            [Op.like] : `%${dataView}%`
-                        },
-                        code : {
-                            [Op.like] : `%${dataView}%`
-                        }
-                    }
-                },
-                attributes: attr
-            })
-        }else {
-            itemData = await Items.findAll({
-                where: {category : dataView},
-                attributes: attr
-            })
-        }
-
         res.status(200).json({
-            msg: `"${item.name.toUpperCase()}" Deleted`,
-            dataView: [...itemData]
+            msg: `"${item.name.toUpperCase()}" Deleted`
         })
     } catch (error) {
         console.log(error)
@@ -238,10 +208,9 @@ export const deleteItem = async(req, res) => {
 }
 
 export const addStock = async(req, res) => {
-    const {stockAdded, dataView} = req.body
+    const {stockAdded} = req.body
     if(!stockAdded) return res.status(400).json({msg: "Stock is required"})
     const itemCode = req.params['kode']
-    const attr = ['code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'discount']
 
     try {
         const item = await Items.findOne({
@@ -254,36 +223,8 @@ export const addStock = async(req, res) => {
         item.stock += parseInt(stockAdded)
         await item.save()
 
-        let itemData = []
-        if(dataView == 'All Category'){
-            itemData = await Items.findAll({
-                attributes: attr
-            })
-        }else if(dataView != 'All Category' && dataView != 'Foods' && dataView != 'Drinks' && dataView != 'Kitchen' && dataView != 'Bathroom') {
-            itemData = await Items.findAll({
-                where: {
-                    [Op.or] : {
-                        name : {
-                            [Op.like] : `%${dataView}%`
-                        },
-                        code : {
-                            [Op.like] : `%${dataView}%`
-                        }
-                    }
-                },
-                attributes: attr
-            })
-        }else {
-            itemData = await Items.findAll({
-                where: {category : dataView},
-                attributes: attr
-            })
-        }
-
         res.status(200).json({
-            msg: `"${item.name.toUpperCase()}" Stock Changed to ${item.stock}`,
-            data: item.stock,
-            dataView : [...itemData]
+            msg: `"${item.name.toUpperCase()}" Stock Changed to ${item.stock}`
         })
     } catch (error) {
         console.log(error)

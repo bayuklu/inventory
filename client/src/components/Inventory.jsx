@@ -159,9 +159,9 @@ const Inventory = () => {
         dataView: dataView
       })
       if(response) {
+        fetchItemsData(dataView)
         setHideFormAddStock('hideFormAddStock')
         setStockAddStock(response.data.data)
-        setItems(response.data.dataView)
         setMsg({msg: response.data.msg, color: 'green'})
       }
     } catch (error) {
@@ -172,11 +172,9 @@ const Inventory = () => {
   const handleDeleteItems = async(code, name) => {
     if(confirm(`Are you sure want to delete ${name.toUpperCase()}?`) != true) return
     try {
-      const response = await axiosJWT.delete(`${import.meta.env.VITE_BASEURL}/items/${code}`, {
-        data: {dataView: dataView}
-      })
+      const response = await axiosJWT.delete(`${import.meta.env.VITE_BASEURL}/items/${code}`)
       if(response) {
-        setItems(response.data.dataView)
+        fetchItemsData(dataView)
         setMsg({msg: response.data.msg, color: 'green'})
       }
     } catch (error) {
