@@ -193,6 +193,7 @@ export const getLast7DaysIncomes = async(req, res) => {
         let incomes = new Array(7).fill(0);
 
 
+        console.log(TODAY_START)
         console.log(SEVEN_DAYS_AGO)
     
         // Fetch all orders from the last 7 days excluding today
