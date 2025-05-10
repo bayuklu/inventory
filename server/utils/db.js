@@ -1,9 +1,27 @@
-import mysqlDb from '../config/MysqlDb.js'
+// import mysqlDb from '../config/MysqlDb.js'
 import db from '../config/Database.js';
+import dotenv from 'dotenv'
 
 //MODULE INI DIBUAT UNTUK MAINTENANCE / RESTORE DATABASE DI PRODUCTION
 
+dotenv.config()
+
+const validateIsLocalDevelopment = async() => {
+    let mysqlDb
+    
+    if(process.env.NODE_ENV !== "PRODUCTION") {
+        mysqlDb = await import('../config/MysqlDb.js')
+        return mysqlDb
+    }else {
+        console.log('Skipped mysqlDb import, running in PRODUCTION mode.');
+        return
+    }
+}
+
 export const tableMigrator = async({tableName}) => {
+    const mysqlDb = await validateIsLocalDevelopment()
+    if(!mysqlDb) throw new Error(error)
+
     try{
         const [rows] = await mysqlDb.query(`SELECT * FROM ${tableName} LIMIT 5`);
 
@@ -32,6 +50,9 @@ export const tableMigrator = async({tableName}) => {
 
 
 export const valueChangerPlus = async({tableName, uniqKey, columnTargets}) => {
+    const mysqlDb = await validateIsLocalDevelopment()
+    if(!mysqlDb) throw new Error(error)
+
     try{
         const [localDbRow] = await mysqlDb.query(`SELECT * FROM ${tableName}`);
         const [productionDbRow] = await db.query(`SELECT * FROM ${tableName}`);
