@@ -19,7 +19,7 @@ const PORT = process.env.PORT
 const init = async() => {
     try {
         await db.authenticate()
-        console.log("\x1b[32m%s\x1b[0m", "Database connected")    
+        console.log("Database connected")    
 
         // return
 
@@ -30,7 +30,7 @@ const init = async() => {
 
         
         //Maintenance Database
-        // console.log("\x1b[32m%s\x1b[0m", "[DB FUNCTION] Maintenance Table...")
+        // console.log("[DB FUNCTION] Maintenance Table...")
         //1.
         // await tableMigrator({tableName: "items"})
 
@@ -43,7 +43,7 @@ const init = async() => {
         //   }
         // )
 
-        // console.log("\x1b[32m%s\x1b[0m", "[DB FUNCTION] Maintenance Tabel Berhasil!")
+        // console.log("[DB FUNCTION] Maintenance Tabel Berhasil!")
     } catch (error) {
         console.log(error)
     }
