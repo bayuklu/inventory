@@ -9,7 +9,7 @@ import Items from './model/ItemsModel.js'
 import Orders from './model/ordersModel.js'
 import Outlet from './model/outletModels.js'
 import Users from './model/userModel.js'
-import { tableMigrator, valueChangerPlus } from './utils/db.js'
+// import { tableMigrator, valueChangerPlus } from './utils/db.js'
 
 const app = express()
 
