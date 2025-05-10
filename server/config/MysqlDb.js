@@ -1,13 +1,12 @@
-// import Sequelize from "sequelize";
-// import dotenv from 'dotenv'
+import Sequelize from "sequelize";
+import dotenv from 'dotenv'
 
-// dotenv.config()
+dotenv.config()
 
-// const mysqlDb = new Sequelize ('inventory2', 'root', '', {
-//     host: "localhost",
-//     dialect: "mysql",
-//     // dialectOptions:{useUTC:false},
-//     timezone:"+08:00"
-// })
+const mysqlDb = new Sequelize ('db_old_ab', 'root', '', {
+    host: "localhost",
+    dialect: "mysql",
+    timezone:"+08:00"
+})
 
-// export default mysqlDb
+export default mysqlDb

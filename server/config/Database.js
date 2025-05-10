@@ -4,23 +4,21 @@ import pg from 'pg'
 
 dotenv.config()
 
-// const db = new Sequelize ('inventory2', 'root', '', {
-//     host: "localhost",
-//     dialect: "mysql",
-//     // dialectOptions:{useUTC:false},
-//     timezone:"+08:00"
-// })
-
-const db = new Sequelize(process.env.PSQL, {
+const db = new Sequelize(
+    // process.env.PRODUCTION_PSQL,
+    process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, 
+    {
     dialect: "postgres",
     protocol: "postgres",
     timezone: "UTC",
     dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false
-        },
-        useUTC: true
+        // ======= gunakan ini jika di dalam lingkungan production ========
+        // ssl: {
+        //     require: true,
+        //     rejectUnauthorized: false
+        // },
+        // ======= gunakan ini jika di dalam lingkungan production ========
+        useUTC: true,
     },
     pool: {
         max: 5,
@@ -31,5 +29,7 @@ const db = new Sequelize(process.env.PSQL, {
     logging: false,
     dialectModule: pg
 })
+
+
 
 export default db

@@ -9,8 +9,7 @@ import Items from './model/ItemsModel.js'
 import Orders from './model/ordersModel.js'
 import Outlet from './model/outletModels.js'
 import Users from './model/userModel.js'
-
-// import mysqlDb from './config/MysqlDb.js'
+import { tableMigrator, valueChangerPlus } from './utils/db.js'
 
 const app = express()
 
@@ -20,48 +19,52 @@ const PORT = process.env.PORT
 const init = async() => {
     try {
         await db.authenticate()
-        console.log("Database connected")
-    
-        // await db.query("SET TIME ZONE 'Asia/Makassar';")
-    
-        await Orders.sync({
+        console.log("\x1b[32m%s\x1b[0m", "Database connected")    
+
+        // return
+
+        //Singkron Database
+        await db.sync({
             alter: true
         })
-    
-        // console.log("Migrasi...")
-        // const [rows] = await mysqlDb.query('SELECT * FROM outlets');
-    
-        // for (const row of rows) {
-        //   await db.query(
-        //     'INSERT INTO outlets("id", "name", "address", "phone", "createdAt", "updatedAt") VALUES($1, $2, $3, $4, $5, $6)',
-        //     {
-        //       bind: [row.id, row.name, row.address, row.phone, row.createdAt, row.updatedAt]
-        //     }
-        //   );
-        // }    
+
+        
+        //Maintenance Database
+        // console.log("\x1b[32m%s\x1b[0m", "[DB FUNCTION] Maintenance Table...")
+        //1.
+        // await tableMigrator({tableName: "items"})
+
+        //2.
+        // await valueChangerPlus(
+        //   {
+        //     tableName: "items",
+        //     uniqKey: "code",
+        //     columnTargets: ['unitTotal', 'unitTotalPack']
+        //   }
+        // )
+
+        // console.log("\x1b[32m%s\x1b[0m", "[DB FUNCTION] Maintenance Tabel Berhasil!")
     } catch (error) {
         console.log(error)
     }
 }
 
-init()
+await init()
 
-const allowedOrigins = [
-    process.env.FRONTEND_ORIGIN
-  ]
+
+const allowedOrigins = [process.env.FRONTEND_ORIGIN]
   
-  const corsOptions = {
-    credentials: true,
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl)
-      if (!origin) return callback(null, true)
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true)
-      } else {
-        callback(new Error('Not allowed by CORS'))
-      }
+const corsOptions = {
+  credentials: true,
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true)
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
     }
   }
+}
   
 app.use(cors(corsOptions))
 
