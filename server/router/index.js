@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { addItem, getAllItem, getFoods, getDrinks, getBathroom, getKitchen, updateItem, deleteItem, addStock, searchItem, updateDus, updatePack } from "../controllers/Items.js";
 import {getTurnCode, getRecordsByTurnCode, createRecordOrder, createFinalOrder, changePriceForSelectedItem, deleteRecordOrder} from "../controllers/orders.js"
-import {getTotalOfItemsStock, getTotalOFItemsProduct, getTodayOrders, getTodayIncomes, getLast7DaysIncomes, getBestSeller, getTodayBestSeller, getTodayOrdersData, getTodayProfit, deleteTransaction, changeSalesName} from "../controllers/dashboard.js"
+import {getTotalOfItemsStock, getTotalOFItemsProduct, getTodayOrders, getTodayIncomes, getLast7DaysIncomes, getBestSeller, getTodayBestSeller, getTodayOrdersData, getTodayProfit, deleteTransaction, changeSalesName, getItemListForTodayOrders, getOutletForTodayOrders} from "../controllers/dashboard.js"
 import { addOutlet, deleteOutlet, getOutlet, searchOutlet, updateOutlet } from "../controllers/outlet.js";
 import { isUserLoggedIn, Login, Logout, Register } from '../controllers/user.js'
 import { refreshToken } from '../controllers/refreshToken.js'
@@ -9,7 +9,7 @@ import { refreshToken } from '../controllers/refreshToken.js'
 const router = express.Router()
 
 router.post('/login', Login)
-// router.post('/register', Register)
+router.post('/register', Register)
 router.get('/login', isUserLoggedIn)
 router.get('/token', refreshToken)
 router.delete('/logout', Logout)
@@ -46,6 +46,8 @@ router.get('/dashboard/todayBestSeller', getTodayBestSeller)
 
 //halaman transaksi
 router.get('/dashboard/orders', getTodayOrdersData)
+router.get('/dashboard/orders/itemList/:code', getItemListForTodayOrders)
+router.get('/dashboard/orders/outlet/:id', getOutletForTodayOrders)
 router.delete('/dashboard/orders/:transactionId', deleteTransaction)
 router.put('/dashboard/orders/sales', changeSalesName)
 

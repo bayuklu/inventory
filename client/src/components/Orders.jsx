@@ -8,6 +8,12 @@ import FileSaver from 'file-saver';
 import { useNavigate } from 'react-router-dom';
 import SpinnerLoader from "./SpinnerLoader";
 import { jwtDecode } from 'jwt-decode';
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc.js'
+import timezone from 'dayjs/plugin/timezone.js'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 const Orders = () => {
     const [msg, setMsg] = useState(null);
@@ -112,8 +118,48 @@ const Orders = () => {
         try{
             setIsOrdersDataLoading(true)
             const response = await axios.get(`${import.meta.env.VITE_BASEURL}/dashboard/orders`)
-            setOrdersData(response.data)
-            setIsOrdersDataLoading(false)
+            if(response) {
+              const {orders} = response.data
+              // console.log(orders)
+
+              const ordersData = await Promise.all(orders.map(async (order) => {
+                // console.log(order)
+                const rawItems = order.items
+                const items = rawItems.includes(',') ? rawItems.split(',') : [rawItems]
+                // console.log(items)
+                const itemList = await Promise.all(items.map(async (i) => {
+                    const [code, quantity] = i.split(':')
+                    const product = await axios.get(`${import.meta.env.VITE_BASEURL}/dashboard/orders/itemList/${code}`)
+                    // const product = await Items.findOne({ where: { code } })
+                    return {
+                        itemName: product.data.name,
+                        quantity
+                    }
+                }))
+    
+                const convertedTime = dayjs.utc(order.createdAt).tz(`Asia/Makassar`).format(`YYYY-MM-DD HH:mm:ss`)
+                const orderTime = dayjs(convertedTime, 'YYYY-MM-DD HH:mm:ss')  // Convert string kembali ke dayjs object
+    
+                // Sekarang kamu bisa mengakses getHours() dan getMinutes()
+                const hours = orderTime.get('hour')   // Mengambil jam
+                const minutes = orderTime.get('minute')  // Mengambil menit
+    
+                const formattedOrderTime = `${hours}.${minutes}`  // Format waktu contoh "16.40"
+    
+                // const outlet = await Outlet.findOne({ where: { id: order.outlet } })
+                const outlet = await axios.get(`${import.meta.env.VITE_BASEURL}/dashboard/orders/outlet/${order.outlet}`)
+                const {name} = outlet.data
+                const profit = order.profit
+                const sales = order.sales
+                return [itemList, formattedOrderTime, name, order.totalPayment, profit, sales, order.id]
+            }))
+
+            // console.log(ordersData)
+
+              setOrdersData(ordersData)
+              setIsOrdersDataLoading(false)
+              // console.log("oke")
+            }
         }catch(error){
             console.log(error.message)
         }
