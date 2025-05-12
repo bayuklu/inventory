@@ -3,7 +3,7 @@ import OrderRecordModel from '../model/orderRecordModel.js'
 import Items from '../model/ItemsModel.js'
 import {Op, where} from 'sequelize'
 import Outlet from '../model/outletModels.js'
-import { convertToWita, SEVEN_DAYS_AGO_WITA_CONVERT_UTC, TODAY_START_WITA_CONVERT_UTC, YESTERDAY_START_WITA_CONVERT_UTC } from '../utils/time.js'
+import { convertToWita, SEVEN_DAYS_AGO_WITA_CONVERT_UTC, TODAY_START_WITA_CONVERT_UTC } from '../utils/time.js'
 import dayjs from 'dayjs'
 
 export const getTotalOfItemsStock = async(req, res) => {
@@ -245,46 +245,15 @@ export const getTodayOrdersData = async (req, res) => {
             ],
             where: {
                 createdAt: {
-                    [Op.gt]: YESTERDAY_START_WITA_CONVERT_UTC,
-                    [Op.lt]: TODAY_START_WITA_CONVERT_UTC
+                    [Op.gt]: TODAY_START_WITA_CONVERT_UTC
                 }
             },
             // raw: true
         })
 
-        // console.log(orders)
-
         // console.log(TODAY_START_WITA_CONVERT_UTC)
         // console.log(orders)
         res.status(200).json({orders})
-        // const ordersData = await Promise.all(orders.map(async (order) => {
-        //     const items = order.dataValues.items.split(',')
-        //     const itemList = await Promise.all(items.map(async (i) => {
-        //         const [code, quantity] = i.split(':')
-        //         const product = await Items.findOne({ where: { code }, raw:true })
-        //         // console.log(typeof(product))
-        //         return {
-        //             itemName: product.name,
-        //             quantity
-        //         }
-        //     }))
-
-        //     const convertedTime = convertToWita(order.createdAt)  // Ini hasilnya berupa string
-        //     const orderTime = dayjs(convertedTime, 'YYYY-MM-DD HH:mm:ss')  // Convert string kembali ke dayjs object
-
-        //     // Sekarang kamu bisa mengakses getHours() dan getMinutes()
-        //     const hours = orderTime.get('hour')   // Mengambil jam
-        //     const minutes = orderTime.get('minute')  // Mengambil menit
-
-        //     const formattedOrderTime = `${hours}.${minutes}`  // Format waktu contoh "16.40"
-
-        //     const outlet = await Outlet.findOne({ where: { id: order.outlet } })
-        //     // console.log(outlet)
-        //     const profit = order.dataValues.profit
-        //     const sales = order.dataValues.sales
-        //     return [itemList, formattedOrderTime, outlet.dataValues.name, order.totalPayment, profit, sales, order.id]
-        // }))
-        // res.status(200).json(ordersData)
     } catch (error) {
         console.log(error)
         res.status(500).json({ msg: "Internal server error", error })
