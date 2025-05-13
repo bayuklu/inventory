@@ -548,7 +548,8 @@ const Dashboard = () => {
                   <p
                     style={{
                       cursor: !dataTagihanIsEnd ? "pointer" : "",
-                      color: dataTagihanIsEnd ? "silver" : "green"
+                      color: dataTagihanIsEnd ? "silver" : "lightgreen",
+                      fontSize: "12px"
                     }}
                     onClick={(e) => {
                       if (dataTagihanIsEnd) return;
@@ -556,7 +557,7 @@ const Dashboard = () => {
                       getTagihan7DayMore("1");
                     }}
                   >
-                    {dataTagihanIsEnd ? "Semua Data Dimuat" : "Muat Lagi"}
+                    {dataTagihanIsEnd ? "Tidak ada data untuk ditampilkan lagi" : "Muat lebih banyak"}
                   </p>
                 </div>
               </div>
