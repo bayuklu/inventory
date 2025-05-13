@@ -3,7 +3,7 @@ import OrderRecordModel from '../model/orderRecordModel.js'
 import Items from '../model/ItemsModel.js'
 import {Op, where} from 'sequelize'
 import Outlet from '../model/outletModels.js'
-import { convertToWita, SEVEN_DAYS_AGO_WITA_CONVERT_UTC, TODAY_START_WITA_CONVERT_UTC } from '../utils/time.js'
+import { convertToWita, SEVEN_DAYS_AGO_WITA_CONVERT_UTC, SIX_DAYS_AGO_WITA_CONVERT_UTC, TODAY_START_WITA_CONVERT_UTC } from '../utils/time.js'
 import dayjs from 'dayjs'
 
 export const getTotalOfItemsStock = async(req, res) => {
@@ -191,10 +191,6 @@ export const getLast7DaysIncomes = async(req, res) => {
     try {
         // Create an array to hold income data for the last 7 days excluding today
         let incomes = new Array(7).fill(0);
-
-
-        console.log(TODAY_START_WITA_CONVERT_UTC)
-        console.log(SEVEN_DAYS_AGO_WITA_CONVERT_UTC)
     
         // Fetch all orders from the last 7 days excluding today
         const orders = await Orders.findAll({
@@ -217,6 +213,78 @@ export const getLast7DaysIncomes = async(req, res) => {
     
         res.status(200).json({ incomes });
         } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: "Internal server error" });
+    }
+}
+
+export const getTagihanIn7DayMore = async(req, res) => {
+    const isMore = req.params['isMore']
+    const latestDateShowed = req.params['latestDateShowed']
+    const limit = 5
+    // console.log(latestDateShowed)
+    // console.log(SIX_DAYS_AGO_WITA_CONVERT_UTC)
+
+    try {
+        const httpResponse = isMore === "1" ? 201 : 200
+        // console.log(isMore)
+
+        const transaction = await Orders.findAll({
+            where: {
+                [Op.and]: {
+                    isBon: true,
+                    createdAt: {
+                        [Op.lt]: isMore === "1" ? latestDateShowed : SIX_DAYS_AGO_WITA_CONVERT_UTC
+                    },
+                }
+            },
+            raw: true,
+            order: [
+                ['createdAt', 'DESC'] 
+            ],
+            limit: limit
+        })
+
+        const manyOfTransaction = await Orders. findAll({
+            where: {
+                [Op.and]: {
+                    isBon: true,
+                    createdAt: {
+                        [Op.lt]: SIX_DAYS_AGO_WITA_CONVERT_UTC
+                    },
+                }
+            },
+            attributes: ['id'],
+            raw: true
+        })
+        
+        // console.log(manyOfTransaction)
+        const isEnd = transaction.length < limit ? "1" : "0"
+
+        res.status(httpResponse ?? 200).json({
+            transaction: transaction,
+            manyOfTransaction: manyOfTransaction.length,
+            isEnd: isEnd
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: "Internal server error" });
+    }
+}
+
+export const getOutletName = async(req, res) => {
+    const outletId = req.params['outletId']
+    try {
+        const outlet = await Outlet.findOne({ 
+            where: {
+                id: outletId
+            },
+            raw: true,
+            attributes: ['name', 'address']
+         })
+
+         res.status(200).json(outlet)
+    } catch (error) {
         console.log(error);
         res.status(500).json({ msg: "Internal server error" });
     }

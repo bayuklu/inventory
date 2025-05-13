@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { addItem, getAllItem, getFoods, getDrinks, getBathroom, getKitchen, updateItem, deleteItem, addStock, searchItem, updateDus, updatePack } from "../controllers/Items.js";
 import {getTurnCode, getRecordsByTurnCode, createRecordOrder, createFinalOrder, changePriceForSelectedItem, deleteRecordOrder} from "../controllers/orders.js"
-import {getTotalOfItemsStock, getTotalOFItemsProduct, getTodayOrders, getTodayIncomes, getLast7DaysIncomes, getBestSeller, getTodayBestSeller, getTodayOrdersData, getTodayProfit, deleteTransaction, changeSalesName, getItemListForTodayOrders, getOutletForTodayOrders} from "../controllers/dashboard.js"
+import {getTotalOfItemsStock, getTotalOFItemsProduct, getTodayOrders, getTodayIncomes, getLast7DaysIncomes, getBestSeller, getTodayBestSeller, getTodayOrdersData, getTodayProfit, deleteTransaction, changeSalesName, getItemListForTodayOrders, getOutletForTodayOrders, getTagihanIn7DayMore, getOutletName} from "../controllers/dashboard.js"
 import { addOutlet, deleteOutlet, getOutlet, searchOutlet, updateOutlet } from "../controllers/outlet.js";
 import { isUserLoggedIn, Login, Logout, Register } from '../controllers/user.js'
 import { refreshToken } from '../controllers/refreshToken.js'
@@ -43,6 +43,8 @@ router.get('/dashboard/todayProfit', getTodayProfit)
 router.get('/dashboard/last6DaysIncome', getLast7DaysIncomes)
 router.get('/dashboard/bestseller', getBestSeller)
 router.get('/dashboard/todayBestSeller', getTodayBestSeller)
+router.get('/dashboard/tagihan7hari/:isMore/:latestDateShowed', getTagihanIn7DayMore)
+router.get('/dashboard/outlet/:outletId', getOutletName)
 
 //halaman transaksi
 router.get('/dashboard/orders', getTodayOrdersData)
@@ -56,7 +58,5 @@ router.get('/outlet', getOutlet)
 router.delete('/outlet/:outletId', deleteOutlet)
 router.put('/outlet', updateOutlet)
 router.post('/outlet/search', searchOutlet)
-
-
 
 export default router

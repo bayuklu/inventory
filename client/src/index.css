@@ -50,6 +50,7 @@ body{
   padding: 30px;
   border-radius: 10px;
   /* cursor: pointer; */
+  z-index: 1;
 }
 
 .my-menu h3 {
@@ -499,4 +500,34 @@ input[type="number"] {
 
 .dropdownItemLoading {
   pointer-events: none;
+}
+
+.hideListTagihan {
+  display: none;
+}
+
+
+/* Untuk elemen tertentu */
+.scrollable {
+  overflow-y: auto;
+}
+
+/* Scrollbar tipis untuk WebKit browser (Chrome, Edge, Safari) */
+.scrollable::-webkit-scrollbar {
+  width: 4px; /* Lebar scrollbar vertikal */
+  height: 4px; /* Tinggi scrollbar horizontal */
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 100, 0.5); /* Warna thumb */
+  border-radius: 10px;
+}
+
+.scrollable::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.scrollable {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100,100,100,0.5) transparent;
 }

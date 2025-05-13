@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "./Sidebar";
 import { useNavigate } from "react-router-dom";
 import "../index.css";
@@ -17,11 +17,11 @@ import SpinnerLoader from "./SpinnerLoader";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import 'dayjs/locale/id';
+import "dayjs/locale/id";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
-dayjs.locale("id")
+dayjs.locale("id");
 
 ChartJS.register(
   CategoryScale,
@@ -31,7 +31,9 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-import { jwtDecode } from 'jwt-decode'
+import { jwtDecode } from "jwt-decode";
+import CIcon from "@coreui/icons-react";
+import * as icon from "@coreui/icons";
 
 const Dashboard = () => {
   const [product, setProduct] = useState("0");
@@ -41,23 +43,31 @@ const Dashboard = () => {
   const [chartData, setChartData] = useState([]);
   const [todayProfit, setTodayProfit] = useState("");
   const [todayBestSeler, setTodayBestSeller] = useState("");
-  const [token, setToken] = useState('')
-  const [expire, setExpire] = useState('')
-  const [userRole, setUserRole] = useState('')
-  const [isNoLoggedIn, setIsNoLoggedIn] = useState(false)
-  const [authCheck, setAuthCheck] = useState(true)
+  const [token, setToken] = useState("");
+  const [expire, setExpire] = useState("");
+  const [userRole, setUserRole] = useState("");
+  const [isNoLoggedIn, setIsNoLoggedIn] = useState(false);
+  const [authCheck, setAuthCheck] = useState(true);
+  const [listTagihanShow, setListTagihanShow] = useState(false);
+  const [dataTagihan, setDataTagihan] = useState([]);
+  const [jumlahDataTagihan, setJumlahDataTagihan] = useState(0);
+  const [dataTagihanIsEnd, setDataTagihanIsEnd] = useState(false);
+  const [outletTagihanName, setOutletTagihanName] = useState([]);
   const navigate = useNavigate();
+
+  const listTagihanRef = useRef(null);
+  const iconListTagihan = useRef(null);
 
   const getLast7Days = () => {
     const days = [];
-    const tz = 'Asia/Makassar';
-  
+    const tz = "Asia/Makassar";
+
     for (let i = 1; i <= 7; i++) {
-      const date = dayjs().tz(tz).subtract(i, 'day');
-      const formatted = date.format('dddd, D MMM'); // Hasil: "Kamis, 8 Mei"
+      const date = dayjs().tz(tz).subtract(i, "day");
+      const formatted = date.format("dddd, D MMM"); // Hasil: "Kamis, 8 Mei"
       days.push(formatted);
     }
-  
+
     return days.reverse();
   };
 
@@ -71,14 +81,35 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    document.title = "Dashboard"
-    refreshToken()
+    document.title = "Dashboard";
+    refreshToken();
   }, []);
+
+  useEffect(() => {
+    function handleClickOutsideListTagihan(event) {
+      if (iconListTagihan.current.contains(event.target)) {
+        setListTagihanShow(!listTagihanShow);
+      } else if (
+        listTagihanRef.current &&
+        !listTagihanRef.current.contains(event.target) &&
+        !iconListTagihan.current.contains(event.target) &&
+        listTagihanShow === true
+      ) {
+        setListTagihanShow(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutsideListTagihan);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsideListTagihan);
+    };
+  }, [listTagihanShow]);
 
   useEffect(() => {
     if (token) {
       try {
-        const decoded = jwtDecode(token)
+        const decoded = jwtDecode(token);
         if (decoded.role === "admin") {
           getProduct();
           getStock();
@@ -87,12 +118,36 @@ const Dashboard = () => {
           getLast6DaysIncomes();
           getTodayProfit();
           getTodayBestSellerProduct();
+          getTagihan7DayMore("0");
         }
       } catch (error) {
-        console.error("Token decoding failed:", error)
+        console.error("Token decoding failed:", error);
       }
     }
-  }, [token])
+  }, [token]);
+
+  useEffect(() => {
+    async function fetchAllOutletNames() {
+      for (let i = 0; i < dataTagihan.length; i++) {
+        const outletId = dataTagihan[i].outlet;
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_BASEURL}/dashboard/outlet/${outletId}`
+          );
+          setOutletTagihanName((prev) => [
+            ...prev,
+            { name: response.data.name, address: response.data.address, index: i },
+          ]);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
+
+    if (dataTagihan.length > 0) {
+      fetchAllOutletNames();
+    }
+  }, [dataTagihan]);
 
   const refreshToken = async () => {
     try {
@@ -105,16 +160,14 @@ const Dashboard = () => {
 
       const decoded = jwtDecode(response.data.accessToken);
 
-      if(decoded.role !== "admin" && decoded.role === "kasir") {
-        navigate("/cashier")
+      if (decoded.role !== "admin" && decoded.role === "kasir") {
+        navigate("/cashier");
       }
 
       setToken(response.data.accessToken);
       setExpire(decoded.exp);
       setIsNoLoggedIn(false);
-      setUserRole(decoded.role)
-
-
+      setUserRole(decoded.role);
     } catch (error) {
       if (error.response) {
         setIsNoLoggedIn(true);
@@ -126,19 +179,24 @@ const Dashboard = () => {
   };
 
   const axiosJWT = axios.create();
-  axiosJWT.interceptors.request.use(async (config) => {
+  axiosJWT.interceptors.request.use(
+    async (config) => {
       const currentDate = new Date();
       if (expire * 1000 < currentDate.getTime()) {
-          const response = await axios.get(`${import.meta.env.VITE_BASEURL}/token`);
-          config.headers.Authorization = `Bearer ${response.data.accessToken}`;
-          setToken(response.data.accessToken);
-          const decoded = jwtDecode(response.data.accessToken);
-          setExpire(decoded.exp);
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASEURL}/token`
+        );
+        config.headers.Authorization = `Bearer ${response.data.accessToken}`;
+        setToken(response.data.accessToken);
+        const decoded = jwtDecode(response.data.accessToken);
+        setExpire(decoded.exp);
       }
       return config;
-  }, (error) => {
+    },
+    (error) => {
       return Promise.reject(error);
-  });  
+    }
+  );
 
   if (authCheck) {
     return (
@@ -237,6 +295,32 @@ const Dashboard = () => {
     }
   };
 
+  const getTagihan7DayMore = async (isMore) => {
+    // const isMore = dataTagihan.length > 2 ? true : false
+    const latestDateShowed = dataTagihan.length
+      ? dataTagihan[dataTagihan.length - 1].createdAt
+      : "-";
+    try {
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_BASEURL
+        }/dashboard/tagihan7hari/${isMore}/${latestDateShowed}`
+      );
+
+      // console.log(response.data);
+      setJumlahDataTagihan(response.data.manyOfTransaction);
+      setDataTagihan((prevData) => [...prevData, ...response.data.transaction]);
+
+      if (response.data.isEnd === "1") {
+        setDataTagihanIsEnd(true);
+      }
+
+      console.log(dataTagihan, response.data.isEnd);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
   const data = {
     labels: getLast7Days(),
     datasets: [
@@ -284,9 +368,23 @@ const Dashboard = () => {
     },
   };
 
+  const convertTanggal = (date) => {
+    return dayjs.utc(date).tz(`Asia/Makassar`).format(`DD, MMM YYYY`);
+  };
+
+  const hitungSudahBerapaHari = (date) => {
+    const waktuTransaksi = dayjs
+      .utc(date)
+      .tz("Asia/Makassar")
+      .format(`YYYY-MM-DD`);
+    const udahBerapaLama = dayjs().diff(waktuTransaksi, "day");
+    return udahBerapaLama;
+  };
+
   // CSS styling
   const myHeroStyle = {
     display: "block",
+    position: "relative",
   };
   const myDashboardTextStyle = {
     fontSize: "70px",
@@ -320,6 +418,157 @@ const Dashboard = () => {
         <div className="my-dashboardChild">
           <div style={myHeroStyle} className="my-headMenu">
             <h1 style={myDashboardTextStyle}>Dashboard</h1>
+            <div style={{ position: "absolute", left: "450px", top: "50px" }}>
+              <div style={{ position: "absolute" }}>
+                <i
+                  ref={iconListTagihan}
+                  style={{ color: "black", cursor: "pointer" }}
+                >
+                  <CIcon icon={icon.cilNotes} />
+                </i>
+                <div
+                className="scrollable"
+                  style={{
+                    width: "350px",
+                    height: "500px",
+                    zIndex: "2",
+                    position: "absolute",
+                    marginTop: "10px",
+                    backgroundColor: "white",
+                    borderRadius: "10px",
+                    boxShadow:
+                      "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+                    flexDirection: "column",
+                    padding: "20px",
+                    scrollPadding: "20px",
+                    gap: "20px",
+                    alignItems: "center",
+                    overflowY: "auto",
+                    display: listTagihanShow ? "flex" : "none",
+                  }}
+                  ref={listTagihanRef}
+                >
+
+                  {/* raw */}
+                  {dataTagihan.map((data, idx) => {
+                    const outlet = outletTagihanName.find((otl) => otl.index === idx)
+
+                    return (
+                    <div
+                      key={idx}
+                      style={{
+                        width: "100%",
+                        minHeight: "80px",
+                        maxHeight: "80px",
+                        display: "flex",
+                        borderRadius: "10px",
+                        backgroundColor: "white",
+                        cursor: "pointer",
+                        boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "85%",
+                          padding: "5px",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: "100%",
+                            height: "75%",
+                            borderBottom: "1px solid lightgrey",
+                          }}
+                        >
+                          <h1
+                              style={{
+                                color: "darkorange",
+                                whiteSpace: "nowrap",         // ⛔ Jangan bungkus ke baris baru
+                                overflow: "hidden",           // Sembunyikan kelebihan teks
+                                textOverflow: "ellipsis",     // Tampilkan "..." di ujung
+                                maxWidth: "100%",             // Batasi lebar maksimalnya
+                              }}
+                          >
+                            {
+                              outlet ? `${outlet.name.toUpperCase()} | ${outlet.address.toUpperCase()}` : "Loading..."
+                            }
+                          </h1>
+                          <h2 style={{ color: "red", fontSize: "13px" }}>
+                            {rupiah(data.totalPayment)}
+                          </h2>
+                        </div>
+                        <div
+                          style={{
+                            width: "100%",
+                            height: "25%",
+                            display: "flex",
+                          }}
+                        >
+                          <p
+                            style={{
+                              fontSize: "11px",
+                              marginTop: "2px",
+                              color: "black",
+                            }}
+                          >
+                            {convertTanggal(data.createdAt)}
+                          </p>
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          width: "15%",
+                          // backgroundColor: "red",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <h1 style={{ color: "red" }}>
+                          {hitungSudahBerapaHari(data.createdAt)}
+                          <span style={{fontSize: '10px'}}>
+                            hr
+                          </span>
+                        </h1>
+                      </div>
+                    </div>
+                    )
+                  })}
+                  {/* end raw */}
+
+                  <p
+                    style={{
+                      cursor: !dataTagihanIsEnd ? "pointer" : "",
+                    }}
+                    onClick={(e) => {
+                      if (dataTagihanIsEnd) return;
+                      e.stopPropagation();
+                      getTagihan7DayMore("1");
+                    }}
+                  >
+                    {dataTagihanIsEnd ? "Semua Data Dimuat" : "Muat Lagi"}
+                  </p>
+                </div>
+              </div>
+              <p
+                style={{
+                  position: "relative",
+                  pointerEvents: "none",
+                  top: "5px",
+                  left: "17px",
+                  color: "white",
+                  padding: "3px 7px 3px 7px",
+                  fontSize: "12px",
+                  textAlign: "center",
+                  borderRadius: "50%",
+                  backgroundColor: "red",
+                }}
+              >
+                {jumlahDataTagihan}
+              </p>
+            </div>
           </div>
           <div className="my-headMenu">
             <div className="chartContainer">
