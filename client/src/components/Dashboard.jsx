@@ -369,7 +369,9 @@ const Dashboard = () => {
   };
 
   const convertTanggal = (date) => {
-    return dayjs.utc(date).tz(`Asia/Makassar`).format(`DD, MMM YYYY`);
+    const converedTime =  dayjs.utc(date).tz(`Asia/Makassar`).format(`dddd, DD MMMM YYYY`)
+    return converedTime
+
   };
 
   const hitungSudahBerapaHari = (date) => {
@@ -465,6 +467,7 @@ const Dashboard = () => {
                         backgroundColor: "white",
                         cursor: "pointer",
                         boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
+                        padding: '4px'
                       }}
                     >
                       <div
@@ -484,7 +487,7 @@ const Dashboard = () => {
                         >
                           <h1
                               style={{
-                                color: "darkorange",
+                                color: "silver",
                                 whiteSpace: "nowrap",         // ⛔ Jangan bungkus ke baris baru
                                 overflow: "hidden",           // Sembunyikan kelebihan teks
                                 textOverflow: "ellipsis",     // Tampilkan "..." di ujung
@@ -492,10 +495,10 @@ const Dashboard = () => {
                               }}
                           >
                             {
-                              outlet ? `${outlet.name.toUpperCase()} | ${outlet.address.toUpperCase()}` : "Loading..."
+                              outlet ? `${outlet.name.toUpperCase()} - ${outlet.address.toUpperCase()}` : "Loading..."
                             }
                           </h1>
-                          <h2 style={{ color: "red", fontSize: "13px" }}>
+                          <h2 style={{ color: "salmon", fontSize: "13px" }}>
                             {rupiah(data.totalPayment)}
                           </h2>
                         </div>
@@ -510,7 +513,7 @@ const Dashboard = () => {
                             style={{
                               fontSize: "11px",
                               marginTop: "2px",
-                              color: "black",
+                              color: "grey",
                             }}
                           >
                             {convertTanggal(data.createdAt)}
@@ -522,16 +525,20 @@ const Dashboard = () => {
                           width: "15%",
                           // backgroundColor: "red",
                           display: "flex",
-                          justifyContent: "center",
+                          justifyContent: "space-between",
                           alignItems: "center",
+                          flexDirection: 'column'
                         }}
                       >
-                        <h1 style={{ color: "red" }}>
+                        <h1 style={{ color: "darkorange" }}>
                           {hitungSudahBerapaHari(data.createdAt)}
                           <span style={{fontSize: '10px'}}>
                             hr
                           </span>
                         </h1>
+                        <i style={{color: 'green'}}>
+                          <CIcon icon={icon.cilCheckAlt} />
+                        </i>
                       </div>
                     </div>
                     )
@@ -541,6 +548,7 @@ const Dashboard = () => {
                   <p
                     style={{
                       cursor: !dataTagihanIsEnd ? "pointer" : "",
+                      color: dataTagihanIsEnd ? "silver" : "green"
                     }}
                     onClick={(e) => {
                       if (dataTagihanIsEnd) return;
