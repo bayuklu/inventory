@@ -320,7 +320,7 @@ export const getTodayOrdersData = async (req, res) => {
         })
 
         // console.log(TODAY_START_WITA_CONVERT_UTC)
-        // console.log(orders)
+        console.log(orders)
         res.status(200).json({orders})
     } catch (error) {
         console.log(error)
