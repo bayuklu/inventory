@@ -335,7 +335,7 @@ export const getItemListForTodayOrders = async(req, res) => {
         const product = await Items.findOne({ where: { code }, raw: true })
         // console.log(code)
         // console.log(product)
-        // if(!product) return res.status(404).json({msg: `ItemList of ${code} not found!`})
+        if(!product) return res.status(404).json({msg: `ItemList of ${code} not found!`})
 
         res.status(200).json(product)
     } catch (error) {
