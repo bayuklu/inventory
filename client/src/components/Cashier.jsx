@@ -102,14 +102,7 @@ const Cashier = () => {
 
   useEffect(() => {
     if (token) {
-      try {
-        const decoded = jwtDecode(token)
-        if (decoded.role === "kasir") {
-          getTurnCode()
-        }
-      } catch (error) {
-        console.error("Token decoding failed:", error)
-      }
+      getTurnCode()
     }
   }, [token])
 
@@ -124,11 +117,11 @@ const Cashier = () => {
 
       const decoded = jwtDecode(response.data.accessToken);
 
-      console.log(decoded.role)
+      // console.log(decoded.role)
 
-      if(decoded.role !== "kasir" && decoded.role === "admin") {
-        navigate("/")
-      }
+      // if(decoded.role !== "kasir" && decoded.role === "admin") {
+      //   navigate("/")
+      // }
       
       setToken(response.data.accessToken);
       setExpire(decoded.exp);
