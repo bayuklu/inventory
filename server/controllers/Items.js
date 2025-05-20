@@ -298,3 +298,53 @@ export const updatePack = async(req, res) => {
         res.status(500).json({error: error.message})
     }
 }
+
+export const updatePrice = async(req, res) => {
+    const {itemId, newPriceValue} = req.body
+    if(!itemId || (!newPriceValue && newPriceValue !== 0)) return res.status(400).json({msg: "All field required!"})
+
+    try {
+        const item = await Items.findOne({
+            where: {id: itemId}
+        })
+        if(!item) return res.status(404).json({msg: "Item not found!"})
+
+        if(newPriceValue < item.capitalPrice) {
+            return res.status(400).json({msg: "Harga jual tidak boleh kurang dari harga modal"})
+        }
+        
+        await item.update({
+            price: newPriceValue ?? item.price
+        })
+
+        res.status(200).json({msg: "Price Changed Successfully"})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({error: error.message})
+    }
+}
+
+export const updateCapitalPrice = async(req, res) => {
+    const {itemId, newCapitalPriceValue} = req.body
+    if(!itemId || (!newCapitalPriceValue && newCapitalPriceValue !== 0)) return res.status(400).json({msg: "All field required!"})
+
+    try {
+        const item = await Items.findOne({
+            where: {id: itemId}
+        })
+        if(!item) return res.status(404).json({msg: "Item not found!"})
+
+        if(newCapitalPriceValue > item.price) {
+            return res.status(400).json({msg: "Harga modal tidak boleh lebih dari harga jual"})
+        }
+
+        await item.update({
+            capitalPrice: newCapitalPriceValue ?? item.capitalPrice
+        })
+
+        res.status(200).json({msg: "Capital Price Changed Successfully"})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({error: error.message})
+    }
+}

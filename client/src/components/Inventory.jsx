@@ -40,6 +40,8 @@ const Inventory = () => {
 
   const [previousDus, setPreviousDus] = useState({})
   const [previousPack, setPreviousPack] = useState({})
+  const [previousPrice, setPreviousPrice] = useState({})
+  const [previousCapitalPrice, setPreviousCapitalPrice] = useState({})
 
   const navigate = useNavigate()
 
@@ -300,6 +302,56 @@ const Inventory = () => {
     )
   }
 
+  const handlePriceFormattedNumberChange = (e, id) => {
+    const rawValue = e.target.value.replace(/\D/g, "");
+    const formattedValue = rupiah(rawValue); // Format ke dalam bentuk rupiah
+
+    // console.log('Id di handler change: ' + id)
+
+    setPreviousPrice((prev) => {
+      if(!prev[id]) {
+        return {
+          ...prev,
+          [id]: items.find((item) => item.id === id).price
+        }
+      }
+      return prev
+    })
+
+    setItems((prevItems) => 
+      prevItems.map((item) => 
+        item.id === id
+        ? { ...item, price: rawValue, formattedPrice: formattedValue }
+        : item
+      )
+    )
+  }
+
+  const handleCapitalPriceFormattedNumberChange = (e, id) => {
+    const rawValue = e.target.value.replace(/\D/g, "");
+    const formattedValue = rupiah(rawValue); // Format ke dalam bentuk rupiah
+
+    // console.log('Id di handler change: ' + id)
+
+    setPreviousCapitalPrice((prev) => {
+      if(!prev[id]) {
+        return {
+          ...prev,
+          [id]: items.find((item) => item.id === id).capitalPrice
+        }
+      }
+      return prev
+    })
+
+    setItems((prevItems) => 
+      prevItems.map((item) => 
+        item.id === id
+        ? { ...item, capitalPrice: rawValue, formattedCapitalPrice: formattedValue }
+        : item
+      )
+    )
+  }
+
   const handleDusChanged = async(e, itemId) => {
     const rawValue = e.target.value.replace(/\D/g, "");
     const newDusValue = Number(rawValue)
@@ -339,6 +391,80 @@ const Inventory = () => {
       }
     } catch (error) {
       console.error(error.message, error)
+    }
+  }
+
+  const handlePriceChanged = async(e, itemId) => {
+    const rawValue = e.target.value.replace(/\D/g, "");
+    const newPriceValue = Number(rawValue)
+
+    // console.log(typeof(newPriceValue))
+
+    try {
+      const response = await axiosJWT.put(`${import.meta.env.VITE_BASEURL}/items/update/price`, {
+        withCredentials: true,
+        itemId,
+        newPriceValue
+      })
+
+      if(response.status === 200) {
+        setMsg({msg: response.data.msg, color: 'green'})
+        fetchItemsData(dataView)
+      }
+    } catch (error) {
+      console.error(error.message, error)
+      if(error.response.data.msg === "Harga jual tidak boleh kurang dari harga modal") {
+        // Kembalikan harga ke nilai sebelumnya
+        setItems((prevItems) =>
+          prevItems.map((item) =>
+            item.id === itemId
+              ? {
+                  ...item,
+                  price: previousPrice[itemId],
+                  formattedPrice: rupiah(previousPrice[itemId]),
+                }
+              : item
+          )
+        );
+        setMsg({msg: error.response.data.msg, color: 'red'})
+      }
+    }
+  }
+
+  const handleCapitalPriceChanged = async(e, itemId) => {
+    const rawValue = e.target.value.replace(/\D/g, "");
+    const newCapitalPriceValue = Number(rawValue)
+
+    // console.log(typeof(newCapitalPriceValue))
+
+    try {
+      const response = await axiosJWT.put(`${import.meta.env.VITE_BASEURL}/items/update/capitalprice`, {
+        withCredentials: true,
+        itemId,
+        newCapitalPriceValue
+      })
+
+      if(response.status === 200) {
+        setMsg({msg: response.data.msg, color: 'green'})
+        fetchItemsData(dataView)
+      }
+    } catch (error) {
+      console.error(error.message, error)
+      if(error.response.data.msg === "Harga modal tidak boleh lebih dari harga jual") {
+        // Kembalikan harga ke nilai sebelumnya
+        setItems((prevItems) =>
+          prevItems.map((item) =>
+            item.id === itemId
+              ? {
+                  ...item,
+                  capitalPrice: previousCapitalPrice[itemId],
+                  formattedCapitalPrice: rupiah(previousCapitalPrice[itemId]),
+                }
+              : item
+          )
+        );
+        setMsg({msg: error.response.data.msg, color: 'red'})
+      }
     }
   }
 
@@ -434,11 +560,21 @@ const Inventory = () => {
                               </div >
                             </td>
                             <td>{item.discount * 100}%</td>
-                            <td>{rupiah(item.price)}</td>
-                            <td>{rupiah(item.capitalPrice)}</td>
+                            {/* <td>{rupiah(item.price)}</td> */}
+                            <td>
+                              <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                <input type="text" style={{width: '130px', marginLeft: '-25px', textAlign: 'center'}} className='input' value={items.formattedPrice || rupiah(item.price)} onKeyDown={(e) => {if(e.key === "Enter") handlePriceChanged(e, item.id)}} onBlur={(e) => handlePriceChanged(e, item.id)} onChange={(e) => handlePriceFormattedNumberChange(e, item.id)}/>
+                              </div>
+                            </td>
+                            {/* <td>{rupiah(item.capitalPrice)}</td> */}
+                            <td>
+                              <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                <input type="text" style={{width: '130px', marginLeft: '-25px', textAlign: 'center'}} className='input' value={items.formattedCapitalPrice || rupiah(item.capitalPrice)} onKeyDown={(e) => {if(e.key === "Enter") handleCapitalPriceChanged(e, item.id)}} onBlur={(e) => handleCapitalPriceChanged(e, item.id)} onChange={(e) => handleCapitalPriceFormattedNumberChange(e, item.id)}/>
+                              </div>
+                            </td>
                             <td>
                               <button style={{border: 'none', color: 'white', backgroundColor: 'darkgreen'}} onClick={() => handleAddStock(item.code, item.name, item.stock)} className='button is-small'>+ Stock</button>
-                              <button style={{border: 'none', color: 'white', backgroundColor: 'darkred'}} onClick={() => handleDeleteItems(item.code, item.name)} className='button ml-3 is-small'><i><CIcon icon={icon.cilTrash}/></i></button>
+                              <button disabled style={{border: 'none', color: 'white', backgroundColor: 'darkred'}} onClick={() => handleDeleteItems(item.code, item.name)} className='button ml-3 is-small'><i><CIcon icon={icon.cilTrash}/></i></button>
                             </td>
                           </tr>
                         ))

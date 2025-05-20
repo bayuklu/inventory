@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { addItem, getAllItem, getFoods, getDrinks, getBathroom, getKitchen, updateItem, deleteItem, addStock, searchItem, updateDus, updatePack } from "../controllers/Items.js";
+import { addItem, getAllItem, getFoods, getDrinks, getBathroom, getKitchen, updateItem, deleteItem, addStock, searchItem, updateDus, updatePack, updatePrice, updateCapitalPrice } from "../controllers/Items.js";
 import {getTurnCode, getRecordsByTurnCode, createRecordOrder, createFinalOrder, changePriceForSelectedItem, deleteRecordOrder} from "../controllers/orders.js"
 import {getTotalOfItemsStock, getTotalOFItemsProduct, getTodayOrders, getTodayIncomes, getLast7DaysIncomes, getBestSeller, getTodayBestSeller, getTodayOrdersData, getTodayProfit, deleteTransaction, changeSalesName, getItemListForTodayOrders, getOutletForTodayOrders, getTagihanIn7DayMore, getOutletName} from "../controllers/dashboard.js"
 import { addOutlet, deleteOutlet, getOutlet, searchOutlet, updateOutlet } from "../controllers/outlet.js";
@@ -27,6 +27,8 @@ router.get('/items/kitchen', getKitchen)
 router.post('/items/search', searchItem)
 router.put('/items/update/dus', updateDus)
 router.put('/items/update/pack', updatePack)
+router.put('/items/update/price', updatePrice)
+router.put('/items/update/capitalprice', updateCapitalPrice)
 
 router.get('/record/code', getTurnCode)
 router.get('/record/turncode/:turnCode', getRecordsByTurnCode)
