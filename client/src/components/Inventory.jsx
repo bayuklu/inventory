@@ -303,6 +303,7 @@ const Inventory = () => {
   }
 
   const handlePriceFormattedNumberChange = (e, id) => {
+    console.log(e.target.value)
     const rawValue = e.target.value.replace(/\D/g, "");
     const formattedValue = rupiah(rawValue); // Format ke dalam bentuk rupiah
 
@@ -445,6 +446,7 @@ const Inventory = () => {
       })
 
       if(response.status === 200) {
+        console.log(dataView)
         setMsg({msg: response.data.msg, color: 'green'})
         fetchItemsData(dataView)
       }
@@ -549,13 +551,28 @@ const Inventory = () => {
                             <td>{item.stock} <span style={{fontSize: '12px', color: "grey"}}>pcs</span></td>
                             <td>
                               <div style={{position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                                <input onKeyDown={(e) => {if(e.key === "Enter") handleDusChanged(e, item.id)}} onBlur={(e) => handleDusChanged(e, item.id)} onChange={(e) => handleDusFormattedNumberChange(e, item.id)} type="text" style={{paddingRight: '45px', marginLeft: '-25px',width: '100px', textAlign: 'center'}} className='input' value={item.unitTotal}/>
+                                <input 
+                                  type="text" 
+                                  onKeyDown={(e) => {if(e.key === "Enter") handleDusChanged(e, item.id)}} 
+                                  // onBlur={(e) => handleDusChanged(e, item.id)} 
+                                  onChange={(e) => handleDusFormattedNumberChange(e, item.id)}
+                                  style={{paddingRight: '45px', marginLeft: '-25px',width: '100px', textAlign: 'center'}} className='input' 
+                                  value={item.unitTotal}
+                                />
                                 <span style={{pointerEvents: 'none', position: 'absolute', left: '50%', fontSize: '12px', color: 'grey', marginLeft: '-5px', zIndex: '10'}}>pcs</span>
                               </div >
                             </td>
                             <td>
                               <div style={{position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                                  <input type="text" style={{paddingRight: '45px', marginLeft: '-25px',width: '100px', textAlign: 'center'}} className='input' value={item.unitTotalPack} onKeyDown={(e) => {if(e.key === "Enter") handlePackChanged(e, item.id)}} onBlur={(e) => handlePackChanged(e, item.id)} onChange={(e) => handlePackFormattedNumberChange(e, item.id)}/>
+                                  <input 
+                                    type="text" 
+                                    style={{paddingRight: '45px', marginLeft: '-25px',width: '100px', textAlign: 'center'}} 
+                                    className='input' 
+                                    value={item.unitTotalPack} 
+                                    onKeyDown={(e) => {if(e.key === "Enter") handlePackChanged(e, item.id)}} 
+                                    // onBlur={(e) => handlePackChanged(e, item.id)} 
+                                    onChange={(e) => handlePackFormattedNumberChange(e, item.id)}
+                                  />
                                   <span style={{pointerEvents: 'none', position: 'absolute', left: '50%', fontSize: '12px', color: 'grey', marginLeft: '-5px', zIndex: '10'}}>pcs</span>
                               </div >
                             </td>
@@ -563,13 +580,50 @@ const Inventory = () => {
                             {/* <td>{rupiah(item.price)}</td> */}
                             <td>
                               <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                                <input type="text" style={{width: '130px', marginLeft: '-25px', textAlign: 'center'}} className='input' value={items.formattedPrice || rupiah(item.price)} onKeyDown={(e) => {if(e.key === "Enter") handlePriceChanged(e, item.id)}} onBlur={(e) => handlePriceChanged(e, item.id)} onChange={(e) => handlePriceFormattedNumberChange(e, item.id)}/>
+                                <input type="text" 
+                                  style={{width: '130px', marginLeft: '-25px', textAlign: 'center'}} className='input' 
+                                  value={items.formattedPrice || rupiah(item.price)} 
+                                  onKeyDown={(e) => {if(e.key === "Enter") handlePriceChanged(e, item.id)}} 
+                                  // onBlur={(e) => {
+                                  //   const itemId = item.id
+                                  //   setItems((prevItems) =>
+                                  //     prevItems.map((item) =>
+                                  //       item.id === itemId
+                                  //         ? {
+                                  //             ...item,
+                                  //             price: previousPrice[itemId],
+                                  //             formattedCapitalPrice: rupiah(previousPrice[itemId]),
+                                  //           }
+                                  //         : item
+                                  //     )
+                                  //   );
+                                  // }} 
+                                  onChange={(e) => handlePriceFormattedNumberChange(e, item.id)}
+                                />
                               </div>
                             </td>
                             {/* <td>{rupiah(item.capitalPrice)}</td> */}
                             <td>
                               <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                                <input type="text" style={{width: '130px', marginLeft: '-25px', textAlign: 'center'}} className='input' value={items.formattedCapitalPrice || rupiah(item.capitalPrice)} onKeyDown={(e) => {if(e.key === "Enter") handleCapitalPriceChanged(e, item.id)}} onBlur={(e) => handleCapitalPriceChanged(e, item.id)} onChange={(e) => handleCapitalPriceFormattedNumberChange(e, item.id)}/>
+                                <input type="text" 
+                                style={{width: '130px', marginLeft: '-25px', textAlign: 'center'}} className='input' 
+                                value={items.formattedCapitalPrice || rupiah(item.capitalPrice)} 
+                                onKeyDown={(e) => {if(e.key === "Enter") handleCapitalPriceChanged(e, item.id)}} 
+                                // onBlur={(e) => {
+                                //   const itemId = item.id
+                                //   setItems((prevItems) =>
+                                //     prevItems.map((item) =>
+                                //       item.id === itemId
+                                //         ? {
+                                //             ...item,
+                                //             capitalPrice: previousCapitalPrice[itemId],
+                                //             formattedCapitalPrice: rupiah(previousCapitalPrice[itemId]),
+                                //           }
+                                //         : item
+                                //     )
+                                //   )
+                                // }} 
+                                onChange={(e) => handleCapitalPriceFormattedNumberChange(e, item.id)}/>
                               </div>
                             </td>
                             <td>
