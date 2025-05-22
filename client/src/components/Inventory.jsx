@@ -386,6 +386,7 @@ const Inventory = () => {
       if(response) {
         setMsg({msg: response.data.msg, color: 'green'})
         fetchItemsData(dataView, false)
+        document.activeElement.blur()
       }
     } catch (error) {
       console.error(error.message, error)
@@ -409,6 +410,7 @@ const Inventory = () => {
         console.log(dataView)
         setMsg({msg: response.data.msg, color: 'green'})
         fetchItemsData(dataView, false)
+        document.activeElement.blur()
       }
     } catch (error) {
       console.error(error.message, error)
@@ -431,6 +433,7 @@ const Inventory = () => {
       if(response.status === 200) {
         setMsg({msg: response.data.msg, color: 'green'})
         fetchItemsData(dataView, false)
+        document.activeElement.blur()
       }
     } catch (error) {
       console.error(error.message, error)
@@ -469,6 +472,7 @@ const Inventory = () => {
         console.log(dataView)
         setMsg({msg: response.data.msg, color: 'green'})
         fetchItemsData(dataView, false)
+        document.activeElement.blur()
       }
     } catch (error) {
       console.error(error.message, error)
