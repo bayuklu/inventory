@@ -3,6 +3,7 @@ import OrderRecordModel from '../model/orderRecordModel.js'
 import Items from '../model/ItemsModel.js'
 import {Op, where} from 'sequelize'
 import orderRecords from '../model/orderRecordModel.js'
+import { TODAY_START_WITA_CONVERT_UTC, TOMORROW_START_WITA_CONVERT_UTC, YESTERDAY_START_WITA_CONVERT_UTC } from '../utils/time.js'
 
 export const getTurnCode = async(req, res) => {
     const date = new Date()
@@ -174,9 +175,9 @@ export const deleteRecordOrder = async(req, res) => {
 
 
 export const createFinalOrder = async(req, res) => {
-    const {turnCode, cash, profit, outlet, sales, isBon} = req.body
+    const {turnCode, cash, profit, outlet, sales, isBon, author} = req.body
     // console.log(isBon)
-    if(!cash || !outlet || !sales) return res.status(400).json({msg: "Cash, Outlet or Sales required"})
+    if(!cash || !outlet || !sales || !author) return res.status(400).json({msg: "Cash, Outlet, Sales or Aurhor required"})
     
 try {
     const start = new Date();
@@ -285,6 +286,7 @@ try {
     }
     //mengupdate stock barang yang di order (end)
 
+    const isPrinted = author === "admin" ? false : true
     //membuat orderan (start)
     await Orders.create({
         transCode: transCode,
@@ -298,6 +300,8 @@ try {
         sales: sales,
         turnCode: turnCode,
         isBon: isBon,
+        author: author,
+        isPrinted: isPrinted
     })
     //membuat orderan (end)
 
@@ -307,6 +311,77 @@ try {
         recipt: [...recordsOrdered],
         unitTotal: unitTotal
     })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({msg: "Internal server error"})
+    }
+}
+
+export const getRequestPrintFromAdmin = async (req, res) => {
+    try {
+        const requests = await Orders.findAll({
+            where: {
+                [Op.and]: [
+                    {author: "admin"},
+                    {isPrinted: false},
+                    {
+                        createdAt: {
+                            [Op.lt]: TOMORROW_START_WITA_CONVERT_UTC,
+                            [Op.gt]: TODAY_START_WITA_CONVERT_UTC
+                        }
+                    }
+                ]
+            },
+            raw: true
+        })
+        if(requests.length < 1) return res.status(404).json({msg: "Tidak ada request dari admin"})
+
+        res.status(200).json(requests)
+        
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({msg: "Internal server error"})
+    }
+}
+
+export const getRecordOrdersFromAdminRequest = async(req, res) => {
+    const turnCode = req.params['turnCode']
+    if(!turnCode) return res.sendStatus(400)
+
+    try {
+        const recordsOrdered = await OrderRecordModel.findAll({
+            where: {
+                turnCode: turnCode
+            }
+        })
+        if(recordsOrdered.length < 1) return res.status(404).json({msg: "tidak ada order record untuk turn code ini!"})
+
+        res.status(200).json([...recordsOrdered])
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({msg: "Internal server error"})
+    }
+}
+
+export const setOrderIsPrinted = async(req, res) => {
+    const turnCode = req.params['turnCode']
+
+    try {
+        const order = await Orders.findOne({
+            where: {
+                [Op.and]: {
+                    turnCode: turnCode,
+                    author: "admin"
+                }
+            }
+        })
+        if(!order) return res.status(404).json({msg: "order not found!"})
+
+        await order.update({
+            isPrinted: true
+        })
+
+        res.status(200).json({msg: "Success"})
     } catch (error) {
         console.log(error)
         res.status(500).json({msg: "Internal server error"})

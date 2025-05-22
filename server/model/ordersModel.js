@@ -48,6 +48,14 @@ const Orders = db.define(
             type: DataTypes.BOOLEAN,
             allowNull: true
         },
+        author: {
+            type: DataTypes.ENUM("admin", "kasir"),
+            allowNull: true
+        },
+        isPrinted: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true
+        }
     }
 )
 

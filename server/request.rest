@@ -21,6 +21,9 @@ Content-Type: application/json
 }
 
 ###
+GET http://localhost:5000/orders/adminRequest
+
+###
 PUT http://localhost:5000/items/FOO6023
 Content-Type: application/json
 

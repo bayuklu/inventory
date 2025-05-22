@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import { addItem, getAllItem, getFoods, getDrinks, getBathroom, getKitchen, updateItem, deleteItem, addStock, searchItem, updateDus, updatePack, updatePrice, updateCapitalPrice } from "../controllers/Items.js";
-import {getTurnCode, getRecordsByTurnCode, createRecordOrder, createFinalOrder, changePriceForSelectedItem, deleteRecordOrder} from "../controllers/orders.js"
+import {getTurnCode, getRecordsByTurnCode, createRecordOrder, createFinalOrder, changePriceForSelectedItem, deleteRecordOrder, getRequestPrintFromAdmin, getRecordOrdersFromAdminRequest, setOrderIsPrinted} from "../controllers/orders.js"
 import {getTotalOfItemsStock, getTotalOFItemsProduct, getTodayOrders, getTodayIncomes, getLast7DaysIncomes, getBestSeller, getTodayBestSeller, getTodayOrdersData, getTodayProfit, deleteTransaction, changeSalesName, getItemListForTodayOrders, getOutletForTodayOrders, getTagihanIn7DayMore, getOutletName, lunaskanTagihan} from "../controllers/dashboard.js"
 import { addOutlet, deleteOutlet, getOutlet, searchOutlet, updateOutlet } from "../controllers/outlet.js";
 import { isUserLoggedIn, Login, Logout, Register } from '../controllers/user.js'
@@ -36,6 +36,9 @@ router.post('/record', createRecordOrder)
 router.post('/record/changePrice', changePriceForSelectedItem)
 router.delete('/record/:recordId', deleteRecordOrder)
 router.post('/orders', createFinalOrder)
+router.get('/orders/adminRequest', getRequestPrintFromAdmin)
+router.put('/orders/adminRequest/:turnCode', setOrderIsPrinted)
+router.get('/orders/adminRequest/orderRecord/:turnCode', getRecordOrdersFromAdminRequest)
 
 router.get('/dashboard/stock', getTotalOfItemsStock)
 router.get('/dashboard/items', getTotalOFItemsProduct)

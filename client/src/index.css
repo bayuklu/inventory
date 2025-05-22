@@ -75,7 +75,7 @@ body{
 }
 
 .judul {
-  width: 100%;
+  width: 50%;
   height: 160px;
   display: flex;
   align-items: center;

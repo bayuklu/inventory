@@ -10,6 +10,7 @@ export const convertToWita = (date) => {
 }
 
 export const TODAY_START_WITA_CONVERT_UTC = dayjs().tz('Asia/Makassar').startOf('day').utc().toDate()
+export const TOMORROW_START_WITA_CONVERT_UTC = dayjs().tz('Asia/Makassar').add(1, 'day').startOf('day').utc().toDate()
 export const YESTERDAY_START_WITA_CONVERT_UTC = dayjs().tz('Asia/Makassar').subtract(1, 'day').startOf('day').utc().toDate()
 
 export const SEVEN_DAYS_AGO_WITA_CONVERT_UTC = dayjs().tz('Asia/Makassar').subtract(7, 'day').startOf('day').utc().toDate()
