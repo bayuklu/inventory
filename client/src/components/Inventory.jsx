@@ -13,7 +13,7 @@ const Inventory = () => {
   const [msg, setMsg] = useState({})
   const [items, setItems] = useState([])
   const [activeButton, setActiveButton] = useState('All Category')
-  const [dataView, setDataView] = useState('')
+  const [dataView, setDataView] = useState('All Category')
   const [hideFormAddProduct, setHideFormAddProduct] = useState('hideFormAddProduct')
   const [hideFormAddStock, setHideFormAddStock] = useState('hideFormAddStock')
   
@@ -50,17 +50,19 @@ const Inventory = () => {
   }, [])  
 
   useEffect(() => {
+    // console.log(dataView)
     if (token) {
       try {
         const decoded = jwtDecode(token)
-        if (decoded.role === "admin") {
-          fetchItemsData("All Category")
+        if (decoded.role === "admin" && items.length === 0 && dataView === "All Category") {
+          // console.log("Mount")
+          fetchItemsData("All Category", true)
         }
       } catch (error) {
         console.error("Token decoding failed:", error)
       }
     }
-  }, [token])  
+  }, [token, items, dataView])
 
   const refreshToken = async () => {
     try {
@@ -161,7 +163,7 @@ const Inventory = () => {
         dataView: dataView
       })
       if(response) {
-        fetchItemsData(dataView)
+        fetchItemsData(dataView, false)
         setHideFormAddStock('hideFormAddStock')
         setStockAddStock(response.data.data)
         setMsg({msg: response.data.msg, color: 'green'})
@@ -176,7 +178,7 @@ const Inventory = () => {
     try {
       const response = await axiosJWT.delete(`${import.meta.env.VITE_BASEURL}/items/${code}`)
       if(response) {
-        fetchItemsData(dataView)
+        fetchItemsData(dataView, false)
         setMsg({msg: response.data.msg, color: 'green'})
       }
     } catch (error) {
@@ -185,12 +187,14 @@ const Inventory = () => {
     }
   }
 
-  const fetchItemsData = async(category) => {
+  const fetchItemsData = async(category, isFirstLoad) => {
+    // console.log(isFirstLoad)
+
     try {
       setDataView(category)
 
       if(category === "") {
-        return handleSearch(search)
+        return handleSearch(null, false)
       }
 
       const url = category === "All Category" ? `${import.meta.env.VITE_BASEURL}/items` : `${import.meta.env.VITE_BASEURL}/items/${category}`
@@ -198,8 +202,14 @@ const Inventory = () => {
         withCredentials: true
       })
 
+      if(isFirstLoad) {
         setItems(response.data.data)
-        setActiveButton(category)
+      }else {
+        // console.log("is Not First Load")
+        setItems((prevItems) => [...prevItems])
+      }
+      setActiveButton(category)
+
     } catch (error) {
       console.log(error)
       setMsg({msg: error.response.data.msg, color: 'red'})
@@ -238,15 +248,24 @@ const Inventory = () => {
     e.stopPropagation();
   };
 
-  const handleSearch = async(e) => {
-    e.preventDefault()
-    
+  const handleSearch = async(e, isFirstLoad) => {
+    // console.log(e, isFirstLoad)
+    if(e) {
+      e.preventDefault()
+    }
+
     try {
       const response = await axiosJWT.post(`${import.meta.env.VITE_BASEURL}/items/search`, {
         value: search
       })
+      
+      if(isFirstLoad) {
+        setItems(response.data.data)
+      }else {
+        setItems((prevItems) => [...prevItems])
+      }
+
       setDataView("")
-      setItems(response.data.data)
       setActiveButton('')
     } catch (error) {
       setItems([])
@@ -366,7 +385,7 @@ const Inventory = () => {
 
       if(response) {
         setMsg({msg: response.data.msg, color: 'green'})
-        fetchItemsData(dataView)
+        fetchItemsData(dataView, false)
       }
     } catch (error) {
       console.error(error.message, error)
@@ -387,8 +406,9 @@ const Inventory = () => {
       })
 
       if(response) {
+        console.log(dataView)
         setMsg({msg: response.data.msg, color: 'green'})
-        fetchItemsData(dataView)
+        fetchItemsData(dataView, false)
       }
     } catch (error) {
       console.error(error.message, error)
@@ -410,7 +430,7 @@ const Inventory = () => {
 
       if(response.status === 200) {
         setMsg({msg: response.data.msg, color: 'green'})
-        fetchItemsData(dataView)
+        fetchItemsData(dataView, false)
       }
     } catch (error) {
       console.error(error.message, error)
@@ -448,7 +468,7 @@ const Inventory = () => {
       if(response.status === 200) {
         console.log(dataView)
         setMsg({msg: response.data.msg, color: 'green'})
-        fetchItemsData(dataView)
+        fetchItemsData(dataView, false)
       }
     } catch (error) {
       console.error(error.message, error)
@@ -500,25 +520,25 @@ const Inventory = () => {
             <div className="inventoryMenu">
                 <ul>
                   <li>
-                    <button className={activeButton === 'All Category' ? 'is-active-btn' : ''} onClick={() => fetchItemsData('All Category')}>All Category</button>
+                    <button className={activeButton === 'All Category' ? 'is-active-btn' : ''} onClick={() => fetchItemsData('All Category', true)}>All Category</button>
                   </li>
                   <li>
-                    <button className={activeButton === 'Foods' ? 'is-active-btn' : ''} onClick={() => fetchItemsData('Foods')}>Foods</button>
+                    <button className={activeButton === 'Foods' ? 'is-active-btn' : ''} onClick={() => fetchItemsData('Foods', true)}>Foods</button>
                   </li>
                   <li>
-                    <button className={activeButton === 'Drinks' ? 'is-active-btn' : ''} onClick={() => fetchItemsData('Drinks')}>Drinks</button>
+                    <button className={activeButton === 'Drinks' ? 'is-active-btn' : ''} onClick={() => fetchItemsData('Drinks', true)}>Drinks</button>
                   </li>
                   <li>
-                    <button className={activeButton === 'Bathroom' ? 'is-active-btn' : ''} onClick={() => fetchItemsData('Bathroom')}>Bathrooms</button>
+                    <button className={activeButton === 'Bathroom' ? 'is-active-btn' : ''} onClick={() => fetchItemsData('Bathroom', true)}>Bathrooms</button>
                   </li>
                   <li>
-                    <button className={activeButton === 'Kitchen' ? 'is-active-btn' : ''} onClick={() => fetchItemsData('Kitchen')}>Kithcens</button>
+                    <button className={activeButton === 'Kitchen' ? 'is-active-btn' : ''} onClick={() => fetchItemsData('Kitchen', true)}>Kithcens</button>
                   </li>
                   <li>
                     <button onClick={handleShowFormAddProduct}>Add Product</button>
                   </li>
                   <li>
-                    <form onSubmit={handleSearch} style={{display: 'flex', alignItems: 'center', gap: '2px'}}>
+                    <form onSubmit={(e) => handleSearch(e, true)} style={{display: 'flex', alignItems: 'center', gap: '2px'}}>
                       <input placeholder='Search' type="text" className="searchItem" value={search} onChange={(e) => setSearch(e.target.value)} />
                       <button style={{width: '50px', height: '41px', border: 'none', color: 'white', display: 'flex', alignItems: 'center'}} type='submit' className='button'><i style={{lineHeight: '10px'}}><CIcon icon={icon.cilSearch}/></i></button>
                     </form>

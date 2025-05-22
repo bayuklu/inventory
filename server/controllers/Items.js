@@ -88,7 +88,8 @@ export const getAllItem = async(req, res) => {
     try {
         const get = await Items.findAll({
             attributes: ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice'],
-            limit: 100
+            limit: 100,
+            order: [['name', 'ASC']]
         })
         return res.status(200).json({data: [...get]})
     } catch (error) {
@@ -103,7 +104,8 @@ export const getFoods = async(req, res) => {
             where: {
                 category: 'foods'
             },
-            attributes: ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
+            attributes: ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice'],
+            order: [['name', 'ASC']]
         })
         return res.status(200).json({data: [...get]})
     } catch (error) {
@@ -118,7 +120,8 @@ export const getDrinks = async(req, res) => {
             where: {
                 category: 'drinks'
             },
-            attributes: ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
+            attributes: ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice'],
+            order: [['name', 'ASC']]
         })
         return res.status(200).json({data: [...get]})
     } catch (error) {
@@ -133,7 +136,8 @@ export const getBathroom = async(req, res) => {
             where: {
                 category: 'bathroom'
             },
-            attributes: ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
+            attributes: ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice'],
+            order: [['name', 'ASC']]
         })
         return res.status(200).json({data: [...get]})
     } catch (error) {
@@ -148,7 +152,8 @@ export const getKitchen = async(req, res) => {
             where: {
                 category: 'kitchen'
             },
-            attributes: ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice']
+            attributes: ['id', 'code', 'name', 'category', 'price', 'price', 'stock', 'unitTotal', 'unitTotalPack', 'discount', 'capitalPrice'],
+            order: [['name', 'ASC']]
         })
         return res.status(200).json({data: [...get]})
     } catch (error) {
@@ -247,7 +252,8 @@ export const searchItem = async(req, res) => {
                         [Op.iLike] : `%${value}%`
                     }
                 }
-            }
+            },
+            order: [['name', 'ASC']]
         })
         if(item.length < 1) return res.status(404).json({msg: "Item not found"})
         res.status(200).json({data: item})
