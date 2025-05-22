@@ -272,6 +272,28 @@ export const getTagihanIn7DayMore = async(req, res) => {
     }
 }
 
+export const lunaskanTagihan = async(req, res) => {
+    const {orderId} = req.body
+    console.log(orderId)
+    if(!orderId) return res.status(400).json({msg: "order id required!"})
+
+    try {
+        const order = await Orders.findOne({
+            where: {id: orderId}
+        })
+        if(!order) return res.status(404).json({msg: "order not found!"})
+
+        await order.update({
+            isBon: false
+        })
+
+        res.status(200).json({msg: `Tagihan berhasil dilunaskan`})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ msg: "Internal server error" });
+    }
+}
+
 export const getOutletName = async(req, res) => {
     const outletId = req.params['outletId']
     try {

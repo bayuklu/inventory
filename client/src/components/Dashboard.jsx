@@ -53,6 +53,7 @@ const Dashboard = () => {
   const [jumlahDataTagihan, setJumlahDataTagihan] = useState(0);
   const [dataTagihanIsEnd, setDataTagihanIsEnd] = useState(false);
   const [outletTagihanName, setOutletTagihanName] = useState([]);
+  const [validasiTagihanShow, setValidasiTagihanShow] = useState({});
   const navigate = useNavigate();
 
   const listTagihanRef = useRef(null);
@@ -136,7 +137,11 @@ const Dashboard = () => {
           );
           setOutletTagihanName((prev) => [
             ...prev,
-            { name: response.data.name, address: response.data.address, index: i },
+            {
+              name: response.data.name,
+              address: response.data.address,
+              index: i,
+            },
           ]);
         } catch (error) {
           console.error(error);
@@ -223,6 +228,7 @@ const Dashboard = () => {
       const response = await axiosJWT.get(
         `${import.meta.env.VITE_BASEURL}/dashboard/items`
       );
+      // console.log(response.data)
       setProduct(response.data.total_product);
     } catch (error) {
       console.log(error.response);
@@ -307,7 +313,7 @@ const Dashboard = () => {
         }/dashboard/tagihan7hari/${isMore}/${latestDateShowed}`
       );
 
-      // console.log(response.data);
+      console.log(response.data);
       setJumlahDataTagihan(response.data.manyOfTransaction);
       setDataTagihan((prevData) => [...prevData, ...response.data.transaction]);
 
@@ -369,9 +375,11 @@ const Dashboard = () => {
   };
 
   const convertTanggal = (date) => {
-    const converedTime =  dayjs.utc(date).tz(`Asia/Makassar`).format(`dddd, DD MMMM YYYY`)
-    return converedTime
-
+    const converedTime = dayjs
+      .utc(date)
+      .tz(`Asia/Makassar`)
+      .format(`dddd, DD MMMM YYYY`);
+    return converedTime;
   };
 
   const hitungSudahBerapaHari = (date) => {
@@ -382,6 +390,44 @@ const Dashboard = () => {
     const udahBerapaLama = dayjs().diff(waktuTransaksi, "day");
     return udahBerapaLama;
   };
+
+  const handleShowValidLunas = async (index) => {
+    setValidasiTagihanShow((prevValid) => {
+      if (!prevValid[index] || prevValid[index] === "none") {
+        return {
+          ...prevValid,
+          [index]: "flex",
+        };
+      }
+      return {
+        ...prevValid,
+        [index]: "none",
+      };
+    });
+
+    console.log(validasiTagihanShow);
+  };
+
+  const handleLunasinTagihan = async(orderId) => {
+    try {
+      const response = await axios.put(`${import.meta.env.VITE_BASEURL}/dashboard/tagihan7hari`, {
+        orderId: orderId
+      })
+
+      if(response) {
+        console.log("hapus")
+        setDataTagihan((prevData) => {
+          return prevData.filter((data) => data.id !== orderId)
+        })
+        setJumlahDataTagihan(jumlahDataTagihan - 1)
+      }
+
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  // console.log(dataTagihan)
 
   // CSS styling
   const myHeroStyle = {
@@ -429,7 +475,7 @@ const Dashboard = () => {
                   <CIcon icon={icon.cilNotes} />
                 </i>
                 <div
-                className="scrollable"
+                  className="scrollable"
                   style={{
                     width: "350px",
                     height: "500px",
@@ -438,8 +484,7 @@ const Dashboard = () => {
                     marginTop: "10px",
                     backgroundColor: "white",
                     borderRadius: "10px",
-                    boxShadow:
-                      "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+                    boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
                     flexDirection: "column",
                     padding: "20px",
                     scrollPadding: "20px",
@@ -450,98 +495,205 @@ const Dashboard = () => {
                   }}
                   ref={listTagihanRef}
                 >
-
                   {/* raw */}
                   {dataTagihan.map((data, idx) => {
-                    const outlet = outletTagihanName.find((otl) => otl.index === idx)
+                    const outlet = outletTagihanName.find(
+                      (otl) => otl.index === idx
+                    );
 
                     return (
-                    <div
-                      key={idx}
-                      style={{
-                        width: "100%",
-                        minHeight: "80px",
-                        maxHeight: "80px",
-                        display: "flex",
-                        borderRadius: "10px",
-                        backgroundColor: "white",
-                        cursor: "pointer",
-                        boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
-                        padding: '4px'
-                      }}
-                    >
                       <div
                         style={{
-                          width: "85%",
-                          padding: "5px",
+                          width: "100%",
+                          // minHeight: "80px",
+                          // maxHeight: "80px",
                           display: "flex",
                           flexDirection: "column",
+                          gap: "2px",
+                          boxShadow:
+                            validasiTagihanShow[idx] === "flex"
+                              ? "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
+                              : "",
+                          borderRadius: "10px",
+                          backgroundColor:
+                            validasiTagihanShow[idx] === "flex"
+                              ? "rgb(230, 243, 245)"
+                              : "white"
                         }}
                       >
                         <div
+                          key={idx}
                           style={{
                             width: "100%",
-                            height: "75%",
-                            borderBottom: "1px solid lightgrey",
-                          }}
-                        >
-                          <h1
-                              style={{
-                                color: "silver",
-                                whiteSpace: "nowrap",         // ⛔ Jangan bungkus ke baris baru
-                                overflow: "hidden",           // Sembunyikan kelebihan teks
-                                textOverflow: "ellipsis",     // Tampilkan "..." di ujung
-                                maxWidth: "100%",             // Batasi lebar maksimalnya
-                              }}
-                          >
-                            {
-                              outlet ? `${outlet.name.toUpperCase()} - ${outlet.address.toUpperCase()}` : "Loading..."
-                            }
-                          </h1>
-                          <h2 style={{ color: "salmon", fontSize: "13px" }}>
-                            {rupiah(data.totalPayment)}
-                          </h2>
-                        </div>
-                        <div
-                          style={{
-                            width: "100%",
-                            height: "25%",
+                            minHeight: "80px",
+                            maxHeight: "80px",
                             display: "flex",
+                            borderRadius: "10px",
+                            backgroundColor:
+                            validasiTagihanShow[idx] === "flex"
+                              ? "rgb(230, 243, 245)"
+                              : "white",
+                            cursor: "pointer",
+                            boxShadow:
+                              validasiTagihanShow[idx] !== "flex"
+                                ? "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
+                                : "",
+                            padding: "4px",
                           }}
+                          onClick={() => handleShowValidLunas(idx)}
                         >
-                          <p
+                          <div
                             style={{
-                              fontSize: "11px",
-                              marginTop: "2px",
-                              color: "grey",
+                              width: "85%",
+                              padding: "5px",
+                              display: "flex",
+                              flexDirection: "column",
                             }}
                           >
-                            {convertTanggal(data.createdAt)}
+                            <div
+                              style={{
+                                width: "100%",
+                                height: "75%",
+                                borderBottom: "1px solid lightgrey",
+                              }}
+                            >
+                              <h1
+                                style={{
+                                  color: "silver",
+                                  whiteSpace: "nowrap", // ⛔ Jangan bungkus ke baris baru
+                                  overflow: "hidden", // Sembunyikan kelebihan teks
+                                  textOverflow: "ellipsis", // Tampilkan "..." di ujung
+                                  maxWidth: "100%", // Batasi lebar maksimalnya
+                                }}
+                              >
+                                {outlet
+                                  ? `${outlet.name.toUpperCase()} - ${outlet.address.toUpperCase()}`
+                                  : "Loading..."}
+                              </h1>
+                              <h2 style={{ color: "salmon", fontSize: "13px" }}>
+                                {rupiah(data.totalPayment)}
+                              </h2>
+                            </div>
+                            <div
+                              style={{
+                                width: "100%",
+                                height: "25%",
+                                display: "flex",
+                              }}
+                            >
+                              <p
+                                style={{
+                                  fontSize: "11px",
+                                  marginTop: "2px",
+                                  color: "grey",
+                                }}
+                              >
+                                {convertTanggal(data.createdAt)}
+                              </p>
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              width: "15%",
+                              // backgroundColor: "red",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              flexDirection: "column",
+                            }}
+                          >
+                            <h1 style={{ color: "darkorange" }}>
+                              {hitungSudahBerapaHari(data.createdAt)}
+                              <span style={{ fontSize: "10px" }}>hr</span>
+                            </h1>
+                            <i
+                              style={{
+                                color:
+                                  validasiTagihanShow[idx] !== "flex"
+                                    ? "green"
+                                    : "red",
+                              }}
+                            >
+                              <CIcon
+                                icon={
+                                  validasiTagihanShow[idx] !== "flex"
+                                    ? icon.cilCheckAlt
+                                    : icon.cilLevelUp
+                                }
+                              />
+                            </i>
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            width: "100%",
+                            height: "70px",
+                            backgroundColor: 
+                              validasiTagihanShow[idx] === "flex"
+                                ? "rgb(230, 243, 245)"
+                                : "white",
+                            display: validasiTagihanShow[idx] || "none",
+                            padding: "10px",
+                            paddingBottom: "20px",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            flexDirection: "column",
+                            borderRadius: "10px"
+                          }}
+                        >
+                          <div
+                            style={{display: "flex", alignItems: 'center'}}
+                          >
+                          <p style={{ fontSize: "12px", color: "darkorange" }}>
+                            Lunaskan tagihan?
                           </p>
+                          <i style={{color: "darkorange", transform: "scale(0.7)"}}><CIcon icon={icon.cilWarning} /></i>
+                          </div>
+                          <div
+                            className="pemilihan-lunas"
+                            style={{
+                              padding: "5px",
+                              display: "flex",
+                              gap: "5px",
+                            }}
+                          >
+                            <button
+                              className="button"
+                              style={{
+                                fontSize: "12px",
+                                border: "none",
+                                backgroundColor: "green",
+                              }}
+                              onClick={() => handleLunasinTagihan(data.id)}
+                            >
+                              Lunaskan
+                            </button>
+                            <button
+                              className="button"
+                              style={{
+                                fontSize: "12px",
+                                border: "none",
+                                backgroundColor: "red",
+                              }}
+                              onClick={
+                                () => {
+                                  setValidasiTagihanShow((prevValid) => {
+                                    if(prevValid[idx]) {
+                                      return {
+                                        ...prevValid,
+                                        [idx]: "none"
+                                      }
+                                    }
+                                  })
+                                }
+                              }
+                            >
+                              Tidak
+                            </button>
+                          </div>
                         </div>
                       </div>
-                      <div
-                        style={{
-                          width: "15%",
-                          // backgroundColor: "red",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          flexDirection: 'column'
-                        }}
-                      >
-                        <h1 style={{ color: "darkorange" }}>
-                          {hitungSudahBerapaHari(data.createdAt)}
-                          <span style={{fontSize: '10px'}}>
-                            hr
-                          </span>
-                        </h1>
-                        <i style={{color: 'green'}}>
-                          <CIcon icon={icon.cilCheckAlt} />
-                        </i>
-                      </div>
-                    </div>
-                    )
+                    );
                   })}
                   {/* end raw */}
 
@@ -549,7 +701,7 @@ const Dashboard = () => {
                     style={{
                       cursor: !dataTagihanIsEnd ? "pointer" : "",
                       color: dataTagihanIsEnd ? "silver" : "lightgreen",
-                      fontSize: "12px"
+                      fontSize: "12px",
                     }}
                     onClick={(e) => {
                       if (dataTagihanIsEnd) return;
@@ -557,7 +709,9 @@ const Dashboard = () => {
                       getTagihan7DayMore("1");
                     }}
                   >
-                    {dataTagihanIsEnd ? "Tidak ada data untuk ditampilkan lagi" : "Muat lebih banyak"}
+                    {dataTagihanIsEnd
+                      ? "Tidak ada data untuk ditampilkan lagi"
+                      : "Muat lebih banyak"}
                   </p>
                 </div>
               </div>
