@@ -129,30 +129,32 @@ const Dashboard = () => {
 
   useEffect(() => {
     async function fetchAllOutletNames() {
+      const newOutletNames = [];
+  
       for (let i = 0; i < dataTagihan.length; i++) {
         const outletId = dataTagihan[i].outlet;
         try {
           const response = await axios.get(
             `${import.meta.env.VITE_BASEURL}/dashboard/outlet/${outletId}`
           );
-          setOutletTagihanName((prev) => [
-            ...prev,
-            {
-              name: response.data.name,
-              address: response.data.address,
-              index: i,
-            },
-          ]);
+          newOutletNames.push({
+            name: response.data.name,
+            address: response.data.address,
+            index: i,
+          });
         } catch (error) {
           console.error(error);
         }
       }
+  
+      setOutletTagihanName(newOutletNames); // ✅ hanya sekali setState
     }
-
+  
     if (dataTagihan.length > 0) {
       fetchAllOutletNames();
     }
   }, [dataTagihan]);
+  
 
   const refreshToken = async () => {
     try {
