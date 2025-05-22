@@ -22,7 +22,7 @@ const LoginPage = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        document.title = 'Login'
+        document.title = 'AB FROZEN | Login'
         checkIsLoggedIn()
     }, [])
 

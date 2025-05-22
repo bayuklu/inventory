@@ -34,6 +34,7 @@ const Orders = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
+        document.title = "AB FROZEN | Today Orders";
         refreshToken()
     }, [])
 

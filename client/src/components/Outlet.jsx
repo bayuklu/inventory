@@ -40,6 +40,7 @@ const Outlet = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
+        document.title = "AB FROZEN | Outlet";
         refreshToken()
     }, []);
 

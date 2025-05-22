@@ -81,7 +81,7 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    document.title = "Dashboard";
+    document.title = "AB FROZEN | Dashboard";
     refreshToken();
   }, []);
 

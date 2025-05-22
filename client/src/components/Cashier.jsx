@@ -27,7 +27,7 @@ const Cashier = () => {
   const [showDropdownOutlet, setShowDropdownOutlet] = useState(false); // State untuk menampilkan dropdown
   const [isStoreClicked, setIsStoreClicked] = useState(false); // State untuk tombol Store
   const [previousPrice, setPreviousPrice] = useState({});
-  const [waitOutletSearch, setWaitOutletSearch] = useState(true)
+  // const [waitOutletSearch, setWaitOutletSearch] = useState(true)
   const [sales, setSales] = useState("Ana")
   
   //jika menggunakan cash tanpa input manual (otomatis)
@@ -91,6 +91,7 @@ const Cashier = () => {
   }, [printData]);  
 
   useEffect(() => {
+    document.title = "AB FROZEN | Cashier";
     refreshToken()
   }, []);
 

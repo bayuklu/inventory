@@ -46,6 +46,7 @@ const Inventory = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
+    document.title = "AB FROZEN | Inventory";
     refreshToken()
   }, [])  
 
