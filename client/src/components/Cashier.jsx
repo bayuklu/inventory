@@ -95,16 +95,16 @@ const Cashier = () => {
   }, []);
 
   useEffect(() => {
-    if (recordCode) {
+    if (recordCode && records.length === 0) {
       getRecords();
     }
-  }, [recordCode]);
+  }, [recordCode, records]);
 
   useEffect(() => {
-    if (token) {
+    if (token && !recordCode) {
       getTurnCode()
     }
-  }, [token])
+  }, [token, recordCode])
 
   const refreshToken = async () => {
     try {
