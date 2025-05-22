@@ -995,7 +995,7 @@ const Cashier = () => {
                     padding: "10px",
                     display: "flex",
                     alignItems: "center",
-                    borderLeft: "5px solid grey",
+                    // borderLeft: "5px solid grey",
                     // border: "5px solid darkorange"
                   }}
                 >
