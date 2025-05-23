@@ -6,7 +6,7 @@ export const refreshToken = async(req, res) => {
         const {refreshToken} = req.cookies
         if(refreshToken == undefined) return res.sendStatus(401)
 
-        const user = await Users.findOne({where : {refreshToken: refreshToken}})
+        const user = await Users.findOne({where : {refreshToken: refreshToken}, attributes: ['id', 'username', 'role']})
         if(!user) return res.sendStatus(403)
 
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {

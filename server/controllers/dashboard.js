@@ -11,12 +11,12 @@ export const getTotalOfItemsStock = async(req, res) => {
         const allStock = await Items.findAll({
             attributes: ['stock']
         })
-        let stocks = []
+        let stocks = 0
         allStock.forEach(element => {
-            stocks.push(element.dataValues.stock)
+            stocks += element.dataValues.stock
         });
-        const totalStock = stocks.reduce((acc, val) => {return acc + val})
-        res.status(200).json({total_stock: totalStock})
+        // const totalStock = stocks.reduce((acc, val) => {return acc + val})
+        res.status(200).json({total_stock: stocks})
     } catch (error) {
         console.log(error)
         res.status(500).json({msg: "Internal server error"})
@@ -25,8 +25,8 @@ export const getTotalOfItemsStock = async(req, res) => {
 
 export const getTotalOFItemsProduct = async(req, res) => {
     try {
-        const allStock = await Items.findAll({})
-        res.status(200).json({total_product: allStock.length})
+        const allStock = await Items.count()
+        res.status(200).json({total_product: allStock})
     } catch (error) {
         console.log(error)
         res.status(500).json({msg: "Internal server error"})
@@ -36,14 +36,14 @@ export const getTotalOFItemsProduct = async(req, res) => {
 export const getTodayOrders = async(req, res) => {
     const NOW = new Date()
     try {
-        const todayOrders = await Orders.findAll({
+        const todayOrders = await Orders.count({
             where: {
                 createdAt: {
                     [Op.gt]: TODAY_START_WITA_CONVERT_UTC
                 }
             }
         })
-        res.status(200).json({total_today_orders: todayOrders.length})
+        res.status(200).json({total_today_orders: todayOrders})
     } catch (error) {
         console.log(error)
         res.status(500).json({msg: "Internal server error"})        
@@ -61,12 +61,11 @@ export const getTodayIncomes = async(req, res) => {
                 }
             }
         })
-        let incomes = []
+        let incomes = 0
         if(todayIncomes.length == 0) return res.status(200).json({total_today_income: '0'})
 
-        todayIncomes.forEach(e => {incomes.push(e.dataValues.totalPayment)})
-        const totalIncome = incomes.reduce((acc, val) => {return acc + val})
-        res.status(200).json({total_today_income: totalIncome})
+        todayIncomes.forEach(e => {incomes += e.dataValues.totalPayment})
+        res.status(200).json({total_today_income: incomes})
     } catch (error) {
         console.log(error)
         res.status(500).json({msg: "Internal server error"})        
@@ -84,12 +83,11 @@ export const getTodayProfit = async(req, res) => {
                 }
             }
         })
-        let profit = []
+        let profit = 0
         if(todayProfit.length == 0) return res.status(200).json({profit: '0'})
 
-        todayProfit.forEach(e => {profit.push(e.dataValues.profit)})
-        const totalProfit = profit.reduce((acc, val) => {return acc + val})
-        res.status(200).json({profit: totalProfit})
+        todayProfit.forEach(e => {profit += e.dataValues.profit})
+        res.status(200).json({profit: profit})
     } catch (error) {
         console.log(error)
         res.status(500).json({msg: "Internal server error"})        
@@ -106,7 +104,8 @@ export const getBestSeller = async(req, res) => {
                 createdAt: {
                     [Op.gt] : SEVEN_DAYS_AGO_WITA_CONVERT_UTC
                 }
-            }
+            },
+            attributes: ['items']
         })
         if(bestSellers.length <= 0) return res.status(200).json({item: "No order last week"})
         let items = [], bestSeller = []
@@ -151,7 +150,8 @@ export const getTodayBestSeller = async(req, res) => {
                 createdAt: {
                     [Op.gt] : TODAY_START_WITA_CONVERT_UTC
                 }
-            }
+            },
+            attributes: ["items"]
         })
         if(bestSellers.length <= 0) return res.status(200).json({item: "No order today"})
         let items = [], bestSeller = []
@@ -242,7 +242,8 @@ export const getTagihanIn7DayMore = async(req, res) => {
             order: [
                 ['createdAt', 'DESC'] 
             ],
-            limit: limit
+            limit: limit,
+            attributes: ['totalPayment', 'createdAt', 'outlet', 'id']
         })
 
         const manyOfTransaction = await Orders. findAll({
