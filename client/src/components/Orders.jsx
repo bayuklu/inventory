@@ -168,14 +168,7 @@ const Orders = () => {
             const convertedTime = dayjs
               .utc(order.createdAt)
               .tz(`Asia/Makassar`)
-              .format(`YYYY-MM-DD HH:mm:ss`);
-            const orderTime = dayjs(convertedTime, "YYYY-MM-DD HH:mm:ss"); // Convert string kembali ke dayjs object
-
-            // Sekarang kamu bisa mengakses getHours() dan getMinutes()
-            const hours = orderTime.get("hour"); // Mengambil jam
-            const minutes = orderTime.get("minute"); // Mengambil menit
-
-            const formattedOrderTime = `${hours}.${minutes}`; // Format waktu contoh "16.40"
+              .format(`HH:mm`);
 
             // const outlet = await Outlet.findOne({ where: { id: order.outlet } })
             const outlet = await axios.get(
@@ -188,7 +181,7 @@ const Orders = () => {
             const sales = order.sales;
             return [
               itemList,
-              formattedOrderTime,
+              convertedTime,
               name,
               order.totalPayment,
               profit,
@@ -391,6 +384,7 @@ const Orders = () => {
   };
 
   const handleHapusTransaksi = async (idTransaksi) => {
+    console.log(idTransaksi)
     if (confirm("Yakin ingin Menghapus Transaksi Ini?") === true) {
       try {
         const response = await axios.delete(
@@ -537,7 +531,7 @@ const Orders = () => {
       >
         Simpan Data Transaksi Hari Ini
       </button>
-      
+
       <div className="viewOrders">
         <div
           style={{ width: "100%", display: "flex", justifyContent: "center" }}
@@ -578,16 +572,16 @@ const Orders = () => {
                 </span>
               </p>
               <div style={{ display: "flex", gap: "5px" }}>
+                <i style={{ color: "white" }}>
+                  <CIcon icon={icon.cilClock} />
+                </i>
+                <p style={{ color: "#fff" }}>{data[1]} WITA</p>
                 <i
                   style={{ color: "red", cursor: "pointer" }}
                   onClick={() => handleHapusTransaksi(data[6])}
                 >
                   <CIcon icon={icon.cilTrash} />
                 </i>
-                <i style={{ color: "white" }}>
-                  <CIcon icon={icon.cilClock} />
-                </i>
-                <p style={{ color: "#fff" }}>{data[1]}</p>
               </div>
             </div>
             <div className="itemOrders">

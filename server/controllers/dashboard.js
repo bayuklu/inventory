@@ -339,7 +339,7 @@ export const getTodayOrdersData = async (req, res) => {
                 }
             },
             // raw: true,
-            attributes: ["items", "outlet", "sales", "profit", "totalPayment"]
+            attributes: ["items", "outlet", "sales", "profit", "totalPayment", "id", "createdAt"]
         })
 
         // console.log(TODAY_START_WITA_CONVERT_UTC)
