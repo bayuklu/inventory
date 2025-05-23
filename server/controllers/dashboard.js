@@ -275,7 +275,7 @@ export const getTagihanIn7DayMore = async(req, res) => {
 
 export const lunaskanTagihan = async(req, res) => {
     const {orderId} = req.body
-    console.log(orderId)
+    // console.log(orderId)
     if(!orderId) return res.status(400).json({msg: "order id required!"})
 
     try {
@@ -344,7 +344,7 @@ export const getTodayOrdersData = async (req, res) => {
         })
 
         // console.log(TODAY_START_WITA_CONVERT_UTC)
-        console.log(orders)
+        // console.log(orders)
         res.status(200).json({orders})
     } catch (error) {
         console.log(error)
@@ -406,7 +406,7 @@ export const deleteTransaction = async(req, res) => {
 export const changeSalesName = async(req, res) => {
     const {transactionId, salesName} = req.body
     if(!transactionId || !salesName) return res.status(400).json({msg: "All field required!"})
-    console.log(salesName)
+    // console.log(salesName)
     try {
         const transaction = await Orders.findOne({where: {id: transactionId}, attributes: ["id"]})
         if(!transaction) return res.status(404).json({msg: "Transaction order not found!"})
