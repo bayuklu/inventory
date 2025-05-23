@@ -338,7 +338,8 @@ export const getTodayOrdersData = async (req, res) => {
                     [Op.gt]: TODAY_START_WITA_CONVERT_UTC
                 }
             },
-            // raw: true
+            // raw: true,
+            attributes: ["items", "outlet", "sales", "profit", "totalPayment"]
         })
 
         // console.log(TODAY_START_WITA_CONVERT_UTC)
@@ -354,7 +355,7 @@ export const getItemListForTodayOrders = async(req, res) => {
     const code = req.params['code']
     if(!code) return res.sendStatus(400)
     try {
-        const product = await Items.findOne({ where: { code }, raw: true })
+        const product = await Items.findOne({ where: { code }, raw: true, attributes: ['name'] })
         // console.log(code)
         // console.log(product)
         if(!product) return res.status(404).json({msg: `ItemList of ${code} not found!`})
@@ -370,7 +371,7 @@ export const getOutletForTodayOrders = async(req, res) => {
     const id = req.params['id']
     if(!id) return res.sendStatus(400)
     try {
-        const otl = await Outlet.findOne({ where: { id }, raw: true })
+        const otl = await Outlet.findOne({ where: { id }, raw: true, attributes: ['name'] })
         if(!otl) return res.status(404).json({msg: `Outlet Id of ${id} not found!`})
 
         res.status(200).json(otl)
@@ -386,7 +387,8 @@ export const deleteTransaction = async(req, res) => {
 
     try {
         const transaction = await Orders.findOne({
-            where: {id: transactionId}
+            where: {id: transactionId},
+            attributes: ["id"]
         })
         if(!transaction) return res.status(404).json({msg: "Transaksi not found!"})
 
@@ -405,7 +407,7 @@ export const changeSalesName = async(req, res) => {
     if(!transactionId || !salesName) return res.status(400).json({msg: "All field required!"})
     console.log(salesName)
     try {
-        const transaction = await Orders.findOne({where: {id: transactionId}})
+        const transaction = await Orders.findOne({where: {id: transactionId}, attributes: ["id"]})
         if(!transaction) return res.status(404).json({msg: "Transaction order not found!"})
 
         await transaction.update({
