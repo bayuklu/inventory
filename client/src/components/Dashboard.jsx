@@ -130,7 +130,7 @@ const Dashboard = () => {
   useEffect(() => {
     async function fetchAllOutletNames() {
       const newOutletNames = [];
-  
+
       for (let i = 0; i < dataTagihan.length; i++) {
         const outletId = dataTagihan[i].outlet;
         try {
@@ -146,15 +146,14 @@ const Dashboard = () => {
           console.error(error);
         }
       }
-  
+
       setOutletTagihanName(newOutletNames); // ✅ hanya sekali setState
     }
-  
+
     if (dataTagihan.length > 0) {
       fetchAllOutletNames();
     }
   }, [dataTagihan]);
-  
 
   const refreshToken = async () => {
     try {
@@ -410,24 +409,26 @@ const Dashboard = () => {
     console.log(validasiTagihanShow);
   };
 
-  const handleLunasinTagihan = async(orderId) => {
+  const handleLunasinTagihan = async (orderId) => {
     try {
-      const response = await axios.put(`${import.meta.env.VITE_BASEURL}/dashboard/tagihan7hari`, {
-        orderId: orderId
-      })
+      const response = await axios.put(
+        `${import.meta.env.VITE_BASEURL}/dashboard/tagihan7hari`,
+        {
+          orderId: orderId,
+        }
+      );
 
-      if(response) {
-        console.log("hapus")
+      if (response) {
+        console.log("hapus");
         setDataTagihan((prevData) => {
-          return prevData.filter((data) => data.id !== orderId)
-        })
-        setJumlahDataTagihan(jumlahDataTagihan - 1)
+          return prevData.filter((data) => data.id !== orderId);
+        });
+        setJumlahDataTagihan(jumlahDataTagihan - 1);
       }
-
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   // console.log(dataTagihan)
 
@@ -520,7 +521,7 @@ const Dashboard = () => {
                           backgroundColor:
                             validasiTagihanShow[idx] === "flex"
                               ? "rgb(230, 243, 245)"
-                              : "white"
+                              : "white",
                         }}
                       >
                         <div
@@ -532,9 +533,9 @@ const Dashboard = () => {
                             display: "flex",
                             borderRadius: "10px",
                             backgroundColor:
-                            validasiTagihanShow[idx] === "flex"
-                              ? "rgb(230, 243, 245)"
-                              : "white",
+                              validasiTagihanShow[idx] === "flex"
+                                ? "rgb(230, 243, 245)"
+                                : "white",
                             cursor: "pointer",
                             boxShadow:
                               validasiTagihanShow[idx] !== "flex"
@@ -630,7 +631,7 @@ const Dashboard = () => {
                           style={{
                             width: "100%",
                             height: "70px",
-                            backgroundColor: 
+                            backgroundColor:
                               validasiTagihanShow[idx] === "flex"
                                 ? "rgb(230, 243, 245)"
                                 : "white",
@@ -640,16 +641,25 @@ const Dashboard = () => {
                             justifyContent: "center",
                             alignItems: "center",
                             flexDirection: "column",
-                            borderRadius: "10px"
+                            borderRadius: "10px",
                           }}
                         >
                           <div
-                            style={{display: "flex", alignItems: 'center'}}
+                            style={{ display: "flex", alignItems: "center" }}
                           >
-                          <p style={{ fontSize: "12px", color: "darkorange" }}>
-                            Lunaskan tagihan?
-                          </p>
-                          <i style={{color: "darkorange", transform: "scale(0.7)"}}><CIcon icon={icon.cilWarning} /></i>
+                            <p
+                              style={{ fontSize: "12px", color: "darkorange" }}
+                            >
+                              Lunaskan tagihan?
+                            </p>
+                            <i
+                              style={{
+                                color: "darkorange",
+                                transform: "scale(0.7)",
+                              }}
+                            >
+                              <CIcon icon={icon.cilWarning} />
+                            </i>
                           </div>
                           <div
                             className="pemilihan-lunas"
@@ -677,18 +687,16 @@ const Dashboard = () => {
                                 border: "none",
                                 backgroundColor: "red",
                               }}
-                              onClick={
-                                () => {
-                                  setValidasiTagihanShow((prevValid) => {
-                                    if(prevValid[idx]) {
-                                      return {
-                                        ...prevValid,
-                                        [idx]: "none"
-                                      }
-                                    }
-                                  })
-                                }
-                              }
+                              onClick={() => {
+                                setValidasiTagihanShow((prevValid) => {
+                                  if (prevValid[idx]) {
+                                    return {
+                                      ...prevValid,
+                                      [idx]: "none",
+                                    };
+                                  }
+                                });
+                              }}
                             >
                               Tidak
                             </button>
