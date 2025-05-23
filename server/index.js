@@ -24,9 +24,9 @@ const init = async() => {
         // return
 
         //Singkron Database
-        await db.sync({
-            alter: true
-        })
+        // await db.sync({
+        //     alter: true
+        // })
 
         
         //Maintenance Database

@@ -219,7 +219,7 @@ const Inventory = () => {
       const url =
         category === "All Category"
           ? `${import.meta.env.VITE_BASEURL}/items`
-          : `${import.meta.env.VITE_BASEURL}/items/${category}`;
+          : `${import.meta.env.VITE_BASEURL}/items/${category.toLowerCase()}`;
       let response = await axiosJWT.get(url, {
         withCredentials: true,
       });
