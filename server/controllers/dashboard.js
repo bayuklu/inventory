@@ -3,7 +3,7 @@ import OrderRecordModel from '../model/orderRecordModel.js'
 import Items from '../model/ItemsModel.js'
 import {Op, where} from 'sequelize'
 import Outlet from '../model/outletModels.js'
-import { convertToWita, SEVEN_DAYS_AGO_WITA_CONVERT_UTC, SIX_DAYS_AGO_WITA_CONVERT_UTC, TODAY_START_WITA_CONVERT_UTC } from '../utils/time.js'
+import { convertToWita, SEVEN_DAYS_AGO_WITA_CONVERT_UTC, SIX_DAYS_AGO_WITA_CONVERT_UTC, TODAY_START_WITA_CONVERT_UTC, YESTERDAY_START_WITA_CONVERT_UTC } from '../utils/time.js'
 import dayjs from 'dayjs'
 
 export const getTotalOfItemsStock = async(req, res) => {
@@ -328,7 +328,6 @@ export const getOutletName = async(req, res) => {
 //==============================================================================================================
 
 export const getTodayOrdersData = async (req, res) => {
-    const NOW = new Date()
     try {
         const orders = await Orders.findAll({
             order: [
@@ -336,7 +335,7 @@ export const getTodayOrdersData = async (req, res) => {
             ],
             where: {
                 createdAt: {
-                    [Op.gt]: TODAY_START_WITA_CONVERT_UTC
+                    [Op.gt]: YESTERDAY_START_WITA_CONVERT_UTC
                 }
             },
             // raw: true,
