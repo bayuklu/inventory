@@ -156,3 +156,15 @@ DELETE http://localhost:5000/outlet/3
 ###
 
 GET http://localhost:5000/dashboard/orders
+
+###
+
+PUT http://localhost:5000/record/quantity
+Content-Type: application/json
+
+{
+    "isLeft": true,
+    "id": 52,
+    "turnCode": "2552025113825",
+    "isUnitChecked": "1-24-12"
+}

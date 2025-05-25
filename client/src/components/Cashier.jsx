@@ -60,7 +60,7 @@ const Cashier = () => {
     transCode: null,
     from: null, //ini digunakan untuk validasi saat membuat receipt
     isBonFromAdmin: null,
-    outletName: null
+    outletName: null,
   });
 
   const [requestPrintDataFromAdmin, setRequestPrintDataFromAdmin] = useState(
@@ -418,6 +418,24 @@ const Cashier = () => {
       setMsg({ msg: error.response.data.msg, color: "red" });
     }
   };
+
+  const handleQuantityArrowOnClick = async(isLeft, recordId) => {
+    // isLeft = BOOLEAN
+    try {
+      const response = await axios.put(`${import.meta.env.VITE_BASEURL}/record/quantity`, {
+        isLeft: isLeft,
+        id: recordId,
+        turnCode: recordCode
+      })
+
+     if(response) {
+       getRecords()
+     }
+    } catch (error) {
+      console.error(error.response)
+    }
+  }
+
   const storeOrders = async (e) => {
     e.preventDefault();
 
@@ -1278,19 +1296,52 @@ const Cashier = () => {
                           }
                         />
                       </td>
-                      <td>
-                        x{" "}
-                        {record.isUnitChecked !== "0"
-                          ? record.isUnitChecked.split("-")[0] === "1"
-                            ? `${
-                                record.isUnitChecked.split("-")[1] /
-                                record.isUnitChecked.split("-")[2]
-                              } dus`
-                            : `${
-                                record.isUnitChecked.split("-")[1] /
-                                record.isUnitChecked.split("-")[2]
-                              } pack`
-                          : `${record.quantity} pcs`}
+                      <td
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        {/* tombol kiri kanan */}
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <button onClick={() => handleQuantityArrowOnClick(true, record.id)} className="button">&lt;</button>
+                        </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            width: "80px",
+                            justifyContent: "space-between",
+                            padding: "0px 15px",
+                            textAlign: "center"
+                          }}
+                        >
+                          {/* pola isUnitChecked = ["0" = pcs], ["1-12-12" = dus], ["2-12-12" = pack] */}
+                          {record.isUnitChecked !== "0" ? (
+                            record.isUnitChecked.split("-")[0] === "1" ? (
+                              <>
+                                <p>
+                                  {record.isUnitChecked.split("-")[1] /
+                                    record.isUnitChecked.split("-")[2]}
+                                </p>
+                                <p>{" "}DUS</p>
+                              </>
+                            ) : (
+                              <>
+                                <p>
+                                  {record.isUnitChecked.split("-")[1] /
+                                    record.isUnitChecked.split("-")[2]}
+                                </p>
+                                <p>{" "}PCK</p>
+                              </>
+                            )
+                          ) : (
+                            <p>{record.quantity} PCS</p>
+                          )}
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <button onClick={() => handleQuantityArrowOnClick(false, record.id)} className="button">&gt;</button>
+                        </div>
                       </td>
                       <td>
                         {rupiah(record.finalPrice)}{" "}

@@ -27,6 +27,7 @@ export const getRecordsByTurnCode = async(req, res) => {
                 turnCode: turnCode
             }
         })
+        // console.log(records)
         res.status(200).json({data: [...records]})
     } catch (error) {
         console.log(error)
@@ -173,6 +174,108 @@ export const deleteRecordOrder = async(req, res) => {
     }
 }
 
+export const changeQuantityRecord = async(req, res) => {
+    const payloads = (({ isLeft, id, turnCode}) => {
+        return { isLeft, id, turnCode}
+      })(req.body)      
+
+    for(const body in payloads) {
+        if(payloads[body] === "") {
+            return res.status(400).json({msg: `Nilai '${body}' dibutuhkan!`})
+            break
+        }else if(payloads[body] == undefined) {
+            return res.status(400).json({msg: `Parameter '${body}' belum dikirim!`})
+            break
+        }
+    }
+
+    try {
+        const orderRecord = await orderRecords.findOne({
+            where: {
+                [Op.and]: [
+                    {id: payloads.id},
+                    {turnCode: payloads.turnCode}
+                ]
+            },
+            attributes: ['id', 'itemCode', 'itemName', 'price', 'quantity', 'discount', 'finalPrice', 'isUnitChecked', 'profit', 'capitalPrice'],
+        })
+        if(!orderRecord){
+            return res.status(404).json({msg: "Record not found!"})
+        }
+
+        // console.log(orderRecord.dataValues)
+        
+        const oldIsUnitChecked = orderRecord.dataValues.isUnitChecked.split("-")
+
+        if
+        (
+            ((Number(oldIsUnitChecked[1]) - Number(oldIsUnitChecked[2]) === 0 && payloads.isLeft))
+            ||
+            ((orderRecord.dataValues.quantity - 1 === 0 && payloads.isLeft))
+        )
+        {
+            return res.status(400).json({msg: "TIdak dapat mengunrangi lagi!"})
+        }
+
+        function convertUnit(oldIsUnCk, isLeft) {
+            const type = oldIsUnCk[0]
+            const qty = Number(oldIsUnCk[1])
+            const valOfUnit = Number(oldIsUnCk[2])
+
+            if (type === "0") {
+                return "0"
+            }else if (type === "1") { 
+                return `1-${isLeft ? qty - valOfUnit : qty + valOfUnit}-${valOfUnit}`
+            }else if (type === "2") {
+                return `2-${isLeft ? qty - valOfUnit : qty + valOfUnit}-${valOfUnit}`
+            }
+        }
+
+        const newIsUnitChekced = convertUnit(oldIsUnitChecked, payloads.isLeft)
+        const cPriceBef = orderRecord.dataValues.capitalPrice
+        const priceBef = orderRecord.dataValues.price
+        const quantityBef = orderRecord.dataValues.quantity
+        const finPriceBef = orderRecord.dataValues.finalPrice
+        const profitBef = orderRecord.dataValues.profit
+
+        let newQuantity, newFinalPrice, newProfit
+
+        if(newIsUnitChekced === "0") {
+            if(payloads.isLeft) {
+                newQuantity = quantityBef - 1
+                newFinalPrice = finPriceBef - priceBef
+                newProfit = profitBef - (priceBef - cPriceBef)
+            }else {
+                newQuantity =  quantityBef + 1
+                newFinalPrice = finPriceBef + priceBef
+                newProfit = profitBef + (priceBef - cPriceBef)
+            }
+        }else {
+            newQuantity = Number(newIsUnitChekced.split("-")[1])
+
+            if(payloads.isLeft) {
+                newFinalPrice = finPriceBef - (Number(oldIsUnitChecked[2]) * priceBef)
+                newProfit = profitBef - ((priceBef - cPriceBef) * newQuantity)
+                newProfit = profitBef - (Number(oldIsUnitChecked[2]) * (priceBef - cPriceBef))
+            }else {
+                newFinalPrice = finPriceBef + (Number(oldIsUnitChecked[2]) * priceBef)
+                newProfit = profitBef + (Number(oldIsUnitChecked[2]) * (priceBef - cPriceBef))
+            }
+        }
+
+        await orderRecord.update({
+            isUnitChecked: newIsUnitChekced || orderRecord.dataValues.isUnitChecked,
+            quantity: newQuantity || orderRecord.dataValues.quantity,
+            finalPrice: newFinalPrice || orderRecord.dataValues.finalPrice,
+            profit: newProfit || orderRecord.dataValues.profit
+          });
+
+        res.status(201).json({msg: "Update in Cashier Qty Successfully", data: orderRecord.dataValues})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({msg: "Internal server error"})
+    }
+}
 
 export const createFinalOrder = async(req, res) => {
     const {turnCode, cash, profit, outlet, sales, isBon, author} = req.body
