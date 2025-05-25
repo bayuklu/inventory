@@ -982,9 +982,11 @@ const Cashier = () => {
     backgroundColor: "black",
     width: "580px",
     maxHeight: "200px",
+    minHeight: "200px",
     overflow: "scroll",
     padding: "10px 0px 10px 0px",
-    marginTop: "40px",
+    top: "-200px"
+    // marginTop: "40px",
   };
 
   // console.log(records);
@@ -1026,7 +1028,7 @@ const Cashier = () => {
             <div style={{width: "100%", display: "flex", flexDirection: "column"}}>
               <div style={{ width: "100%", display: "flex", gap: "10px" }}>
                 <div className="judul">
-                  <h1>kasir {userRole === "admin" ? userRole : ""}</h1>
+                  <h1>Kasir {userRole === "admin" ? userRole : ""}</h1>
                 </div>
                 {userRole === "kasir" && (
                   <div
@@ -1260,36 +1262,40 @@ const Cashier = () => {
                     />
                   </div>
                   <button style={{...addButtonStyle, backgroundColor: "darkgoldenrod"}} className="button is-success">
-                    <i style={{color: "unset"}}><CIcon icon={icon.cilDataTransferDown}/></i>
+                    <i style={{color: "unset"}}><CIcon icon={icon.cilChevronDoubleDown}/></i>
                   </button>
                 </form>
               </div>
             </div>
             <div style={{flex: "1", overflow: "auto", display: "flex", paddingLeft: "20px"}}>
-              <div className="orderView">
+              <div className="orderView" style={{backgroundColor: records.length % 2 !== 0 ? "hsl(221, 14%, 9%)" : "black"}}>
                     <table style={tableStyle} className="table">
                       <thead>
                         <tr>
-                          <th style={{width: "0%"}}>No</th>
-                          <th style={{width: "0%"}}>Kode Barang</th>
-                          <th style={{width: "40%"}}>Nama Barang</th>
-                          <th style={{width: "15%"}}>Harga Modal{" (pcs)"}</th>
-                          <th style={{width: "15%"}} >Harga Jual{" (pcs)"}</th>
-                          <th style={{width: "10%"}}>Jumlah</th>
-                          <th style={{width: "10%"}}>Total</th>
-                          <th style={{width: "10%"}}>Profit</th>
-                          <th style={{width: "0%"}}><i style={{color: "thistle"}}><CIcon icon={icon.cilBurn}></CIcon></i></th>
+                          <th style={{width: "0%", color: "unset"}}>
+                            <i>
+                              <CIcon icon={icon.cilSortAscending}/>
+                            </i>
+                          </th>
+                          <th style={{color: "unset", width: "0%"}}>Kode</th>
+                          <th style={{color: "unset", width: "40%"}}>Nama Barang</th>
+                          <th style={{color: "unset", width: "15%"}}>Harga Modal{" (pcs)"}</th>
+                          <th style={{color: "unset", width: "15%"}} >Harga Jual{" (pcs)"}</th>
+                          <th style={{color: "unset", width: "10%"}}>Jumlah</th>
+                          <th style={{color: "unset", width: "10%"}}>Profit</th>
+                          <th style={{color: "unset", width: "10%"}}>Total</th>
+                          <th style={{color: "unset", width: "0%"}}><i style={{color: "unset"}}><CIcon icon={icon.cilControl}></CIcon></i></th>
                         </tr>
                       </thead>
                       <tbody>
                         {records.map((record, index) => (
-                          <tr key={index} style={{backgroundColor: index % 2 === 0 ? "rgb(0,0,1" : ""}}>
-                            <th style={{verticalAlign: "middle", color:  "steelblue"}}>{index + 1}</th>
-                            <td style={{verticalAlign: "middle"}}>{record.itemCode}</td>
-                            <td style={{nameTableStyle, verticalAlign: "middle"}}>
+                          <tr key={index} style={{backgroundColor: index % 2 === 0 ? "black" : "unset"}}>
+                            <th style={{verticalAlign: "middle", color: "unset"}}>{index + 1}</th>
+                            <td style={{verticalAlign: "middle", color: "GrayText"}}>{record.itemCode}</td>
+                            <td style={{nameTableStyle, verticalAlign: "middle", color: "unset"}}>
                               {record.itemName.toUpperCase()}
                             </td>
-                            <td style={{verticalAlign: "middle"}}>{rupiah(record.capitalPrice)}</td>
+                            <td style={{verticalAlign: "middle", color: "GrayText"}}>{rupiah(record.capitalPrice)}</td>
                             <td style={{verticalAlign: "middle"}}>
                               <input
                                 className="input"
@@ -1306,56 +1312,62 @@ const Cashier = () => {
                             </td>
                             <td
                               style={{
-                                display: "flex",
-                                alignItems: "center",
+                                verticalAlign: "middle"
                               }}
                             >
-                              {/* tombol kiri kanan */}
-                              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px" }}>
-                                <button style={{position: "relative"}} onClick={() => handleQuantityArrowOnClick(true, record.id)} className="button">&minus;<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
-                                <button onClick={() => {}} className="button">&lt;</button>
-                              </div>
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  width: "80px",
-                                  justifyContent: "space-between",
-                                  padding: "0px 15px",
-                                  textAlign: "center"
-                                }}
-                              >
-                                {/* pola isUnitChecked = ["0" = pcs], ["1-12-12" = dus], ["2-12-12" = pack] */}
-                                {record.isUnitChecked !== "0" ? (
-                                  record.isUnitChecked.split("-")[0] === "1" ? (
-                                    <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
-                                      <p>
-                                        {record.isUnitChecked.split("-")[1] /
-                                          record.isUnitChecked.split("-")[2]}
-                                      </p>
-                                      <p style={{color: "darkorange"}}>DUS</p>
-                                    </div>
-                                  ) : (
-                                    <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
-                                      <p>
-                                        {record.isUnitChecked.split("-")[1] /
-                                          record.isUnitChecked.split("-")[2]}
-                                      </p>
-                                      <p style={{color: "darkorange"}}>PCK</p>
-                                    </div>
-                                  )
-                                ) : (
-                                <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
-                                  <p>{record.quantity}</p>
-                                  <p style={{color: "darkorange"}}>PCS</p>
+                              <div style={{
+                                display: "flex",
+                                alignItems: "center",
+                                paddingTop: "5px"
+                              }}>
+                                {/* tombol kiri kanan */}
+                                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px" }}>
+                                  <button style={{position: "relative"}} onClick={() => handleQuantityArrowOnClick(true, record.id)} className="button">&minus;<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
+                                  <button onClick={() => {}} className="button">&lt;</button>
                                 </div>
-                                )}
-                              </div>
-                              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px" }}>
-                                <button style={{position: "relative"}} onClick={() => handleQuantityArrowOnClick(false, record.id)} className="button">+<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
-                                <button onClick={() => {}} className="button">&gt;</button>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    width: "80px",
+                                    // justifyContent: "space-between",
+                                    // padding: "0px 15px",
+                                    textAlign: "center"
+                                  }}
+                                >
+                                  {/* pola isUnitChecked = ["0" = pcs], ["1-12-12" = dus], ["2-12-12" = pack] */}
+                                  {record.isUnitChecked !== "0" ? (
+                                    record.isUnitChecked.split("-")[0] === "1" ? (
+                                      <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
+                                        <p>
+                                          {record.isUnitChecked.split("-")[1] /
+                                            record.isUnitChecked.split("-")[2]}
+                                        </p>
+                                        <p style={{color: "darkorange"}}>DUS</p>
+                                      </div>
+                                    ) : (
+                                      <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
+                                        <p>
+                                          {record.isUnitChecked.split("-")[1] /
+                                            record.isUnitChecked.split("-")[2]}
+                                        </p>
+                                        <p style={{color: "darkorange"}}>PCK</p>
+                                      </div>
+                                    )
+                                  ) : (
+                                  <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
+                                    <p>{record.quantity}</p>
+                                    <p style={{color: "darkorange"}}>PCS</p>
+                                  </div>
+                                  )}
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "5px" }}>
+                                  <button style={{position: "relative"}} onClick={() => handleQuantityArrowOnClick(false, record.id)} className="button">+<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
+                                  <button onClick={() => {}} className="button">&gt;</button>
+                                </div>
                               </div>
                             </td>
+                            <td style={{verticalAlign: "middle", color: "GrayText"}}>{rupiah(record.profit)}</td>
                             <td style={{verticalAlign: "middle"}}>
                               {rupiah(record.finalPrice)}{" "}
                               <span style={{ color: "red" }}>
@@ -1364,7 +1376,6 @@ const Cashier = () => {
                                   : ""}
                               </span>
                             </td>
-                            <td style={{verticalAlign: "middle"}}>{rupiah(record.profit)}</td>
                             <td style={{verticalAlign: "middle"}}>
                               <button
                                 style={{verticalAlign: "middle", backgroundColor: "rgb(200, 10, 50)"}}
@@ -1431,6 +1442,7 @@ const Cashier = () => {
                       gap: "10px",
                       width: "100%",
                       marginLeft: "2px",
+                      position: "relative"
                     }}
                   >
                     <input
@@ -1441,6 +1453,19 @@ const Cashier = () => {
                       onChange={handleOutletChange}
                       style={{backgroundColor: "hsl(221, 14%, 9%)"}}
                     />
+                    {showDropdownOutlet && (
+                      <ul className="dropdown" style={dropdownStyleOutlet}>
+                        {outletList.map((outlet) => (
+                          <li
+                            style={{ cursor: "pointer", color: "white" }}
+                            key={outlet.id}
+                            onClick={() => handleSelectOutlet(outlet)}
+                          >
+                            {outlet.name.toUpperCase()}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                     {/* <input
                           type="text"
                           className="input"
@@ -1465,30 +1490,56 @@ const Cashier = () => {
                       <option value="Dian">Dian</option>
                       <option value="Eyung">Eyung</option>
                     </select>
-                    {showDropdownOutlet && (
-                      <ul className="dropdown" style={dropdownStyleOutlet}>
-                        {outletList.map((outlet) => (
-                          <li
-                            style={{ cursor: "pointer", color: "white" }}
-                            key={outlet.id}
-                            onClick={() => handleSelectOutlet(outlet)}
-                          >
-                            {outlet.name.toUpperCase()}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
                   </div>
-                  <button
-                    style={addButtonStyle}
-                    className="button is-success"
-                    disabled={isStoreClicked}
-                    type="submit"
-                  >
-                    {userRole === "admin" ? "Kirim Ke Kasir" : "Buat Order"}
-                  </button>
+                  {
+                    isStoreClicked
+                    ? 
+                      (
+                        <div style={{display: "flex", alignItems: "center", justifyContent: "center", width: "300px"}}>
+                          <button
+                            style={{...addButtonStyle, backgroundColor: "rgb(200, 10, 50)"}}
+                            className="button is-success"
+                            disabled={!isStoreClicked}
+                            onClick={() =>
+                              createRecipt(
+                                printData.datas,
+                                printData.transCode,
+                                printData.from,
+                                printData.isBonFromAdmin,
+                                printData.outletName
+                              )
+                            }
+                          >
+                            <i style={{display: "flex", alignItems: "center"}}>
+                              <CIcon icon={icon.cilPrint}/>
+                            </i>
+                          </button>
+                          <button
+                            style={{...addButtonStyle, backgroundColor: "green"}}
+                            className="button is-success"
+                            disabled={!isStoreClicked}
+                            onClick={handleRefresh}
+                          >
+                            <i style={{display: "flex", alignItems: "center"}}>
+                              <CIcon icon={icon.cilReload}/>
+                            </i>
+                          </button>
+                        </div>
+                      )
+                      :
+                      (
+                        <button
+                          style={addButtonStyle}
+                          className="button is-success"
+                          disabled={isStoreClicked}
+                          type="submit"
+                        >
+                          {userRole === "admin" ? "Kirim Ke Kasir" : "Buat Order"}
+                        </button>
+                      )
+                  }
                 </form>
-                {isStoreClicked && (
+                {/* {isStoreClicked && (
                   <div
                     style={{
                       display: "flex",
@@ -1534,7 +1585,7 @@ const Cashier = () => {
                       Print Ulang
                     </button>
                   </div>
-                )}
+                )} */}
                 {/* <div style={returnAndDiscountStyle} className="is-flex mt-5">
                   <h1 style={totalKembalian}>
                     Kembali <br />
