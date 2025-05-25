@@ -939,6 +939,7 @@ const Cashier = () => {
   };
   const tableStyle = {
     width: "100%",
+    border: "11px solid transparent",
   };
   const nameTableStyle = {
     width: "400px",
@@ -1022,522 +1023,528 @@ const Cashier = () => {
       ) : (
         <>
           <div className="myCashierContainer">
-            <div style={{ width: "100%", display: "flex", gap: "10px" }}>
-              <div className="judul">
-                <h1>kasir {userRole === "admin" ? userRole : ""}</h1>
+            <div style={{width: "100%", display: "flex", flexDirection: "column"}}>
+              <div style={{ width: "100%", display: "flex", gap: "10px" }}>
+                <div className="judul">
+                  <h1>kasir {userRole === "admin" ? userRole : ""}</h1>
+                </div>
+                {userRole === "kasir" && (
+                  <div
+                    style={{
+                      width: "60%",
+                      height: "160px",
+                      // backgroundColor: "black",
+                      padding: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      // borderLeft: "5px solid grey",
+                      // border: "5px solid darkorange"
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        // gap: "15px",
+                        overflowY: "scroll",
+                        width: "100%",
+                        height: "130px",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div style={{ display: "flex", gap: "20px" }}>
+                        <p style={{ color: "black" }}>
+                          PERMINTAAN PRINT DARI ADMIN
+                        </p>
+                        {refreshLoadingAdminRequest ? (
+                          <>
+                            <p>Loading...</p>
+                          </>
+                        ) : (
+                          <>
+                            <i
+                              style={{ cursor: "pointer", color: "green" }}
+                              onClick={() => getRequestPrintFromAdmin(true)}
+                            >
+                              <CIcon
+                                style={{ transform: "scale(0.8)" }}
+                                icon={icon.cilReload}
+                              />
+                            </i>
+                          </>
+                        )}
+                      </div>
+                      <ul
+                        style={{
+                          width: "100%",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "5px",
+                        }}
+                      >
+                        {requestPrintDataFromAdmin.map((data, index) => {
+                          const outlet = outletSearching.find(
+                            (otl) => otl.index === index
+                          );
+
+                          return (
+                            <li
+                              key={index}
+                              style={{
+                                backgroundColor: "lightgreen",
+                                padding: "5px",
+                                display: "flex",
+                                gap: "5px",
+                                alignItems: "center",
+                                width: "100%",
+                                borderRadius: "10px",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  width: "80%",
+                                }}
+                              >
+                                <i
+                                  style={{
+                                    color: "green",
+                                    display: "flex",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <CIcon icon={icon.cilBellExclamation} />
+                                </i>
+                                <p style={{ color: "white" }}>
+                                  {convertTanggal(data.createdAt)} |{" "}
+                                  {outlet
+                                    ? `${outlet.name.toUpperCase()}`
+                                    : "Loading..."}{" "}
+                                  ~{" "}
+                                  <span style={{ color: "green" }}>
+                                    {"["}
+                                    {rupiah(data.totalPayment)}
+                                    {"]"}
+                                  </span>
+                                </p>
+                              </div>
+
+                              <button
+                                className="button"
+                                style={{
+                                  width: "15%",
+                                  backgroundColor: "green",
+                                  border: "none",
+                                }}
+                                onClick={() => handlePrintFromAdmin(data, outlet)}
+                              >
+                                Print
+                              </button>
+                              <button
+                                className="button"
+                                style={{
+                                  width: "5%",
+                                  backgroundColor: "transparent",
+                                  border: "none",
+                                  color: "green",
+                                }}
+                                onClick={async () => {
+                                  try {
+                                    const response = await axios.put(
+                                      `${
+                                        import.meta.env.VITE_BASEURL
+                                      }/orders/adminRequest/${data.turnCode}`
+                                    );
+                                    if (response)
+                                      getRequestPrintFromAdmin(false, data.id);
+                                  } catch (error) {
+                                    console.error(error);
+                                  }
+                                }}
+                              >
+                                &times;
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  </div>
+                )}
               </div>
-              {userRole === "kasir" && (
-                <div
-                  style={{
-                    width: "60%",
-                    height: "160px",
-                    // backgroundColor: "black",
-                    padding: "10px",
-                    display: "flex",
-                    alignItems: "center",
-                    // borderLeft: "5px solid grey",
-                    // border: "5px solid darkorange"
-                  }}
-                >
+              <div className="formContainer" style={{position: "relative"}}>
+                <form onSubmit={record} className="is-flex codeForm">
                   <div
                     style={{
                       display: "flex",
                       flexDirection: "column",
-                      // gap: "15px",
-                      overflowY: "scroll",
                       width: "100%",
-                      height: "130px",
-                      alignItems: "center",
                     }}
                   >
-                    <div style={{ display: "flex", gap: "20px" }}>
-                      <p style={{ color: "black" }}>
-                        PERMINTAAN PRINT DARI ADMIN
-                      </p>
-                      {refreshLoadingAdminRequest ? (
-                        <>
-                          <p>Loading...</p>
-                        </>
-                      ) : (
-                        <>
-                          <i
-                            style={{ cursor: "pointer", color: "green" }}
-                            onClick={() => getRequestPrintFromAdmin(true)}
-                          >
-                            <CIcon
-                              style={{ transform: "scale(0.8)" }}
-                              icon={icon.cilReload}
-                            />
-                          </i>
-                        </>
-                      )}
-                    </div>
-                    <ul
-                      style={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "5px",
-                      }}
-                    >
-                      {requestPrintDataFromAdmin.map((data, index) => {
-                        const outlet = outletSearching.find(
-                          (otl) => otl.index === index
-                        );
-
-                        return (
+                    <input
+                      type="text"
+                      className="input"
+                      placeholder="Cari Barang dengan memasukkan 'kode' Barang atau 'nama' Barang"
+                      value={productName}
+                      onChange={handleProductCodeChange}
+                      style={{backgroundColor: "hsl(221, 14%, 9%)"}}
+                    />
+                    {showDropdownProductCode && (
+                      <ul className="dropdown" style={dropdownStyle}>
+                        {productList.map((product) => (
                           <li
-                            key={index}
-                            style={{
-                              backgroundColor: "lightgreen",
-                              padding: "5px",
-                              display: "flex",
-                              gap: "5px",
-                              alignItems: "center",
-                              width: "100%",
-                              borderRadius: "10px",
-                            }}
+                            style={{ cursor: "pointer", color: "green" }}
+                            key={product.code}
+                            onClick={() => handleSelectProduct(product)}
                           >
-                            <div
+                            [{product.code}]{" "}
+                            <span style={{ color: "white" }}>
+                              {product.name.toUpperCase()} ~ (
+                              {rupiah(product.price)})
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  <input
+                    style={{...quantityStyle, backgroundColor: "hsl(221, 14%, 9%)"}}
+                    type="number"
+                    className="input"
+                    placeholder="Jumlah"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "5px",
+                      marginRight: "10px",
+                      padding: "10px",
+                    }}
+                  >
+                    <h1 style={{ color: "black", fontWeight: "bold" }}>Dus</h1>
+                    <input
+                      type="checkbox"
+                      checked={isUnitChecked}
+                      onChange={(e) => {
+                        setIsUnitChecked(e.target.checked);
+                        if (e.target.checked) {
+                          setIsPackChecked(false);
+                        }
+                      }}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "5px",
+                      marginRight: "10px",
+                      padding: "10px",
+                    }}
+                  >
+                    <h1 style={{ color: "black", fontWeight: "bold" }}>Pack</h1>
+                    <input
+                      type="checkbox"
+                      checked={isPackChecked}
+                      onChange={(e) => {
+                        setIsPackChecked(e.target.checked);
+                        if (e.target.checked) {
+                          setIsUnitChecked(false);
+                        }
+                      }}
+                    />
+                  </div>
+                  <button style={{...addButtonStyle, backgroundColor: "darkgoldenrod"}} className="button is-success">
+                    <i style={{color: "unset"}}><CIcon icon={icon.cilDataTransferDown}/></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+            <div style={{flex: "1", overflow: "auto", display: "flex", paddingLeft: "20px"}}>
+              <div className="orderView">
+                    <table style={tableStyle} className="table">
+                      <thead>
+                        <tr>
+                          <th style={{width: "0%"}}>No</th>
+                          <th style={{width: "0%"}}>Kode Barang</th>
+                          <th style={{width: "40%"}}>Nama Barang</th>
+                          <th style={{width: "15%"}}>Harga Modal{" (pcs)"}</th>
+                          <th style={{width: "15%"}} >Harga Jual{" (pcs)"}</th>
+                          <th style={{width: "10%"}}>Jumlah</th>
+                          <th style={{width: "10%"}}>Total</th>
+                          <th style={{width: "10%"}}>Profit</th>
+                          <th style={{width: "0%"}}><i style={{color: "thistle"}}><CIcon icon={icon.cilBurn}></CIcon></i></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {records.map((record, index) => (
+                          <tr key={index} style={{backgroundColor: index % 2 === 0 ? "rgb(0,0,1" : ""}}>
+                            <th style={{verticalAlign: "middle", color:  "steelblue"}}>{index + 1}</th>
+                            <td style={{verticalAlign: "middle"}}>{record.itemCode}</td>
+                            <td style={{nameTableStyle, verticalAlign: "middle"}}>
+                              {record.itemName.toUpperCase()}
+                            </td>
+                            <td style={{verticalAlign: "middle"}}>{rupiah(record.capitalPrice)}</td>
+                            <td style={{verticalAlign: "middle"}}>
+                              <input
+                                className="input"
+                                style={{ padding: "0px 5px",}}
+                                type="text"
+                                value={record.formattedPrice || rupiah(record.price)}
+                                onChange={(e) =>
+                                  handleFormattedPriceChange(e, record.id)
+                                }
+                                onBlur={(e) =>
+                                  handlePriceOnChange(e, record.id, record.itemCode)
+                                }
+                              />
+                            </td>
+                            <td
                               style={{
                                 display: "flex",
-                                width: "80%",
+                                alignItems: "center",
                               }}
                             >
-                              <i
+                              {/* tombol kiri kanan */}
+                              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px" }}>
+                                <button style={{position: "relative"}} onClick={() => handleQuantityArrowOnClick(true, record.id)} className="button">&minus;<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
+                                <button onClick={() => {}} className="button">&lt;</button>
+                              </div>
+                              <div
                                 style={{
-                                  color: "green",
                                   display: "flex",
                                   alignItems: "center",
+                                  width: "80px",
+                                  justifyContent: "space-between",
+                                  padding: "0px 15px",
+                                  textAlign: "center"
                                 }}
                               >
-                                <CIcon icon={icon.cilBellExclamation} />
-                              </i>
-                              <p style={{ color: "white" }}>
-                                {convertTanggal(data.createdAt)} |{" "}
-                                {outlet
-                                  ? `${outlet.name.toUpperCase()}`
-                                  : "Loading..."}{" "}
-                                ~{" "}
-                                <span style={{ color: "green" }}>
-                                  {"["}
-                                  {rupiah(data.totalPayment)}
-                                  {"]"}
-                                </span>
-                              </p>
-                            </div>
-
-                            <button
-                              className="button"
-                              style={{
-                                width: "15%",
-                                backgroundColor: "green",
-                                border: "none",
-                              }}
-                              onClick={() => handlePrintFromAdmin(data, outlet)}
-                            >
-                              Print
-                            </button>
-                            <button
-                              className="button"
-                              style={{
-                                width: "5%",
-                                backgroundColor: "transparent",
-                                border: "none",
-                                color: "green",
-                              }}
-                              onClick={async () => {
-                                try {
-                                  const response = await axios.put(
-                                    `${
-                                      import.meta.env.VITE_BASEURL
-                                    }/orders/adminRequest/${data.turnCode}`
-                                  );
-                                  if (response)
-                                    getRequestPrintFromAdmin(false, data.id);
-                                } catch (error) {
-                                  console.error(error);
-                                }
-                              }}
-                            >
-                              &times;
-                            </button>
-                          </li>
-                        );
-                      })}
-                    </ul>
+                                {/* pola isUnitChecked = ["0" = pcs], ["1-12-12" = dus], ["2-12-12" = pack] */}
+                                {record.isUnitChecked !== "0" ? (
+                                  record.isUnitChecked.split("-")[0] === "1" ? (
+                                    <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
+                                      <p>
+                                        {record.isUnitChecked.split("-")[1] /
+                                          record.isUnitChecked.split("-")[2]}
+                                      </p>
+                                      <p style={{color: "darkorange"}}>DUS</p>
+                                    </div>
+                                  ) : (
+                                    <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
+                                      <p>
+                                        {record.isUnitChecked.split("-")[1] /
+                                          record.isUnitChecked.split("-")[2]}
+                                      </p>
+                                      <p style={{color: "darkorange"}}>PCK</p>
+                                    </div>
+                                  )
+                                ) : (
+                                <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
+                                  <p>{record.quantity}</p>
+                                  <p style={{color: "darkorange"}}>PCS</p>
+                                </div>
+                                )}
+                              </div>
+                              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px" }}>
+                                <button style={{position: "relative"}} onClick={() => handleQuantityArrowOnClick(false, record.id)} className="button">+<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
+                                <button onClick={() => {}} className="button">&gt;</button>
+                              </div>
+                            </td>
+                            <td style={{verticalAlign: "middle"}}>
+                              {rupiah(record.finalPrice)}{" "}
+                              <span style={{ color: "red" }}>
+                                {record.discount > 0
+                                  ? `(-${record.discount * 100}%)`
+                                  : ""}
+                              </span>
+                            </td>
+                            <td style={{verticalAlign: "middle"}}>{rupiah(record.profit)}</td>
+                            <td style={{verticalAlign: "middle"}}>
+                              <button
+                                style={{verticalAlign: "middle", backgroundColor: "rgb(200, 10, 50)"}}
+                                className="button"
+                                onClick={() => handleDeleteRecord(record.id)}
+                              >
+                                &times;
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+              </div>
+            </div>
+            <div style={{position: "", top: "100%", width: "100%", padding: "0px 20px"}}>
+                <div style={{width: "100%", display: "flex", justifyContent: "space-between"}}>
+                  <h1 style={totalBayar}>Total Keseluruhan:</h1>
+                  <h1 style={totalBayar}>{total}</h1>
+                </div>
+                <form
+                  onSubmit={
+                    userRole === "admin" ? sendOrdersToKasir : storeOrders
+                  }
+                  className="is-flex codeForm mt-5"
+                >
+                  <input
+                    style={quantityStyle}
+                    type="hidden"
+                    value={recordCode}
+                    className="input"
+                  />
+                  {/* jika menggunakan cash aktifkan input dibawah */}
+                  {/* <input 
+                                          style={quantityStyle} 
+                                          type="text" 
+                                          className='input' 
+                                          placeholder='Cash' 
+                                          value={formattedCash || cash} 
+                                          onChange={handleFormattedCashChange} 
+                                          onBlur={handleCashOnChange} 
+                                      /> */}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "5px",
+                      marginRight: "10px",
+                    }}
+                  >
+                    <h1 style={{ color: "black", fontWeight: "bold" }}>Tempo</h1>
+                    <input
+                      type="checkbox"
+                      onChange={(e) => {
+                        setIsBon(e.target.checked);
+                      }}
+                    />
                   </div>
-                </div>
-              )}
-            </div>
-            <div className="formContainer">
-              <form onSubmit={record} className="is-flex codeForm">
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="input"
-                    placeholder="Cari Barang dengan memasukkan 'kode' Barang atau 'nama' Barang"
-                    value={productName}
-                    onChange={handleProductCodeChange}
-                    style={{backgroundColor: "hsl(221, 14%, 9%)"}}
-                  />
-                  {showDropdownProductCode && (
-                    <ul className="dropdown" style={dropdownStyle}>
-                      {productList.map((product) => (
-                        <li
-                          style={{ cursor: "pointer", color: "green" }}
-                          key={product.code}
-                          onClick={() => handleSelectProduct(product)}
-                        >
-                          [{product.code}]{" "}
-                          <span style={{ color: "white" }}>
-                            {product.name.toUpperCase()} ~ (
-                            {rupiah(product.price)})
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-                <input
-                  style={{...quantityStyle, backgroundColor: "hsl(221, 14%, 9%)"}}
-                  type="number"
-                  className="input"
-                  placeholder="Jumlah"
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                />
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "5px",
-                    marginRight: "10px",
-                    padding: "10px",
-                  }}
-                >
-                  <h1 style={{ color: "black", fontWeight: "bold" }}>Dus</h1>
-                  <input
-                    type="checkbox"
-                    checked={isUnitChecked}
-                    onChange={(e) => {
-                      setIsUnitChecked(e.target.checked);
-                      if (e.target.checked) {
-                        setIsPackChecked(false);
-                      }
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      gap: "10px",
+                      width: "100%",
+                      marginLeft: "2px",
                     }}
-                  />
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "5px",
-                    marginRight: "10px",
-                    padding: "10px",
-                  }}
-                >
-                  <h1 style={{ color: "black", fontWeight: "bold" }}>Pack</h1>
-                  <input
-                    type="checkbox"
-                    checked={isPackChecked}
-                    onChange={(e) => {
-                      setIsPackChecked(e.target.checked);
-                      if (e.target.checked) {
-                        setIsUnitChecked(false);
-                      }
-                    }}
-                  />
-                </div>
-                <button style={{...addButtonStyle, backgroundColor: "darkgoldenrod"}} className="button is-success">
-                  <i style={{color: "unset"}}><CIcon icon={icon.cilDataTransferDown}/></i>
-                </button>
-              </form>
-            </div>
-            <div className="orderView">
-              <table style={tableStyle} className="table">
-                <thead>
-                  <tr>
-                    <th style={{width: "0%"}}>No</th>
-                    <th style={{width: "0%"}}>Kode Barang</th>
-                    <th style={{width: "40%"}}>Nama Barang</th>
-                    <th style={{width: "15%"}}>Harga Modal{" (pcs)"}</th>
-                    <th style={{width: "15%"}} >Harga Jual{" (pcs)"}</th>
-                    <th style={{width: "10%"}}>Jumlah</th>
-                    <th style={{width: "10%"}}>Total</th>
-                    <th style={{width: "10%"}}>Profit</th>
-                    <th style={{width: "0%"}}><i style={{color: "thistle"}}><CIcon icon={icon.cilBurn}></CIcon></i></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {records.map((record, index) => (
-                    <tr key={index} style={{backgroundColor: index % 2 === 0 ? "rgb(0,0,1" : ""}}>
-                      <th style={{verticalAlign: "middle", color:  "steelblue"}}>{index + 1}</th>
-                      <td style={{verticalAlign: "middle"}}>{record.itemCode}</td>
-                      <td style={{nameTableStyle, verticalAlign: "middle"}}>
-                        {record.itemName.toUpperCase()}
-                      </td>
-                      <td style={{verticalAlign: "middle"}}>{rupiah(record.capitalPrice)}</td>
-                      <td style={{verticalAlign: "middle"}}>
-                        <input
-                          className="input"
-                          style={{ padding: "0px 5px",}}
+                  >
+                    <input
+                      type="text"
+                      className="input"
+                      placeholder="Cari Outlet"
+                      value={outlet.name}
+                      onChange={handleOutletChange}
+                      style={{backgroundColor: "hsl(221, 14%, 9%)"}}
+                    />
+                    {/* <input
                           type="text"
-                          value={record.formattedPrice || rupiah(record.price)}
-                          onChange={(e) =>
-                            handleFormattedPriceChange(e, record.id)
-                          }
-                          onBlur={(e) =>
-                            handlePriceOnChange(e, record.id, record.itemCode)
-                          }
-                        />
-                      </td>
-                      <td
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        {/* tombol kiri kanan */}
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <button onClick={() => handleQuantityArrowOnClick(true, record.id)} className="button">&lt;</button>
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            width: "80px",
-                            justifyContent: "space-between",
-                            padding: "0px 15px",
-                            textAlign: "center"
-                          }}
-                        >
-                          {/* pola isUnitChecked = ["0" = pcs], ["1-12-12" = dus], ["2-12-12" = pack] */}
-                          {record.isUnitChecked !== "0" ? (
-                            record.isUnitChecked.split("-")[0] === "1" ? (
-                              <div style={{display: "flex", gap: "5px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
-                                <p style={{color: "darkorange"}}>
-                                  {record.isUnitChecked.split("-")[1] /
-                                    record.isUnitChecked.split("-")[2]}
-                                </p>
-                                <p>DUS</p>
-                              </div>
-                            ) : (
-                              <div style={{display: "flex", gap: "5px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
-                                <p style={{color: "darkorange"}}>
-                                  {record.isUnitChecked.split("-")[1] /
-                                    record.isUnitChecked.split("-")[2]}
-                                </p>
-                                <p>PCK</p>
-                              </div>
-                            )
-                          ) : (
-                          <div style={{display: "flex", gap: "5px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
-                            <p style={{color: "darkorange"}}>{record.quantity}</p>
-                            <p style={{color: "#fff"}}>PCS</p>
-                          </div>
-                          )}
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <button onClick={() => handleQuantityArrowOnClick(false, record.id)} className="button">&gt;</button>
-                        </div>
-                      </td>
-                      <td style={{verticalAlign: "middle"}}>
-                        {rupiah(record.finalPrice)}{" "}
-                        <span style={{ color: "red" }}>
-                          {record.discount > 0
-                            ? `(-${record.discount * 100}%)`
-                            : ""}
-                        </span>
-                      </td>
-                      <td style={{verticalAlign: "middle"}}>{rupiah(record.profit)}</td>
-                      <td style={{verticalAlign: "middle"}}>
-                        <button
-                          style={{verticalAlign: "middle", backgroundColor: "purple"}}
-                          className="button"
-                          onClick={() => handleDeleteRecord(record.id)}
-                        >
-                          &times;
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="formContainer">
-              <div style={{width: "100%", display: "flex", justifyContent: "space-between"}}>
-                <h1 style={totalBayar}>Total Keseluruhan:</h1>
-                <h1 style={totalBayar}>{total}</h1>
-              </div>
-              <form
-                onSubmit={
-                  userRole === "admin" ? sendOrdersToKasir : storeOrders
-                }
-                className="is-flex codeForm mt-5"
-              >
-                <input
-                  style={quantityStyle}
-                  type="hidden"
-                  value={recordCode}
-                  className="input"
-                />
-                {/* jika menggunakan cash aktifkan input dibawah */}
-                {/* <input 
-                                        style={quantityStyle} 
-                                        type="text" 
-                                        className='input' 
-                                        placeholder='Cash' 
-                                        value={formattedCash || cash} 
-                                        onChange={handleFormattedCashChange} 
-                                        onBlur={handleCashOnChange} 
-                                    /> */}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "5px",
-                    marginRight: "10px",
-                  }}
-                >
-                  <h1 style={{ color: "black", fontWeight: "bold" }}>Tempo</h1>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      setIsBon(e.target.checked);
-                    }}
-                  />
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "10px",
-                    width: "100%",
-                    marginLeft: "2px",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="input"
-                    placeholder="Cari Outlet"
-                    value={outlet.name}
-                    onChange={handleOutletChange}
-                    style={{backgroundColor: "hsl(221, 14%, 9%)"}}
-                  />
-                  {/* <input
-                        type="text"
-                        className="input"
-                        placeholder="Sales"
-                        onChange={handleSalesOnChange}
-                      /> */}
-                  <select
-                    onChange={handleSalesOnChange}
-                    className="input"
-                    name="sales"
-                    id="sales"
-                    value={sales}
-                    style={{backgroundColor: "hsl(221, 14%, 9%)"}}
-                  >
-                    <option value="Ana">Ana</option>
-                    <option value="Eman">Eman</option>
-                    <option value="Eva">Eva</option>
-                    <option value="Uyung">Uyung</option>
-                    <option value="Dwik">Dwik</option>
-                    <option value="Suhendri">Suhendri</option>
-                    <option value="Eja">Eja</option>
-                    <option value="Dian">Dian</option>
-                    <option value="Eyung">Eyung</option>
-                  </select>
-                  {showDropdownOutlet && (
-                    <ul className="dropdown" style={dropdownStyleOutlet}>
-                      {outletList.map((outlet) => (
-                        <li
-                          style={{ cursor: "pointer", color: "white" }}
-                          key={outlet.id}
-                          onClick={() => handleSelectOutlet(outlet)}
-                        >
-                          {outlet.name.toUpperCase()}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-                <button
-                  style={addButtonStyle}
-                  className="button is-success"
-                  disabled={isStoreClicked}
-                  type="submit"
-                >
-                  {userRole === "admin" ? "Kirim Ke Kasir" : "Buat Order"}
-                </button>
-              </form>
-              {isStoreClicked && (
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "10px",
-                    width: "230px",
-                    position: "absolute",
-                  }}
-                >
+                          className="input"
+                          placeholder="Sales"
+                          onChange={handleSalesOnChange}
+                        /> */}
+                    <select
+                      onChange={handleSalesOnChange}
+                      className="input"
+                      name="sales"
+                      id="sales"
+                      value={sales}
+                      style={{backgroundColor: "hsl(221, 14%, 9%)"}}
+                    >
+                      <option value="Ana">Ana</option>
+                      <option value="Eman">Eman</option>
+                      <option value="Eva">Eva</option>
+                      <option value="Uyung">Uyung</option>
+                      <option value="Dwik">Dwik</option>
+                      <option value="Suhendri">Suhendri</option>
+                      <option value="Eja">Eja</option>
+                      <option value="Dian">Dian</option>
+                      <option value="Eyung">Eyung</option>
+                    </select>
+                    {showDropdownOutlet && (
+                      <ul className="dropdown" style={dropdownStyleOutlet}>
+                        {outletList.map((outlet) => (
+                          <li
+                            style={{ cursor: "pointer", color: "white" }}
+                            key={outlet.id}
+                            onClick={() => handleSelectOutlet(outlet)}
+                          >
+                            {outlet.name.toUpperCase()}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                   <button
-                    onClick={handleRefresh}
-                    className="button is-danger"
+                    style={addButtonStyle}
+                    className="button is-success"
+                    disabled={isStoreClicked}
+                    type="submit"
+                  >
+                    {userRole === "admin" ? "Kirim Ke Kasir" : "Buat Order"}
+                  </button>
+                </form>
+                {isStoreClicked && (
+                  <div
                     style={{
-                      ...addButtonStyle,
-                      marginTop: "10px",
-                      backgroundColor: "green",
-                      width: "100px",
-                      height: "100px",
-                      marginLeft: "",
+                      display: "flex",
+                      gap: "10px",
+                      width: "230px",
+                      position: "absolute",
                     }}
                   >
-                    Refresh
-                  </button>
-                  <button
-                    onClick={() =>
-                      createRecipt(
-                        printData.datas,
-                        printData.transCode,
-                        printData.from,
-                        printData.isBonFromAdmin,
-                        printData.outletName
-                      )
-                    }
-                    className="button is-danger"
-                    style={{
-                      ...addButtonStyle,
-                      marginTop: "10px",
-                      backgroundColor: "darkgoldenrod",
-                      width: "100px",
-                      height: "100px",
-                      marginLeft: "",
-                    }}
-                  >
-                    Print Ulang
-                  </button>
-                </div>
-              )}
-              <div style={returnAndDiscountStyle} className="is-flex mt-5">
-                <h1 style={totalKembalian}>
-                  Kembali <br />
-                  {returns}
-                </h1>
-                <h1 className="ml-5" style={totalKembalian}>
-                  Diskon <br />
-                  {discount}
-                </h1>
-              </div>
+                    <button
+                      onClick={handleRefresh}
+                      className="button is-danger"
+                      style={{
+                        ...addButtonStyle,
+                        marginTop: "10px",
+                        backgroundColor: "green",
+                        width: "100px",
+                        height: "100px",
+                        marginLeft: "",
+                      }}
+                    >
+                      Refresh
+                    </button>
+                    <button
+                      onClick={() =>
+                        createRecipt(
+                          printData.datas,
+                          printData.transCode,
+                          printData.from,
+                          printData.isBonFromAdmin,
+                          printData.outletName
+                        )
+                      }
+                      className="button is-danger"
+                      style={{
+                        ...addButtonStyle,
+                        marginTop: "10px",
+                        backgroundColor: "darkgoldenrod",
+                        width: "100px",
+                        height: "100px",
+                        marginLeft: "",
+                      }}
+                    >
+                      Print Ulang
+                    </button>
+                  </div>
+                )}
+                {/* <div style={returnAndDiscountStyle} className="is-flex mt-5">
+                  <h1 style={totalKembalian}>
+                    Kembali <br />
+                    {returns}
+                  </h1>
+                  <h1 className="ml-5" style={totalKembalian}>
+                    Diskon <br />
+                    {discount}
+                  </h1>
+                </div> */}
             </div>
           </div>
         </>
