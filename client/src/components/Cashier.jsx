@@ -13,6 +13,8 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import "dayjs/locale/id";
 
+import backgroundKu from "../assets/img/form2.jpg"
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.locale("id");
@@ -930,7 +932,7 @@ const Cashier = () => {
   };
   const addButtonStyle = {
     width: "300px",
-    backgroundColor: "darkorange",
+    backgroundColor: "darkgoldenrod",
     fontWeight: "bold",
     color: "white",
     marginLeft: "10px",
@@ -949,7 +951,7 @@ const Cashier = () => {
   };
   const totalKembalian = {
     fontSize: "30px",
-    color: "green",
+    color: "hsl(221, 14%, 9%)",
     fontWeight: "bold",
     marginRight: "20px",
   };
@@ -1022,7 +1024,7 @@ const Cashier = () => {
           <div className="myCashierContainer">
             <div style={{ width: "100%", display: "flex", gap: "10px" }}>
               <div className="judul">
-                <h1>Cashier {userRole === "admin" ? userRole : ""}</h1>
+                <h1>kasir {userRole === "admin" ? userRole : ""}</h1>
               </div>
               {userRole === "kasir" && (
                 <div
@@ -1180,9 +1182,10 @@ const Cashier = () => {
                   <input
                     type="text"
                     className="input"
-                    placeholder="Search Item with code or name of product"
+                    placeholder="Cari Barang dengan memasukkan 'kode' Barang atau 'nama' Barang"
                     value={productName}
                     onChange={handleProductCodeChange}
+                    style={{backgroundColor: "hsl(221, 14%, 9%)"}}
                   />
                   {showDropdownProductCode && (
                     <ul className="dropdown" style={dropdownStyle}>
@@ -1203,10 +1206,10 @@ const Cashier = () => {
                   )}
                 </div>
                 <input
-                  style={quantityStyle}
+                  style={{...quantityStyle, backgroundColor: "hsl(221, 14%, 9%)"}}
                   type="number"
                   className="input"
-                  placeholder="Quantity"
+                  placeholder="Jumlah"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
                 />
@@ -1254,8 +1257,8 @@ const Cashier = () => {
                     }}
                   />
                 </div>
-                <button style={addButtonStyle} className="button is-success">
-                  +
+                <button style={{...addButtonStyle, backgroundColor: "darkgoldenrod"}} className="button is-success">
+                  <i style={{color: "unset"}}><CIcon icon={icon.cilDataTransferDown}/></i>
                 </button>
               </form>
             </div>
@@ -1263,29 +1266,30 @@ const Cashier = () => {
               <table style={tableStyle} className="table">
                 <thead>
                   <tr>
-                    <th>No</th>
-                    <th>Code</th>
-                    <th style={{ width: "400px" }}>Product Name</th>
-                    <th>Capital Price</th>
-                    <th>Unit Price</th>
-                    <th>Quantity</th>
-                    <th>Sub Total</th>
-                    <th>Profit</th>
-                    <th>Action</th>
+                    <th style={{width: "0%"}}>No</th>
+                    <th style={{width: "0%"}}>Kode Barang</th>
+                    <th style={{width: "40%"}}>Nama Barang</th>
+                    <th style={{width: "15%"}}>Harga Modal{" (pcs)"}</th>
+                    <th style={{width: "15%"}} >Harga Jual{" (pcs)"}</th>
+                    <th style={{width: "10%"}}>Jumlah</th>
+                    <th style={{width: "10%"}}>Total</th>
+                    <th style={{width: "10%"}}>Profit</th>
+                    <th style={{width: "0%"}}><i style={{color: "thistle"}}><CIcon icon={icon.cilBurn}></CIcon></i></th>
                   </tr>
                 </thead>
                 <tbody>
                   {records.map((record, index) => (
-                    <tr key={index}>
-                      <th>{index + 1}</th>
-                      <td>{record.itemCode}</td>
-                      <td style={nameTableStyle}>
+                    <tr key={index} style={{backgroundColor: index % 2 === 0 ? "rgb(0,0,1" : ""}}>
+                      <th style={{verticalAlign: "middle", color:  "steelblue"}}>{index + 1}</th>
+                      <td style={{verticalAlign: "middle"}}>{record.itemCode}</td>
+                      <td style={{nameTableStyle, verticalAlign: "middle"}}>
                         {record.itemName.toUpperCase()}
                       </td>
-                      <td>{rupiah(record.capitalPrice)}</td>
-                      <td>
+                      <td style={{verticalAlign: "middle"}}>{rupiah(record.capitalPrice)}</td>
+                      <td style={{verticalAlign: "middle"}}>
                         <input
-                          style={{ padding: "5px", fontSize: "13px" }}
+                          className="input"
+                          style={{ padding: "0px 5px",}}
                           type="text"
                           value={record.formattedPrice || rupiah(record.price)}
                           onChange={(e) =>
@@ -1319,31 +1323,34 @@ const Cashier = () => {
                           {/* pola isUnitChecked = ["0" = pcs], ["1-12-12" = dus], ["2-12-12" = pack] */}
                           {record.isUnitChecked !== "0" ? (
                             record.isUnitChecked.split("-")[0] === "1" ? (
-                              <>
-                                <p>
+                              <div style={{display: "flex", gap: "5px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
+                                <p style={{color: "darkorange"}}>
                                   {record.isUnitChecked.split("-")[1] /
                                     record.isUnitChecked.split("-")[2]}
                                 </p>
-                                <p>{" "}DUS</p>
-                              </>
+                                <p>DUS</p>
+                              </div>
                             ) : (
-                              <>
-                                <p>
+                              <div style={{display: "flex", gap: "5px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
+                                <p style={{color: "darkorange"}}>
                                   {record.isUnitChecked.split("-")[1] /
                                     record.isUnitChecked.split("-")[2]}
                                 </p>
-                                <p>{" "}PCK</p>
-                              </>
+                                <p>PCK</p>
+                              </div>
                             )
                           ) : (
-                            <p>{record.quantity} PCS</p>
+                          <div style={{display: "flex", gap: "5px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
+                            <p style={{color: "darkorange"}}>{record.quantity}</p>
+                            <p style={{color: "#fff"}}>PCS</p>
+                          </div>
                           )}
                         </div>
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <button onClick={() => handleQuantityArrowOnClick(false, record.id)} className="button">&gt;</button>
                         </div>
                       </td>
-                      <td>
+                      <td style={{verticalAlign: "middle"}}>
                         {rupiah(record.finalPrice)}{" "}
                         <span style={{ color: "red" }}>
                           {record.discount > 0
@@ -1351,14 +1358,14 @@ const Cashier = () => {
                             : ""}
                         </span>
                       </td>
-                      <td>{rupiah(record.profit)}</td>
-                      <td>
+                      <td style={{verticalAlign: "middle"}}>{rupiah(record.profit)}</td>
+                      <td style={{verticalAlign: "middle"}}>
                         <button
+                          style={{verticalAlign: "middle", backgroundColor: "purple"}}
                           className="button"
-                          style={{ height: "30px" }}
                           onClick={() => handleDeleteRecord(record.id)}
                         >
-                          Hapus
+                          &times;
                         </button>
                       </td>
                     </tr>
@@ -1367,7 +1374,10 @@ const Cashier = () => {
               </table>
             </div>
             <div className="formContainer">
-              <h1 style={totalBayar}>Total: {total}</h1>
+              <div style={{width: "100%", display: "flex", justifyContent: "space-between"}}>
+                <h1 style={totalBayar}>Total Keseluruhan:</h1>
+                <h1 style={totalBayar}>{total}</h1>
+              </div>
               <form
                 onSubmit={
                   userRole === "admin" ? sendOrdersToKasir : storeOrders
@@ -1419,9 +1429,10 @@ const Cashier = () => {
                   <input
                     type="text"
                     className="input"
-                    placeholder="Search Outlet"
+                    placeholder="Cari Outlet"
                     value={outlet.name}
                     onChange={handleOutletChange}
+                    style={{backgroundColor: "hsl(221, 14%, 9%)"}}
                   />
                   {/* <input
                         type="text"
@@ -1435,6 +1446,7 @@ const Cashier = () => {
                     name="sales"
                     id="sales"
                     value={sales}
+                    style={{backgroundColor: "hsl(221, 14%, 9%)"}}
                   >
                     <option value="Ana">Ana</option>
                     <option value="Eman">Eman</option>
@@ -1466,7 +1478,7 @@ const Cashier = () => {
                   disabled={isStoreClicked}
                   type="submit"
                 >
-                  {userRole === "admin" ? "Send To Cashier" : "Create Order"}
+                  {userRole === "admin" ? "Kirim Ke Kasir" : "Buat Order"}
                 </button>
               </form>
               {isStoreClicked && (
@@ -1506,7 +1518,7 @@ const Cashier = () => {
                     style={{
                       ...addButtonStyle,
                       marginTop: "10px",
-                      backgroundColor: "darkorange",
+                      backgroundColor: "darkgoldenrod",
                       width: "100px",
                       height: "100px",
                       marginLeft: "",
@@ -1518,11 +1530,11 @@ const Cashier = () => {
               )}
               <div style={returnAndDiscountStyle} className="is-flex mt-5">
                 <h1 style={totalKembalian}>
-                  Return <br />
+                  Kembali <br />
                   {returns}
                 </h1>
                 <h1 className="ml-5" style={totalKembalian}>
-                  Discount <br />
+                  Diskon <br />
                   {discount}
                 </h1>
               </div>

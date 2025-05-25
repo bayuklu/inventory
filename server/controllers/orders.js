@@ -25,7 +25,8 @@ export const getRecordsByTurnCode = async(req, res) => {
             attributes: ['id', 'itemCode', 'itemName', 'price', 'quantity', 'discount', 'finalPrice', 'isUnitChecked', 'profit', 'capitalPrice'],
             where: {
                 turnCode: turnCode
-            }
+            },
+            order: [['createdAt', 'ASC']]
         })
         // console.log(records)
         res.status(200).json({data: [...records]})
