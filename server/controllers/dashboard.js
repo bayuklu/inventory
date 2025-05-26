@@ -335,7 +335,7 @@ export const getTodayOrdersData = async (req, res) => {
             ],
             where: {
                 createdAt: {
-                    [Op.gt]: TOMORROW_START_WITA_CONVERT_UTC
+                    [Op.gt]: YESTERDAY_START_WITA_CONVERT_UTC
                 }
             },
             // raw: true,
