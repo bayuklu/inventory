@@ -11,6 +11,8 @@ import { jwtDecode } from "jwt-decode";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
+import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/themes/confetti.css";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -29,6 +31,7 @@ const Orders = () => {
   const [outletName, setOutletName] = useState("");
   const [selectedTransactionSalesChange, setSelectedTransactionSalesChange] =
     useState(null);
+  const [tanggal, setTanggal] = useState(new Date());
 
   const salesList = [
     "--Ganti Sales--",
@@ -384,7 +387,7 @@ const Orders = () => {
   };
 
   const handleHapusTransaksi = async (idTransaksi) => {
-    console.log(idTransaksi)
+    console.log(idTransaksi);
     if (confirm("Yakin ingin Menghapus Transaksi Ini?") === true) {
       try {
         const response = await axios.delete(
@@ -429,6 +432,17 @@ const Orders = () => {
       console.error(error.message);
     }
   };
+
+  const handleGantiTanggal = async(date) => {
+    setIsOrdersDataLoading(true)
+    try {
+      const response = await axios.put(`${import.meta.env.VITE_BASEURL}/dashboard/orders`)
+      setTanggal(date)
+    } catch (error) {
+      console.log(error.response)
+      setIsOrdersDataLoading(false)
+    }
+  }
 
   return (
     <div className="orders-container">
@@ -510,91 +524,153 @@ const Orders = () => {
       </div>
       {/* End Tampian Ganti Sales */}
 
-      <a
-        href="/"
+      <div
         style={{
-          marginLeft: "20px",
-          marginTop: "20px",
-          marginBottom: "20px",
-          width: "20px",
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "20px",
+          backgroundColor: "black",
         }}
       >
-        <i style={{ color: "black" }}>
-          <CIcon icon={icon.cilMediaStepBackward} />
-        </i>
-      </a>
-      <button
-        className="button"
-        style={{ margin: "0px 20px" }}
-        disabled={isOrdersDataLoading}
-        onClick={handlePrint}
-      >
-        Simpan Data Transaksi Hari Ini
-      </button>
-
-      <div className="viewOrders">
-        <div
-          style={{ width: "100%", display: "flex", justifyContent: "center" }}
+        <a
+          href="/"
+          style={{
+            width: "20px",
+          }}
         >
-          {isOrdersDataLoading && (
-            <>
-              <SpinnerLoader color={"black"} />
-            </>
-          )}
+          <i style={{ color: "#fff" }}>
+            <CIcon icon={icon.cilMediaStepBackward} />
+          </i>
+        </a>
+        <div style={{ display: "flex" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "relative",
+            }}
+          >
+            <Flatpickr
+              style={{
+                height: "50px",
+                width: "200px",
+                padding: "10px",
+                borderRadius: "10px",
+                border: "3px solid grey",
+                paddingRight: "40px",
+                color: "GrayText",
+              }}
+              placeholder={tanggal}
+              value={tanggal}
+              onChange={([date]) => handleGantiTanggal(date)}
+              options={{
+                dateFormat: "d-m-Y",
+              }}
+            />
+            <i
+              style={{
+                position: "absolute",
+                right: "10px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: "darkorange",
+              }}
+            >
+              <CIcon icon={icon.cilCalendar} />
+            </i>
+          </div>
+          <div>
+            <button
+              className="button"
+              style={{
+                margin: "0px 20px",
+                backgroundColor: "green",
+                border: "none",
+                height: "50px",
+              }}
+              disabled={isOrdersDataLoading}
+              onClick={handlePrint}
+            >
+              Export ke Excel
+            </button>
+          </div>
         </div>
-        {ordersData.map((data, index) => (
-          <div key={index} className="orders">
-            <div className="infoOrders">
-              <p style={{ fontWeight: "bold", color: "darkorange" }}>
-                {`${data[2].toUpperCase()} ~ [${rupiah(
-                  data[3]
-                )}] ~ Profit = ${rupiah(data[4])} ====>>> Sales: `}
-                <span style={{ color: "lightgreen" }}>
-                  {`${data[5]}`}
-                  <i
-                    style={{
-                      color: "lightgreen",
-                      marginLeft: "0px",
-                      cursor: "pointer",
-                    }}
-                    onClick={(e) => {
-                      setChangeSalesView(!changeSalesView);
-                      setSalesBefore(data[5]);
-                      setOutletName(data[2]);
-                      setSelectedTransactionSalesChange(data[6]);
-                    }}
-                  >
-                    <CIcon
-                      style={{ transform: "scale(0.7)" }}
-                      icon={icon.cilPen}
-                    />
+      </div>
+
+      {isOrdersDataLoading ? (
+        <div
+          style={{
+            width: "100%",
+            height: "100vh",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <SpinnerLoader color={"black"} width={"100px"} />
+        </div>
+      ) : (
+        <div className="viewOrders">
+          {ordersData.map((data, index) => (
+            <div
+              key={index}
+              className="orders"
+              style={{ backgroundColor: "#fff" }}
+            >
+              <div className="infoOrders">
+                <p style={{ fontWeight: "bold", color: "darkorange" }}>
+                  {`${data[2].toUpperCase()} ~ [${rupiah(
+                    data[3]
+                  )}] ~ Profit = ${rupiah(data[4])} ====>>> Sales: `}
+                  <span style={{ color: "lightgreen" }}>
+                    {`${data[5]}`}
+                    <i
+                      style={{
+                        color: "lightgreen",
+                        marginLeft: "0px",
+                        cursor: "pointer",
+                      }}
+                      onClick={(e) => {
+                        setChangeSalesView(!changeSalesView);
+                        setSalesBefore(data[5]);
+                        setOutletName(data[2]);
+                        setSelectedTransactionSalesChange(data[6]);
+                      }}
+                    >
+                      <CIcon
+                        style={{ transform: "scale(0.7)" }}
+                        icon={icon.cilPen}
+                      />
+                    </i>
+                  </span>
+                </p>
+                <div style={{ display: "flex", gap: "5px" }}>
+                  <i style={{ color: "white" }}>
+                    <CIcon icon={icon.cilClock} />
                   </i>
-                </span>
-              </p>
-              <div style={{ display: "flex", gap: "5px" }}>
-                <i style={{ color: "white" }}>
-                  <CIcon icon={icon.cilClock} />
-                </i>
-                <p style={{ color: "#fff" }}>{data[1]} WITA</p>
-                <i
-                  style={{ color: "red", cursor: "pointer" }}
-                  onClick={() => handleHapusTransaksi(data[6])}
-                >
-                  <CIcon icon={icon.cilTrash} />
-                </i>
+                  <p style={{ color: "#fff" }}>{data[1]} WITA</p>
+                  <i
+                    style={{ color: "red", cursor: "pointer" }}
+                    onClick={() => handleHapusTransaksi(data[6])}
+                  >
+                    <CIcon icon={icon.cilTrash} />
+                  </i>
+                </div>
+              </div>
+              <div className="itemOrders">
+                {data[0].map((item, i) => (
+                  <div key={i} className="itemOrder">
+                    <p>{item.itemName.toUpperCase()}</p>
+                    <p>{`x ${item.quantity}`}</p>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="itemOrders">
-              {data[0].map((item, i) => (
-                <div key={i} className="itemOrder">
-                  <p>{item.itemName.toUpperCase()}</p>
-                  <p>{`x ${item.quantity}`}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

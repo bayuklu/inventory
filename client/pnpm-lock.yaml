@@ -32,6 +32,9 @@ importers:
       file-saver:
         specifier: ^2.0.5
         version: 2.0.5
+      flatpickr:
+        specifier: ^4.6.13
+        version: 4.6.13
       jwt-decode:
         specifier: ^4.0.0
         version: 4.0.0
@@ -47,6 +50,9 @@ importers:
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
+      react-flatpickr:
+        specifier: ^4.0.10
+        version: 4.0.10(react@18.3.1)
       react-router-dom:
         specifier: ^6.24.0
         version: 6.24.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -884,6 +890,9 @@ packages:
     resolution: {integrity: sha512-CYcENa+FtcUKLmhhqyctpclsq7QF38pKjZHsGNiSQF5r4FtoKDWabFDl3hzaEQMvT1LHEysw5twgLvpYYb4vbw==}
     engines: {node: ^10.12.0 || >=12.0.0}
 
+  flatpickr@4.6.13:
+    resolution: {integrity: sha512-97PMG/aywoYpB4IvbvUJi0RQi8vearvU0oov1WW3k0WZPBMrTQVqekSX5CjSG/M4Q3i6A/0FKXC7RyAoAUUSPw==}
+
   flatted@3.3.1:
     resolution: {integrity: sha512-X8cqMLLie7KsNUDSdzeN8FYK9rEt4Dt67OsG/DNGnYTSDBG4uFAJFBnUeiV+zCVAvwFy56IjM9sH51jVaEhNxw==}
 
@@ -1319,6 +1328,11 @@ packages:
     resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
     peerDependencies:
       react: ^18.3.1
+
+  react-flatpickr@4.0.10:
+    resolution: {integrity: sha512-/pFC+Y0KZ3C4cPwMwvH+CR+AHovPjdQV+Tfn8II9ue2N6AN7+D8KIvo2x5oY29dFFL60hwfqjJ/9s3NBKJzmDA==}
+    peerDependencies:
+      react: '>= 16 <= 19'
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -2539,6 +2553,8 @@ snapshots:
       keyv: 4.5.4
       rimraf: 3.0.2
 
+  flatpickr@4.6.13: {}
+
   flatted@3.3.1: {}
 
   follow-redirects@1.15.6: {}
@@ -2944,6 +2960,11 @@ snapshots:
       loose-envify: 1.4.0
       react: 18.3.1
       scheduler: 0.23.2
+
+  react-flatpickr@4.0.10(react@18.3.1):
+    dependencies:
+      flatpickr: 4.6.13
+      react: 18.3.1
 
   react-is@16.13.1: {}
 
