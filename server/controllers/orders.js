@@ -176,15 +176,15 @@ export const deleteRecordOrder = async(req, res) => {
 }
 
 export const changeQuantityRecord = async(req, res) => {
-    const payloads = (({ isLeft, id, turnCode}) => {
+    const req_Bodies = (({ isLeft, id, turnCode}) => {
         return { isLeft, id, turnCode}
       })(req.body)      
 
-    for(const body in payloads) {
-        if(payloads[body] === "") {
+    for(const body in req_Bodies) {
+        if(req_Bodies[body] === "") {
             return res.status(400).json({msg: `Nilai '${body}' dibutuhkan!`})
             break
-        }else if(payloads[body] == undefined) {
+        }else if(req_Bodies[body] == undefined) {
             return res.status(400).json({msg: `Parameter '${body}' belum dikirim!`})
             break
         }
@@ -194,8 +194,8 @@ export const changeQuantityRecord = async(req, res) => {
         const orderRecord = await orderRecords.findOne({
             where: {
                 [Op.and]: [
-                    {id: payloads.id},
-                    {turnCode: payloads.turnCode}
+                    {id: req_Bodies.id},
+                    {turnCode: req_Bodies.turnCode}
                 ]
             },
             attributes: ['id', 'itemCode', 'itemName', 'price', 'quantity', 'discount', 'finalPrice', 'isUnitChecked', 'profit', 'capitalPrice'],
@@ -203,16 +203,14 @@ export const changeQuantityRecord = async(req, res) => {
         if(!orderRecord){
             return res.status(404).json({msg: "Record not found!"})
         }
-
-        // console.log(orderRecord.dataValues)
         
         const oldIsUnitChecked = orderRecord.dataValues.isUnitChecked.split("-")
 
         if
         (
-            ((Number(oldIsUnitChecked[1]) - Number(oldIsUnitChecked[2]) === 0 && payloads.isLeft))
+            ((Number(oldIsUnitChecked[1]) - Number(oldIsUnitChecked[2]) === 0 && req_Bodies.isLeft))
             ||
-            ((orderRecord.dataValues.quantity - 1 === 0 && payloads.isLeft))
+            ((orderRecord.dataValues.quantity - 1 === 0 && req_Bodies.isLeft))
         )
         {
             return res.status(400).json({msg: "TIdak dapat mengunrangi lagi!"})
@@ -232,7 +230,7 @@ export const changeQuantityRecord = async(req, res) => {
             }
         }
 
-        const newIsUnitChekced = convertUnit(oldIsUnitChecked, payloads.isLeft)
+        const newIsUnitChekced = convertUnit(oldIsUnitChecked, req_Bodies.isLeft)
         const cPriceBef = orderRecord.dataValues.capitalPrice
         const priceBef = orderRecord.dataValues.price
         const quantityBef = orderRecord.dataValues.quantity
@@ -242,7 +240,7 @@ export const changeQuantityRecord = async(req, res) => {
         let newQuantity, newFinalPrice, newProfit
 
         if(newIsUnitChekced === "0") {
-            if(payloads.isLeft) {
+            if(req_Bodies.isLeft) {
                 newQuantity = quantityBef - 1
                 newFinalPrice = finPriceBef - priceBef
                 newProfit = profitBef - (priceBef - cPriceBef)
@@ -254,7 +252,7 @@ export const changeQuantityRecord = async(req, res) => {
         }else {
             newQuantity = Number(newIsUnitChekced.split("-")[1])
 
-            if(payloads.isLeft) {
+            if(req_Bodies.isLeft) {
                 newFinalPrice = finPriceBef - (Number(oldIsUnitChecked[2]) * priceBef)
                 newProfit = profitBef - ((priceBef - cPriceBef) * newQuantity)
                 newProfit = profitBef - (Number(oldIsUnitChecked[2]) * (priceBef - cPriceBef))

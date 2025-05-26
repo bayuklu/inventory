@@ -1,6 +1,14 @@
+/* :root {
+  color-scheme: light;
+} */
+
+/* @import 'bulma/css/bulma.css'; */
+
 body{
   background-color: rgb(255, 255, 255);
 }
+
+
 .my-sidebar {
   width: 300px;
   height: 100vh;
@@ -407,7 +415,7 @@ body{
 
 /* Mengubah warna placeholder */
 input::placeholder {
-  color: black; /* Ganti dengan warna yang diinginkan */
+  color: hsl(221deg, 14%, 53%); /* Ganti dengan warna yang diinginkan */
   opacity: 1;  /* Agar warna sesuai dengan yang ditentukan */
 }
 

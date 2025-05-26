@@ -952,7 +952,7 @@ const Cashier = () => {
   };
   const totalKembalian = {
     fontSize: "30px",
-    color: "hsl(221, 14%, 9%)",
+    color: "#14161a",
     fontWeight: "bold",
     marginRight: "20px",
   };
@@ -1189,7 +1189,7 @@ const Cashier = () => {
                       placeholder="Cari Barang dengan memasukkan 'kode' Barang atau 'nama' Barang"
                       value={productName}
                       onChange={handleProductCodeChange}
-                      style={{backgroundColor: "hsl(221, 14%, 9%)"}}
+                      style={{backgroundColor: "#14161a", color: "#fff"}}
                     />
                     {showDropdownProductCode && (
                       <ul className="dropdown" style={dropdownStyle}>
@@ -1210,7 +1210,7 @@ const Cashier = () => {
                     )}
                   </div>
                   <input
-                    style={{...quantityStyle, backgroundColor: "hsl(221, 14%, 9%)"}}
+                    style={{...quantityStyle, backgroundColor: "#14161a"}}
                     type="number"
                     className="input"
                     placeholder="Jumlah"
@@ -1262,44 +1262,44 @@ const Cashier = () => {
                     />
                   </div>
                   <button style={{...addButtonStyle, backgroundColor: "darkgoldenrod"}} className="button is-success">
-                    <i style={{color: "unset"}}><CIcon icon={icon.cilChevronDoubleDown}/></i>
+                    <i style={{color: "#fff"}}><CIcon icon={icon.cilChevronDoubleDown}/></i>
                   </button>
                 </form>
               </div>
             </div>
             <div style={{flex: "1", overflow: "auto", display: "flex", paddingLeft: "20px"}}>
-              <div className="orderView" style={{backgroundColor: records.length % 2 !== 0 ? "hsl(221, 14%, 9%)" : "black"}}>
+              <div className="orderView" style={{backgroundColor: records.length % 2 !== 0 ? "#14161a" : "black"}}>
                     <table style={tableStyle} className="table">
                       <thead>
                         <tr>
-                          <th style={{width: "0%", color: "unset"}}>
+                          <th style={{width: "0%", color: "#fff"}}>
                             <i>
                               <CIcon icon={icon.cilSortAscending}/>
                             </i>
                           </th>
-                          <th style={{color: "unset", width: "0%"}}>Kode</th>
-                          <th style={{color: "unset", width: "40%"}}>Nama Barang</th>
-                          <th style={{color: "unset", width: "15%"}}>Harga Modal{" (pcs)"}</th>
-                          <th style={{color: "unset", width: "15%"}} >Harga Jual{" (pcs)"}</th>
-                          <th style={{color: "unset", width: "10%"}}>Jumlah</th>
-                          <th style={{color: "unset", width: "10%"}}>Profit</th>
-                          <th style={{color: "unset", width: "10%"}}>Total</th>
-                          <th style={{color: "unset", width: "0%"}}><i style={{color: "unset"}}><CIcon icon={icon.cilControl}></CIcon></i></th>
+                          <th style={{color: "#fff", width: "0%"}}>Kode</th>
+                          <th style={{color: "#fff", width: "40%"}}>Nama Barang</th>
+                          <th style={{color: "#fff", width: "15%"}}>Harga Modal{" (pcs)"}</th>
+                          <th style={{color: "#fff", width: "15%"}} >Harga Jual{" (pcs)"}</th>
+                          <th style={{color: "#fff", width: "10%"}}>Jumlah</th>
+                          <th style={{color: "#fff", width: "10%"}}>Profit</th>
+                          <th style={{color: "#fff", width: "10%"}}>Total</th>
+                          <th style={{color: "#fff", width: "0%"}}><i style={{color: "#fff"}}><CIcon icon={icon.cilControl}></CIcon></i></th>
                         </tr>
                       </thead>
                       <tbody>
                         {records.map((record, index) => (
-                          <tr key={index} style={{backgroundColor: index % 2 === 0 ? "black" : "unset"}}>
-                            <th style={{verticalAlign: "middle", color: "unset"}}>{index + 1}</th>
+                          <tr key={index} style={{backgroundColor: index % 2 === 0 ? "black" : "#14161a"}}>
+                            <th style={{verticalAlign: "middle", color: "#fff"}}>{index + 1}</th>
                             <td style={{verticalAlign: "middle", color: "GrayText"}}>{record.itemCode}</td>
-                            <td style={{nameTableStyle, verticalAlign: "middle", color: "unset"}}>
+                            <td style={{nameTableStyle, verticalAlign: "middle", color: "#fff"}}>
                               {record.itemName.toUpperCase()}
                             </td>
                             <td style={{verticalAlign: "middle", color: "GrayText"}}>{rupiah(record.capitalPrice)}</td>
                             <td style={{verticalAlign: "middle"}}>
                               <input
                                 className="input"
-                                style={{ padding: "0px 5px",}}
+                                style={{ padding: "0px 5px", backgroundColor: "hsl(220deg 13.04% 9.02%)", color: "#fff"}}
                                 type="text"
                                 value={record.formattedPrice || rupiah(record.price)}
                                 onChange={(e) =>
@@ -1322,8 +1322,8 @@ const Cashier = () => {
                               }}>
                                 {/* tombol kiri kanan */}
                                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px" }}>
-                                  <button style={{position: "relative"}} onClick={() => handleQuantityArrowOnClick(true, record.id)} className="button">&minus;<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
-                                  <button onClick={() => {}} className="button">&lt;</button>
+                                  <button style={{position: "relative", backgroundColor: "hsl(220deg 13.04% 9.02%)", color: "#fff"}} onClick={() => handleQuantityArrowOnClick(true, record.id)} className="button">&minus;<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
+                                  <button style={{backgroundColor: "hsl(220deg 13.04% 9.02%)", color: "#fff"}} onClick={() => {}} className="button">&lt;</button>
                                 </div>
                                 <div
                                   style={{
@@ -1339,7 +1339,7 @@ const Cashier = () => {
                                   {record.isUnitChecked !== "0" ? (
                                     record.isUnitChecked.split("-")[0] === "1" ? (
                                       <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
-                                        <p>
+                                        <p style={{color: "#fff"}}>
                                           {record.isUnitChecked.split("-")[1] /
                                             record.isUnitChecked.split("-")[2]}
                                         </p>
@@ -1347,7 +1347,7 @@ const Cashier = () => {
                                       </div>
                                     ) : (
                                       <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
-                                        <p>
+                                        <p style={{color: "#fff"}}>
                                           {record.isUnitChecked.split("-")[1] /
                                             record.isUnitChecked.split("-")[2]}
                                         </p>
@@ -1356,19 +1356,19 @@ const Cashier = () => {
                                     )
                                   ) : (
                                   <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
-                                    <p>{record.quantity}</p>
+                                    <p style={{color: "#fff"}}>{record.quantity}</p>
                                     <p style={{color: "darkorange"}}>PCS</p>
                                   </div>
                                   )}
                                 </div>
                                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "5px" }}>
-                                  <button style={{position: "relative"}} onClick={() => handleQuantityArrowOnClick(false, record.id)} className="button">+<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
-                                  <button onClick={() => {}} className="button">&gt;</button>
+                                  <button style={{position: "relative", backgroundColor: "hsl(220deg 13.04% 9.02%)", color: "#fff"}} onClick={() => handleQuantityArrowOnClick(false, record.id)} className="button">+<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
+                                  <button style={{backgroundColor: "hsl(220deg 13.04% 9.02%)", color: "#fff"}} onClick={() => {}} className="button">&gt;</button>
                                 </div>
                               </div>
                             </td>
                             <td style={{verticalAlign: "middle", color: "GrayText"}}>{rupiah(record.profit)}</td>
-                            <td style={{verticalAlign: "middle"}}>
+                            <td style={{verticalAlign: "middle", color: "#fff"}}>
                               {rupiah(record.finalPrice)}{" "}
                               <span style={{ color: "red" }}>
                                 {record.discount > 0
@@ -1378,7 +1378,7 @@ const Cashier = () => {
                             </td>
                             <td style={{verticalAlign: "middle"}}>
                               <button
-                                style={{verticalAlign: "middle", backgroundColor: "rgb(200, 10, 50)"}}
+                                style={{verticalAlign: "middle", backgroundColor: "rgb(200, 10, 50)", color: "#fff"}}
                                 className="button"
                                 onClick={() => handleDeleteRecord(record.id)}
                               >
@@ -1451,7 +1451,7 @@ const Cashier = () => {
                       placeholder="Cari Outlet"
                       value={outlet.name}
                       onChange={handleOutletChange}
-                      style={{backgroundColor: "hsl(221, 14%, 9%)"}}
+                      style={{backgroundColor: "#14161a", color: "#fff"}}
                     />
                     {showDropdownOutlet && (
                       <ul className="dropdown" style={dropdownStyleOutlet}>
@@ -1478,7 +1478,7 @@ const Cashier = () => {
                       name="sales"
                       id="sales"
                       value={sales}
-                      style={{backgroundColor: "hsl(221, 14%, 9%)"}}
+                      style={{backgroundColor: "#14161a", color: "#fff"}}
                     >
                       <option value="Ana">Ana</option>
                       <option value="Eman">Eman</option>
