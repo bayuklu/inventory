@@ -783,9 +783,11 @@ const Dashboard = () => {
         </div>
         <div className="my-dashboardChild">
           <div className="my-headMenu">
-            <div className="my-menu">
+            <div className="my-menu" >
               <h3>Today Best Seller</h3>
-              <h1>{todayBestSeler || "-"}</h1>
+              <div style={{width: "600px"}}>
+                <h1 style={{whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"}}>{todayBestSeler || "-"}</h1>
+              </div>
             </div>
           </div>
           <div className="my-headMenu">
