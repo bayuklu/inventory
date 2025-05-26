@@ -434,6 +434,7 @@ const Cashier = () => {
        getRecords()
      }
     } catch (error) {
+      setMsg({msg: error.response.data.msg, color: "red"})
       console.error(error.response)
     }
   }
@@ -1344,7 +1345,7 @@ const Cashier = () => {
                                           {record.isUnitChecked.split("-")[1] /
                                             record.isUnitChecked.split("-")[2]}
                                         </p>
-                                        <p style={{color: "grey"}}>DUS</p>
+                                        <p style={{color: "crimson"}}>DUS</p>
                                       </div>
                                     ) : (
                                       <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
@@ -1352,13 +1353,13 @@ const Cashier = () => {
                                           {record.isUnitChecked.split("-")[1] /
                                             record.isUnitChecked.split("-")[2]}
                                         </p>
-                                        <p style={{color: "grey"}}>PCK</p>
+                                        <p style={{color: "crimson"}}>PCK</p>
                                       </div>
                                     )
                                   ) : (
                                   <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
                                     <p style={{color: "grey"}}>{record.quantity}</p>
-                                    <p style={{color: "grey"}}>PCS</p>
+                                    <p style={{color: "crimson"}}>PCS</p>
                                   </div>
                                   )}
                                 </div>

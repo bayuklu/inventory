@@ -262,6 +262,14 @@ export const changeQuantityRecord = async(req, res) => {
             }
         }
 
+        const item = await Items.findOne({
+            where: {
+                code: orderRecord.dataValues.itemCode
+            },
+            attributes: ['stock']
+        })
+        if(newQuantity > item.stock) return res.status(400).json({msg: "Stock tidak cukup!"})
+
         await orderRecord.update({
             isUnitChecked: newIsUnitChekced || orderRecord.dataValues.isUnitChecked,
             quantity: newQuantity || orderRecord.dataValues.quantity,
