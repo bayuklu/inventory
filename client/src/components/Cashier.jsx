@@ -939,7 +939,8 @@ const Cashier = () => {
   };
   const tableStyle = {
     width: "100%",
-    border: "11px solid transparent",
+    border: "25px solid transparent",
+    backgroundColor: "transparent",
   };
   const nameTableStyle = {
     width: "400px",
@@ -1175,7 +1176,7 @@ const Cashier = () => {
                 )}
               </div>
               <div className="formContainer" style={{position: "relative"}}>
-                <form onSubmit={record} className="is-flex codeForm">
+                <form onSubmit={record} className="is-flex codeForm" style={{gap: "8px"}}>
                   <div
                     style={{
                       display: "flex",
@@ -1189,7 +1190,7 @@ const Cashier = () => {
                       placeholder="Cari Barang dengan memasukkan 'kode' Barang atau 'nama' Barang"
                       value={productName}
                       onChange={handleProductCodeChange}
-                      style={{backgroundColor: "#14161a", color: "#fff"}}
+                      style={{backgroundColor: "#fff", color: "black"}}
                     />
                     {showDropdownProductCode && (
                       <ul className="dropdown" style={dropdownStyle}>
@@ -1210,7 +1211,7 @@ const Cashier = () => {
                     )}
                   </div>
                   <input
-                    style={{...quantityStyle, backgroundColor: "#14161a"}}
+                    style={{...quantityStyle, backgroundColor: "#fff", color: "black"}}
                     type="number"
                     className="input"
                     placeholder="Jumlah"
@@ -1268,9 +1269,9 @@ const Cashier = () => {
               </div>
             </div>
             <div style={{flex: "1", overflow: "auto", display: "flex", paddingLeft: "20px"}}>
-              <div className="orderView" style={{backgroundColor: records.length % 2 !== 0 ? "#14161a" : "black"}}>
+              <div className="orderView" style={{backgroundColor: "lightgrey"}}>
                     <table style={tableStyle} className="table">
-                      <thead>
+                      <thead style={{backgroundColor: "black"}}>
                         <tr>
                           <th style={{width: "0%", color: "#fff"}}>
                             <i>
@@ -1289,17 +1290,17 @@ const Cashier = () => {
                       </thead>
                       <tbody>
                         {records.map((record, index) => (
-                          <tr key={index} style={{backgroundColor: index % 2 === 0 ? "black" : "#14161a"}}>
-                            <th style={{verticalAlign: "middle", color: "#fff"}}>{index + 1}</th>
-                            <td style={{verticalAlign: "middle", color: "GrayText"}}>{record.itemCode}</td>
-                            <td style={{nameTableStyle, verticalAlign: "middle", color: "#fff"}}>
+                          <tr key={index} style={{backgroundColor: "#fff"}}>
+                            <th style={{verticalAlign: "middle", color: "grey"}}>{index + 1}</th>
+                            <td style={{verticalAlign: "middle", color: "grey"}}>{record.itemCode}</td>
+                            <td style={{nameTableStyle, verticalAlign: "middle", color: "grey"}}>
                               {record.itemName.toUpperCase()}
                             </td>
-                            <td style={{verticalAlign: "middle", color: "GrayText"}}>{rupiah(record.capitalPrice)}</td>
+                            <td style={{verticalAlign: "middle", color: "grey"}}>{rupiah(record.capitalPrice)}</td>
                             <td style={{verticalAlign: "middle"}}>
                               <input
                                 className="input"
-                                style={{ padding: "0px 5px", backgroundColor: "hsl(220deg 13.04% 9.02%)", color: "#fff"}}
+                                style={{ padding: "0px 5px", backgroundColor: "#fff", color: "black"}}
                                 type="text"
                                 value={record.formattedPrice || rupiah(record.price)}
                                 onChange={(e) =>
@@ -1322,8 +1323,8 @@ const Cashier = () => {
                               }}>
                                 {/* tombol kiri kanan */}
                                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px" }}>
-                                  <button style={{position: "relative", backgroundColor: "hsl(220deg 13.04% 9.02%)", color: "#fff"}} onClick={() => handleQuantityArrowOnClick(true, record.id)} className="button">&minus;<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
-                                  <button style={{backgroundColor: "hsl(220deg 13.04% 9.02%)", color: "#fff"}} onClick={() => {}} className="button">&lt;</button>
+                                  <button style={{position: "relative", backgroundColor: "darkorange", border: "none", color: "#fff"}} onClick={() => handleQuantityArrowOnClick(true, record.id)} className="button">&minus;<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
+                                  <button style={{backgroundColor: "darkorange", border: "none", color: "#fff"}} onClick={() => {}} className="button">&lt;</button>
                                 </div>
                                 <div
                                   style={{
@@ -1339,36 +1340,36 @@ const Cashier = () => {
                                   {record.isUnitChecked !== "0" ? (
                                     record.isUnitChecked.split("-")[0] === "1" ? (
                                       <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
-                                        <p style={{color: "#fff"}}>
+                                        <p style={{color: "grey"}}>
                                           {record.isUnitChecked.split("-")[1] /
                                             record.isUnitChecked.split("-")[2]}
                                         </p>
-                                        <p style={{color: "darkorange"}}>DUS</p>
+                                        <p style={{color: "grey"}}>DUS</p>
                                       </div>
                                     ) : (
                                       <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
-                                        <p style={{color: "#fff"}}>
+                                        <p style={{color: "grey"}}>
                                           {record.isUnitChecked.split("-")[1] /
                                             record.isUnitChecked.split("-")[2]}
                                         </p>
-                                        <p style={{color: "darkorange"}}>PCK</p>
+                                        <p style={{color: "grey"}}>PCK</p>
                                       </div>
                                     )
                                   ) : (
                                   <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
-                                    <p style={{color: "#fff"}}>{record.quantity}</p>
-                                    <p style={{color: "darkorange"}}>PCS</p>
+                                    <p style={{color: "grey"}}>{record.quantity}</p>
+                                    <p style={{color: "grey"}}>PCS</p>
                                   </div>
                                   )}
                                 </div>
                                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "5px" }}>
-                                  <button style={{position: "relative", backgroundColor: "hsl(220deg 13.04% 9.02%)", color: "#fff"}} onClick={() => handleQuantityArrowOnClick(false, record.id)} className="button">+<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
-                                  <button style={{backgroundColor: "hsl(220deg 13.04% 9.02%)", color: "#fff"}} onClick={() => {}} className="button">&gt;</button>
+                                  <button style={{position: "relative", backgroundColor: "darkorange", border: "none", color: "#fff"}} onClick={() => handleQuantityArrowOnClick(false, record.id)} className="button">+<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
+                                  <button style={{backgroundColor: "darkorange", border: "none", color: "#fff"}} onClick={() => {}} className="button">&gt;</button>
                                 </div>
                               </div>
                             </td>
-                            <td style={{verticalAlign: "middle", color: "GrayText"}}>{rupiah(record.profit)}</td>
-                            <td style={{verticalAlign: "middle", color: "#fff"}}>
+                            <td style={{verticalAlign: "middle", color: "grey"}}>{rupiah(record.profit)}</td>
+                            <td style={{verticalAlign: "middle", color: "grey"}}>
                               {rupiah(record.finalPrice)}{" "}
                               <span style={{ color: "red" }}>
                                 {record.discount > 0
@@ -1378,7 +1379,7 @@ const Cashier = () => {
                             </td>
                             <td style={{verticalAlign: "middle"}}>
                               <button
-                                style={{verticalAlign: "middle", backgroundColor: "rgb(200, 10, 50)", color: "#fff"}}
+                                style={{verticalAlign: "middle", backgroundColor: "rgb(200, 10, 50)", border: "none", color: "#fff"}}
                                 className="button"
                                 onClick={() => handleDeleteRecord(record.id)}
                               >
@@ -1451,7 +1452,7 @@ const Cashier = () => {
                       placeholder="Cari Outlet"
                       value={outlet.name}
                       onChange={handleOutletChange}
-                      style={{backgroundColor: "#14161a", color: "#fff"}}
+                      style={{backgroundColor: "#fff", color: "black"}}
                     />
                     {showDropdownOutlet && (
                       <ul className="dropdown" style={dropdownStyleOutlet}>
@@ -1478,7 +1479,7 @@ const Cashier = () => {
                       name="sales"
                       id="sales"
                       value={sales}
-                      style={{backgroundColor: "#14161a", color: "#fff"}}
+                      style={{backgroundColor: "#fff", color: "black"}}
                     >
                       <option value="Ana">Ana</option>
                       <option value="Eman">Eman</option>
