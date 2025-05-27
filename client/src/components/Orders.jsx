@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import axios from "axios";
 import { useState } from "react";
 import CIcon from "@coreui/icons-react";
@@ -31,13 +31,11 @@ const Orders = () => {
   const [outletName, setOutletName] = useState("");
   const [selectedTransactionSalesChange, setSelectedTransactionSalesChange] =
     useState(null);
-  const [tanggal, setTanggal] = useState(new Date());
-  const [tanggalBeforeToLocalDate, setTanggalBeforeToLocalDate] = useState(
-    new Date(Date.now()).toLocaleDateString()
+  const [tanggal, setTanggal] = useState(
+    // new Date(new Date().setHours(0, 0, 0, 0))
+    null
   );
-  const [tanggalLocaleDate, setTanggalLocaleDate] = useState(
-    new Date(Date.now()).toLocaleDateString()
-  );
+  const calendarRef = useRef();
   const [isDateChanged, setIsDateChanged] = useState(false);
 
   const salesList = [
@@ -64,24 +62,24 @@ const Orders = () => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        if (decoded.role === "admin") {
-          fetchData();
+        if (decoded.role === "admin" && !isDateChanged) {
+          const tanggalku = dayjs().tz("Asia/Makassar").toDate();
+          fetchData(tanggalku);
+          console.log("ini dari useEffect");
+        } else {
+          setIsDateChanged(true);
         }
       } catch (error) {
         console.error("Token decoding failed:", error);
       }
     }
-  }, [token]);
+  }, [token, isDateChanged]);
 
-  useEffect(() => {
-    if (
-      isDateChanged &&
-      tanggal.toLocaleDateString() !== tanggalBeforeToLocalDate
-    ) {
-      fetchData();
-      console.log("permintaan kedua");
-    }
-  }, [tanggal, isDateChanged]);
+  // useEffect(() => {
+  //   if(token) {
+  //     console.log(calendarRef.current.querySelector(".flatpickr-input").placeholder)
+  //   }
+  // }, [token, calendarRef])
 
   const refreshToken = async () => {
     try {
@@ -151,12 +149,30 @@ const Orders = () => {
     return null;
   }
 
-  const fetchData = async () => {
-    // console.log(tanggal)
+  const fetchData = async (fixDate) => {
+    const regex = /^(0?[1-9]|1[0-2])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/;
+    // console.log(regex.test(fixDate))
+
+    if (!fixDate) {
+      fixDate = dayjs().tz("Asia/Makassar").toDate().toLocaleDateString();
+    }else if (regex.test(fixDate)) {
+      const input = fixDate;
+      const [month, day, year] = input.split("/");
+
+      const formatted = `${day.padStart(2, "0")}-${month.padStart(2,"0")}-${year}`;
+      // console.log(formatted)
+
+      const [day2, month2, year2] = formatted.split("-").map(Number);
+      const dateObj = new Date(year2, month2 - 1, day2);
+      // console.log(dateObj)
+      // console.log(dateObj.toString());
+      fixDate = dateObj.toString()
+    }
+
     try {
       setIsOrdersDataLoading(true);
       const response = await axios.get(
-        `${import.meta.env.VITE_BASEURL}/dashboard/orders/${tanggal}`
+        `${import.meta.env.VITE_BASEURL}/dashboard/orders/${fixDate}`
       );
       if (response) {
         const { orders } = response.data;
@@ -243,11 +259,18 @@ const Orders = () => {
 
   const handlePrint = () => {
     // const tanggal = new Date();
-    const formattedDate = `${tanggal.getDate().toString().padStart(2, "0")}-${(
-      tanggal.getMonth() + 1
-    )
-      .toString()
-      .padStart(2, "0")}-${tanggal.getFullYear()}`;
+    let formattedDate =
+      calendarRef.current.querySelector(".flatpickr-input").value;
+
+    if (!formattedDate) {
+      const date = new Date();
+
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const year = date.getFullYear();
+
+      formattedDate = `${month}/${day}/${year}`;
+    }
 
     const worksheet1 = XLSX.utils.aoa_to_sheet([]);
 
@@ -422,7 +445,9 @@ const Orders = () => {
         );
 
         if (response) {
-          await fetchData();
+          await fetchData(
+            calendarRef.current.querySelector(".flatpickr-input").value
+          );
         }
       } catch (error) {
         console.error(error.message);
@@ -448,27 +473,15 @@ const Orders = () => {
         );
 
         if (response) {
-          fetchData();
+          fetchData(
+            calendarRef.current.querySelector(".flatpickr-input").value
+          );
           setChangeSalesView(!changeSalesView);
         }
       }
     } catch (error) {
       console.error(error.message);
     }
-  };
-
-  const handleGantiTanggal = async (date) => {
-    const newLocaleDate = date.toLocaleDateString();
-
-    if (newLocaleDate !== tanggalLocaleDate) {
-      setTanggalBeforeToLocalDate(tanggalLocaleDate);
-      setTanggalLocaleDate(newLocaleDate);
-      setIsDateChanged(true);
-    } else {
-      setIsDateChanged(false);
-    }
-
-    setTanggal(date);
   };
 
   return (
@@ -579,6 +592,7 @@ const Orders = () => {
               justifyContent: "center",
               position: "relative",
             }}
+            ref={calendarRef}
           >
             <Flatpickr
               style={{
@@ -590,11 +604,24 @@ const Orders = () => {
                 paddingRight: "40px",
                 color: "GrayText",
               }}
-              placeholder={tanggal}
-              value={tanggal}
-              onChange={([date]) => handleGantiTanggal(date)}
+              placeholder={!isDateChanged ? "Hari Ini" : ""}
+              onChange={([date]) => {
+                const flatDate = dayjs(date).tz("Asia/Makassar").toDate();
+                const convDate = flatDate.toLocaleDateString();
+                const convLocDate = dayjs().tz("Asia/Makassar").toDate();
+                const locDate = convLocDate.toLocaleDateString();
+                // console.log(convDate);
+                // console.log(locDate);
+                if (convDate !== locDate) {
+                  fetchData(flatDate);
+                  // console.log("ini dari Pilihan");
+                } else {
+                  fetchData(convLocDate);
+                  setIsDateChanged(false);
+                }
+              }}
               options={{
-                dateFormat: "d-m-Y",
+                dateFormat: "m/d/Y",
               }}
             />
             <i
@@ -639,20 +666,20 @@ const Orders = () => {
           <SpinnerLoader color={"black"} width={"100px"} />
         </div>
       ) : (
-        <div className="viewOrders" style={{ position: "relative", minHeight: "90vh" }}>
+        <div
+          className="viewOrders"
+          style={{ position: "relative", minHeight: "90vh" }}
+        >
           {ordersData.length < 1 ? (
-            <div style={{position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)"}}>
-              <p>
-                Belum ada data transaksi pada{" "}
-                {
-                  !isDateChanged
-                  ? "Hari ini"
-                  : `tanggal ${tanggal.getDate().toString().padStart(2, 0)}-${tanggal
-                    .getMonth()
-                    .toString()
-                    .padStart(2, 0)}-${tanggal.getFullYear()}`
-                }
-              </p>
+            <div
+              style={{
+                position: "absolute",
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              <p>Belum ada data transaksi</p>
             </div>
           ) : (
             <>
