@@ -59,21 +59,32 @@ const Orders = () => {
   }, []);
 
   useEffect(() => {
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        if (decoded.role === "admin" && !isDateChanged) {
-          const tanggalku = dayjs().tz("Asia/Makassar").toDate();
-          fetchData(tanggalku);
-          console.log("ini dari useEffect");
-        } else {
-          setIsDateChanged(true);
+    const controller = new AbortController();
+  
+    const runFetch = async () => {
+      if (token) {
+        try {
+          const decoded = jwtDecode(token);
+          if (decoded.role === "admin" && isDateChanged === false) {
+            const tanggalku = dayjs().tz("Asia/Makassar").toDate();
+            await fetchData(tanggalku, controller.signal); // passing signal
+            console.log("ini dari useEffect");
+          } else {
+            setIsDateChanged(true);
+          }
+        } catch (error) {
+          console.error("Token decoding failed:", error);
         }
-      } catch (error) {
-        console.error("Token decoding failed:", error);
       }
-    }
+    };
+  
+    runFetch();
+  
+    return () => {
+      controller.abort(); // Cancel request if effect re-runs or component unmounts
+    };
   }, [token, isDateChanged]);
+  
 
   // useEffect(() => {
   //   if(token) {

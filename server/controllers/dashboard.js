@@ -328,38 +328,38 @@ export const getOutletName = async(req, res) => {
 //==============================================================================================================
 
 export const getTodayOrdersData = async (req, res) => {
-    const date = req.params['date']
-    
-    const todayStart = new Date(date)
-    todayStart.setHours(0,0,0,0)
-    const tomorrowStart = new Date(todayStart.getTime() + 86400000)
-
-    try {
-        const orders = await Orders.findAll({
-            order: [
-                ['createdAt', 'DESC']
-            ],
-            where: {
-                createdAt: {
-                    [Op.and] : [
-                        {[Op.gt]: todayStart},
-                        {[Op.lt]: tomorrowStart},
-                    ]
-                    // [Op.gt]: todayStart
-                }
-            },
-            // raw: true,
-            attributes: ["items", "outlet", "sales", "profit", "totalPayment", "id", "createdAt"]
-        })
-        if(orders.length < 1) return res.status(404).json({msg: "Tidak ada data pada tanggal tersebut!", date: todayStart})
-
-        // console.log(orders)
-        res.status(200).json({orders, date: todayStart})
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ msg: "Internal server error", error })
+    const dateParam = req.params['date']; 
+    const parsedDate = dayjs(dateParam);
+  
+    if (!parsedDate.isValid()) {
+      return res.status(400).json({ msg: "Tanggal tidak valid" });
     }
-}
+  
+    const todayStart = parsedDate.tz("Asia/Makassar").startOf('day').toDate();
+    const tomorrowStart = dayjs(todayStart).add(1, 'day').toDate();
+  
+    try {
+      const orders = await Orders.findAll({
+        order: [['createdAt', 'DESC']],
+        where: {
+          createdAt: {
+            [Op.gte]: todayStart,
+            [Op.lt]: tomorrowStart
+          }
+        },
+        attributes: ["items", "outlet", "sales", "profit", "totalPayment", "id", "createdAt"]
+      });
+  
+      if (orders.length < 1) {
+        return res.status(404).json({ msg: "Tidak ada data pada tanggal tersebut!", date: todayStart });
+      }
+  
+      res.status(200).json({ orders, date: todayStart });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ msg: "Internal server error", error });
+    }
+  };
 
 export const getItemListForTodayOrders = async(req, res) => {
     const code = req.params['code']
