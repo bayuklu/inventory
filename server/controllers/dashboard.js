@@ -328,6 +328,15 @@ export const getOutletName = async(req, res) => {
 //==============================================================================================================
 
 export const getTodayOrdersData = async (req, res) => {
+    const date = req.params['date']
+    
+    const todayStart = new Date(date)
+    todayStart.setHours(0,0,0,0)
+    const tomorrowStart = new Date(todayStart.getTime() + 86400000)
+
+    // console.log(todayStart)
+    // console.log(tomorrowStart)
+
     try {
         const orders = await Orders.findAll({
             order: [
@@ -335,16 +344,20 @@ export const getTodayOrdersData = async (req, res) => {
             ],
             where: {
                 createdAt: {
-                    [Op.gt]: TODAY_START_WITA_CONVERT_UTC
+                    [Op.and] : [
+                        {[Op.gt]: todayStart},
+                        {[Op.lt]: tomorrowStart},
+                    ]
+                    // [Op.gt]: todayStart
                 }
             },
             // raw: true,
             attributes: ["items", "outlet", "sales", "profit", "totalPayment", "id", "createdAt"]
         })
+        if(orders.length < 1) return res.status(404).json({msg: "Tidak ada data pada tanggal tersebut!", date: todayStart})
 
-        // console.log(TODAY_START_WITA_CONVERT_UTC)
         // console.log(orders)
-        res.status(200).json({orders})
+        res.status(200).json({orders, date: todayStart})
     } catch (error) {
         console.log(error)
         res.status(500).json({ msg: "Internal server error", error })
@@ -353,6 +366,8 @@ export const getTodayOrdersData = async (req, res) => {
 
 export const getItemListForTodayOrders = async(req, res) => {
     const code = req.params['code']
+    // console.log(code)
+    // console.log("OOOOOOOOOOOOOOo")
     if(!code) return res.sendStatus(400)
     try {
         const product = await Items.findOne({ where: { code }, raw: true, attributes: ['name'] })

@@ -32,6 +32,13 @@ const Orders = () => {
   const [selectedTransactionSalesChange, setSelectedTransactionSalesChange] =
     useState(null);
   const [tanggal, setTanggal] = useState(new Date());
+  const [tanggalBeforeToLocalDate, setTanggalBeforeToLocalDate] = useState(
+    new Date(Date.now()).toLocaleDateString()
+  );
+  const [tanggalLocaleDate, setTanggalLocaleDate] = useState(
+    new Date(Date.now()).toLocaleDateString()
+  );
+  const [isDateChanged, setIsDateChanged] = useState(false);
 
   const salesList = [
     "--Ganti Sales--",
@@ -65,6 +72,16 @@ const Orders = () => {
       }
     }
   }, [token]);
+
+  useEffect(() => {
+    if (
+      isDateChanged &&
+      tanggal.toLocaleDateString() !== tanggalBeforeToLocalDate
+    ) {
+      fetchData();
+      console.log("permintaan kedua");
+    }
+  }, [tanggal, isDateChanged]);
 
   const refreshToken = async () => {
     try {
@@ -135,10 +152,11 @@ const Orders = () => {
   }
 
   const fetchData = async () => {
+    // console.log(tanggal)
     try {
       setIsOrdersDataLoading(true);
       const response = await axios.get(
-        `${import.meta.env.VITE_BASEURL}/dashboard/orders`
+        `${import.meta.env.VITE_BASEURL}/dashboard/orders/${tanggal}`
       );
       if (response) {
         const { orders } = response.data;
@@ -158,7 +176,7 @@ const Orders = () => {
                 const product = await axios.get(
                   `${
                     import.meta.env.VITE_BASEURL
-                  }/dashboard/orders/itemList/${code}`
+                  }/dashboard/orders/item/list/${code}`
                 );
                 // const product = await Items.findOne({ where: { code } })
                 return {
@@ -175,10 +193,12 @@ const Orders = () => {
 
             // const outlet = await Outlet.findOne({ where: { id: order.outlet } })
             const outlet = await axios.get(
-              `${import.meta.env.VITE_BASEURL}/dashboard/orders/outlet/${
+              `${import.meta.env.VITE_BASEURL}/dashboard/orders/outlet/name/${
                 order.outlet
               }`
             );
+
+            // console.log(outlet)
             const { name } = outlet.data;
             const profit = order.profit;
             const sales = order.sales;
@@ -194,13 +214,17 @@ const Orders = () => {
           })
         );
 
-        // console.log(ordersData)
+        // console.log(ordersData[0])
 
         setOrdersData(ordersData);
         setIsOrdersDataLoading(false);
         // console.log("oke")
+        // console.log(new Date(response.data.date).toString())
+        // console.log(new Date(response.data.date).toLocaleDateString())
       }
     } catch (error) {
+      setIsOrdersDataLoading(false);
+      setOrdersData([]);
       console.log(error.message);
     }
   };
@@ -218,12 +242,12 @@ const Orders = () => {
   };
 
   const handlePrint = () => {
-    const today = new Date();
-    const formattedDate = `${today.getDate().toString().padStart(2, "0")}-${(
-      today.getMonth() + 1
+    // const tanggal = new Date();
+    const formattedDate = `${tanggal.getDate().toString().padStart(2, "0")}-${(
+      tanggal.getMonth() + 1
     )
       .toString()
-      .padStart(2, "0")}-${today.getFullYear()}`;
+      .padStart(2, "0")}-${tanggal.getFullYear()}`;
 
     const worksheet1 = XLSX.utils.aoa_to_sheet([]);
 
@@ -387,7 +411,7 @@ const Orders = () => {
   };
 
   const handleHapusTransaksi = async (idTransaksi) => {
-    console.log(idTransaksi);
+    // console.log(idTransaksi);
     if (confirm("Yakin ingin Menghapus Transaksi Ini?") === true) {
       try {
         const response = await axios.delete(
@@ -433,16 +457,19 @@ const Orders = () => {
     }
   };
 
-  const handleGantiTanggal = async(date) => {
-    setIsOrdersDataLoading(true)
-    try {
-      const response = await axios.put(`${import.meta.env.VITE_BASEURL}/dashboard/orders`)
-      setTanggal(date)
-    } catch (error) {
-      console.log(error.response)
-      setIsOrdersDataLoading(false)
+  const handleGantiTanggal = async (date) => {
+    const newLocaleDate = date.toLocaleDateString();
+
+    if (newLocaleDate !== tanggalLocaleDate) {
+      setTanggalBeforeToLocalDate(tanggalLocaleDate);
+      setTanggalLocaleDate(newLocaleDate);
+      setIsDateChanged(true);
+    } else {
+      setIsDateChanged(false);
     }
-  }
+
+    setTanggal(date);
+  };
 
   return (
     <div className="orders-container">
@@ -612,63 +639,81 @@ const Orders = () => {
           <SpinnerLoader color={"black"} width={"100px"} />
         </div>
       ) : (
-        <div className="viewOrders">
-          {ordersData.map((data, index) => (
-            <div
-              key={index}
-              className="orders"
-              style={{ backgroundColor: "#fff" }}
-            >
-              <div className="infoOrders">
-                <p style={{ fontWeight: "bold", color: "darkorange" }}>
-                  {`${data[2].toUpperCase()} ~ [${rupiah(
-                    data[3]
-                  )}] ~ Profit = ${rupiah(data[4])} ====>>> Sales: `}
-                  <span style={{ color: "lightgreen" }}>
-                    {`${data[5]}`}
-                    <i
-                      style={{
-                        color: "lightgreen",
-                        marginLeft: "0px",
-                        cursor: "pointer",
-                      }}
-                      onClick={(e) => {
-                        setChangeSalesView(!changeSalesView);
-                        setSalesBefore(data[5]);
-                        setOutletName(data[2]);
-                        setSelectedTransactionSalesChange(data[6]);
-                      }}
-                    >
-                      <CIcon
-                        style={{ transform: "scale(0.7)" }}
-                        icon={icon.cilPen}
-                      />
-                    </i>
-                  </span>
-                </p>
-                <div style={{ display: "flex", gap: "5px" }}>
-                  <i style={{ color: "white" }}>
-                    <CIcon icon={icon.cilClock} />
-                  </i>
-                  <p style={{ color: "#fff" }}>{data[1]} WITA</p>
-                  <i
-                    style={{ color: "red", cursor: "pointer" }}
-                    onClick={() => handleHapusTransaksi(data[6])}
-                  >
-                    <CIcon icon={icon.cilTrash} />
-                  </i>
-                </div>
-              </div>
-              <div className="itemOrders">
-                {data[0].map((item, i) => (
-                  <div key={i} className="itemOrder">
-                    <p>{item.itemName.toUpperCase()}</p>
-                    <p>{`x ${item.quantity}`}</p>
-                  </div>
-                ))}
-              </div>
+        <div className="viewOrders" style={{ position: "relative", minHeight: "90vh" }}>
+          {ordersData.length < 1 ? (
+            <div style={{position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)"}}>
+              <p>
+                Belum ada data transaksi pada{" "}
+                {
+                  !isDateChanged
+                  ? "Hari ini"
+                  : `tanggal ${tanggal.getDate().toString().padStart(2, 0)}-${tanggal
+                    .getMonth()
+                    .toString()
+                    .padStart(2, 0)}-${tanggal.getFullYear()}`
+                }
+              </p>
             </div>
-          ))}
+          ) : (
+            <>
+              {ordersData.map((data, index) => (
+                <div
+                  key={index}
+                  className="orders"
+                  style={{ backgroundColor: "#fff" }}
+                >
+                  <div className="infoOrders">
+                    <p style={{ fontWeight: "bold", color: "darkorange" }}>
+                      {`${data[2].toUpperCase()} ~ [${rupiah(
+                        data[3]
+                      )}] ~ Profit = ${rupiah(data[4])} ====>>> Sales: `}
+                      <span style={{ color: "lightgreen" }}>
+                        {`${data[5]}`}
+                        <i
+                          style={{
+                            color: "lightgreen",
+                            marginLeft: "0px",
+                            cursor: "pointer",
+                          }}
+                          onClick={(e) => {
+                            setChangeSalesView(!changeSalesView);
+                            setSalesBefore(data[5]);
+                            setOutletName(data[2]);
+                            setSelectedTransactionSalesChange(data[6]);
+                          }}
+                        >
+                          <CIcon
+                            style={{ transform: "scale(0.7)" }}
+                            icon={icon.cilPen}
+                          />
+                        </i>
+                      </span>
+                    </p>
+                    <div style={{ display: "flex", gap: "5px" }}>
+                      <i style={{ color: "white" }}>
+                        <CIcon icon={icon.cilClock} />
+                      </i>
+                      <p style={{ color: "#fff" }}>{data[1]} WITA</p>
+                      <i
+                        style={{ color: "red", cursor: "pointer" }}
+                        onClick={() => handleHapusTransaksi(data[6])}
+                      >
+                        <CIcon icon={icon.cilTrash} />
+                      </i>
+                    </div>
+                  </div>
+                  <div className="itemOrders">
+                    {data[0].map((item, i) => (
+                      <div key={i} className="itemOrder">
+                        <p>{item.itemName.toUpperCase()}</p>
+                        <p>{`x ${item.quantity}`}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       )}
     </div>

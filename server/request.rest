@@ -163,8 +163,7 @@ PUT http://localhost:5000/record/quantity
 Content-Type: application/json
 
 {
-    "isLeft": true,
+    "isLeft": false,
     "id": 52,
-    "turnCode": "2552025113825",
-    "isUnitChecked": "1-24-12"
+    "turnCode": "2552025113825"
 }

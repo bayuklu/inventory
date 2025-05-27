@@ -1270,7 +1270,7 @@ const Cashier = () => {
               </div>
             </div>
             <div style={{flex: "1", overflow: "auto", display: "flex", paddingLeft: "20px"}}>
-              <div className="orderView" style={{backgroundColor: "lightgrey"}}>
+              <div className="orderView" style={{backgroundColor: records.length > 0 ? "lightgrey" : "black"}}>
                     <table style={tableStyle} className="table">
                       <thead style={{backgroundColor: "black"}}>
                         <tr>

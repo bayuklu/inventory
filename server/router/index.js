@@ -57,9 +57,9 @@ router.put('/dashboard/tagihan7hari', lunaskanTagihan)
 router.get('/dashboard/outlet/:outletId', getOutletName)
 
 //router transaksi today orders
-router.get('/dashboard/orders', getTodayOrdersData)
-router.get('/dashboard/orders/itemList/:code', getItemListForTodayOrders)
-router.get('/dashboard/orders/outlet/:id', getOutletForTodayOrders)
+router.get('/dashboard/orders/:date', getTodayOrdersData)
+router.get('/dashboard/orders/item/list/:code', getItemListForTodayOrders)
+router.get('/dashboard/orders/outlet/name/:id', getOutletForTodayOrders)
 router.delete('/dashboard/orders/:transactionId', deleteTransaction)
 router.put('/dashboard/orders/sales', changeSalesName)
 
