@@ -334,9 +334,6 @@ export const getTodayOrdersData = async (req, res) => {
     todayStart.setHours(0,0,0,0)
     const tomorrowStart = new Date(todayStart.getTime() + 86400000)
 
-    const CONVERT_DAY_START = new Date(convertToWita(todayStart))
-    const CONVERT_TOMORROW_OF_DAY_START = new Date(convertToWita(tomorrowStart))
-
     try {
         const orders = await Orders.findAll({
             order: [
@@ -345,8 +342,8 @@ export const getTodayOrdersData = async (req, res) => {
             where: {
                 createdAt: {
                     [Op.and] : [
-                        {[Op.gt]: CONVERT_DAY_START},
-                        {[Op.lt]: CONVERT_TOMORROW_OF_DAY_START},
+                        {[Op.gt]: todayStart},
+                        {[Op.lt]: tomorrowStart},
                     ]
                     // [Op.gt]: todayStart
                 }
@@ -356,7 +353,7 @@ export const getTodayOrdersData = async (req, res) => {
         })
         if(orders.length < 1) return res.status(404).json({msg: "Tidak ada data pada tanggal tersebut!", date: todayStart})
 
-        console.log(orders)
+        // console.log(orders)
         res.status(200).json({orders, date: todayStart})
     } catch (error) {
         console.log(error)

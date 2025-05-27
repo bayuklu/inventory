@@ -6,8 +6,12 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 
 export const convertToWita = (date) => {
-    return dayjs.utc(date).tz(`Asia/Makassar`).add(1, 'day').format(`YYYY-MM-DD HH:mm:ss`)
+    return dayjs.utc(date).tz(`Asia/Makassar`).format(`YYYY-MM-DD HH:mm:ss`)
 }
+
+// export const getStartOfDayUTCFromWITA = (tanggal) => {
+//     return dayjs(tanggal).tz('Asia/Makassar').startOf('day').utc().toDate()
+// }
 
 export const TODAY_START_WITA_CONVERT_UTC = dayjs().tz('Asia/Makassar').startOf('day').utc().toDate()
 export const TOMORROW_START_WITA_CONVERT_UTC = dayjs().tz('Asia/Makassar').add(1, 'day').startOf('day').utc().toDate()
