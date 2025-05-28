@@ -866,7 +866,7 @@ const Inventory = () => {
                         + Stock
                       </button>
                       <button
-                        disabled
+                        
                         style={{
                           border: "none",
                           color: "white",

@@ -149,34 +149,29 @@ const Orders = () => {
     return null;
   }
 
+  //ini fungsi dinamis tapi komplex karena request parameter yang berbeda type data asw
   const fetchData = async (fixDate) => {
     const regex = /^(0?[1-9]|1[0-2])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/;
-
     if (!fixDate) {
       const today = new Date();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const date = String(today.getDate()).padStart(2, '0');
+      
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const date = String(today.getDate()).padStart(2, "0");
       const year = String(today.getFullYear());
-  
       const newInput = `${month}/${date}/${year}`;
       const [month2, day2, year2] = newInput.split("/");
-
       const formatted = `${day2.padStart(2, "0")}-${month2.padStart(2,"0")}-${year2}`;
       const [day3, month3, year3] = formatted.split("-").map(Number);
-
       const dateObj = new Date(year3, month3 - 1, day3);
-      fixDate = dateObj.toString()
-    }else if (regex.test(fixDate)) {
+      fixDate = dateObj.toString();
+    } else if (regex.test(fixDate)) {
       const input = fixDate;
       const [month, day, year] = input.split("/");
-
       const formatted = `${day.padStart(2, "0")}-${month.padStart(2,"0")}-${year}`;
       const [day2, month2, year2] = formatted.split("-").map(Number);
-
       const dateObj = new Date(year2, month2 - 1, day2);
-      fixDate = dateObj.toString()
+      fixDate = dateObj.toString();
     }
-    
     try {
       setIsOrdersDataLoading(true);
       const response = await axios.get(
@@ -184,45 +179,38 @@ const Orders = () => {
       );
       if (response) {
         const { orders } = response.data;
-        // console.log(orders)
-
         const ordersData = await Promise.all(
           orders.map(async (order) => {
-            // console.log(order)
             const rawItems = order.items;
             const items = rawItems.includes(",")
               ? rawItems.split(",")
               : [rawItems];
-            // console.log(items)
             const itemList = await Promise.all(
               items.map(async (i) => {
                 const [code, quantity] = i.split(":");
-                const product = await axios.get(
-                  `${
-                    import.meta.env.VITE_BASEURL
-                  }/dashboard/orders/item/list/${code}`
-                );
-                // const product = await Items.findOne({ where: { code } })
-                return {
-                  itemName: product.data.name,
-                  quantity,
-                };
+                try {
+                  const product = await axios.get(
+                    `${
+                      import.meta.env.VITE_BASEURL
+                    }/dashboard/orders/item/list/${code}`
+                  );
+                  return { itemName: product.data.name, quantity };
+                } catch (error) {
+                  if(error.response.status === 404) {
+                    return { itemName: "- dihapus / tidak tersedia -", quantity };
+                  }
+                }
               })
             );
-
             const convertedTime = dayjs
               .utc(order.createdAt)
               .tz(`Asia/Makassar`)
               .format(`HH:mm`);
-
-            // const outlet = await Outlet.findOne({ where: { id: order.outlet } })
             const outlet = await axios.get(
               `${import.meta.env.VITE_BASEURL}/dashboard/orders/outlet/name/${
                 order.outlet
               }`
             );
-
-            // console.log(outlet)
             const { name } = outlet.data;
             const profit = order.profit;
             const sales = order.sales;
@@ -237,14 +225,8 @@ const Orders = () => {
             ];
           })
         );
-
-        // console.log(ordersData[0])
-
         setOrdersData(ordersData);
         setIsOrdersDataLoading(false);
-        // console.log("oke")
-        // console.log(new Date(response.data.date).toString())
-        // console.log(new Date(response.data.date).toLocaleDateString())
       }
     } catch (error) {
       setIsOrdersDataLoading(false);

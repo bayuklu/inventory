@@ -330,7 +330,7 @@ export const getOutletName = async(req, res) => {
 export const getTodayOrdersData = async (req, res) => {
     const dateParam = req.params['date']; 
     const parsedDate = dayjs(dateParam);
-    console.log(parsedDate)
+    // console.log(parsedDate)
   
     if (!parsedDate.isValid()) {
       return res.status(400).json({ msg: "Tanggal tidak valid" });
@@ -387,6 +387,7 @@ export const getOutletForTodayOrders = async(req, res) => {
         const otl = await Outlet.findOne({ where: { id }, raw: true, attributes: ['name'] })
         if(!otl) return res.status(404).json({msg: `Outlet Id of ${id} not found!`})
 
+        // console.log(otl)
         res.status(200).json(otl)
     } catch (error) {
         console.log(error)
