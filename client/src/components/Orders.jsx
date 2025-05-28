@@ -59,32 +59,21 @@ const Orders = () => {
   }, []);
 
   useEffect(() => {
-    const controller = new AbortController();
-  
-    const runFetch = async () => {
-      if (token) {
-        try {
-          const decoded = jwtDecode(token);
-          if (decoded.role === "admin" && isDateChanged === false) {
-            const tanggalku = dayjs().tz("Asia/Makassar").toDate();
-            await fetchData(tanggalku, controller.signal); // passing signal
-            console.log("ini dari useEffect");
-          } else {
-            setIsDateChanged(true);
-          }
-        } catch (error) {
-          console.error("Token decoding failed:", error);
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        if (decoded.role === "admin" && isDateChanged === false) {
+          const tanggalku = dayjs().tz("Asia/Makassar").toDate();
+          fetchData(tanggalku);
+          console.log("ini dari useEffect");
+        } else {
+          setIsDateChanged(true);
         }
+      } catch (error) {
+        console.error("Token decoding failed:", error);
       }
-    };
-  
-    runFetch();
-  
-    return () => {
-      controller.abort(); // Cancel request if effect re-runs or component unmounts
-    };
+    }
   }, [token, isDateChanged]);
-  
 
   // useEffect(() => {
   //   if(token) {
@@ -162,24 +151,32 @@ const Orders = () => {
 
   const fetchData = async (fixDate) => {
     const regex = /^(0?[1-9]|1[0-2])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/;
-    // console.log(regex.test(fixDate))
 
     if (!fixDate) {
-      fixDate = dayjs().tz("Asia/Makassar").toDate().toLocaleDateString();
+      const today = new Date();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const date = String(today.getDate()).padStart(2, '0');
+      const year = String(today.getFullYear());
+  
+      const newInput = `${month}/${date}/${year}`;
+      const [month2, day2, year2] = newInput.split("/");
+
+      const formatted = `${day2.padStart(2, "0")}-${month2.padStart(2,"0")}-${year2}`;
+      const [day3, month3, year3] = formatted.split("-").map(Number);
+
+      const dateObj = new Date(year3, month3 - 1, day3);
+      fixDate = dateObj.toString()
     }else if (regex.test(fixDate)) {
       const input = fixDate;
       const [month, day, year] = input.split("/");
 
       const formatted = `${day.padStart(2, "0")}-${month.padStart(2,"0")}-${year}`;
-      // console.log(formatted)
-
       const [day2, month2, year2] = formatted.split("-").map(Number);
+
       const dateObj = new Date(year2, month2 - 1, day2);
-      // console.log(dateObj)
-      // console.log(dateObj.toString());
       fixDate = dateObj.toString()
     }
-
+    
     try {
       setIsOrdersDataLoading(true);
       const response = await axios.get(

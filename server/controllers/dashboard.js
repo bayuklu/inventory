@@ -330,6 +330,7 @@ export const getOutletName = async(req, res) => {
 export const getTodayOrdersData = async (req, res) => {
     const dateParam = req.params['date']; 
     const parsedDate = dayjs(dateParam);
+    console.log(parsedDate)
   
     if (!parsedDate.isValid()) {
       return res.status(400).json({ msg: "Tanggal tidak valid" });
