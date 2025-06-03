@@ -1141,7 +1141,7 @@ const Cashier = () => {
                                   backgroundColor: "green",
                                   border: "none",
                                 }}
-                                onClick={() => handlePrintFromAdmin(data, outlet.name)}
+                                onClick={() => handlePrintFromAdmin(data, outlet)}
                               >
                                 Print
                               </button>
