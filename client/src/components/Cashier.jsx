@@ -87,18 +87,18 @@ const Cashier = () => {
     // }).catch(err => console.error(err));
 
     //punya bik ana
-    qz.security.setCertificatePromise(function (resolve, reject) {
-      resolve(
-        "-----BEGIN CERTIFICATE-----\nMIIECzCCAvOgAwIBAgIGAZG7LIaHMA0GCSqGSIb3DQEBCwUAMIGiMQswCQYDVQQGEwJVUzELMAkGA1UECAwCTlkxEjAQBgNVBAcMCUNhbmFzdG90YTEbMBkGA1UECgwSUVogSW5kdXN0cmllcywgTExDMRswGQYDVQQLDBJRWiBJbmR1c3RyaWVzLCBMTEMxHDAaBgkqhkiG9w0BCQEWDXN1cHBvcnRAcXouaW8xGjAYBgNVBAMMEVFaIFRyYXkgRGVtbyBDZXJ0MB4XDTI0MDkwMzAzNTU0M1oXDTQ0MDkwMzAzNTU0M1owgaIxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJOWTESMBAGA1UEBwwJQ2FuYXN0b3RhMRswGQYDVQQKDBJRWiBJbmR1c3RyaWVzLCBMTEMxGzAZBgNVBAsMElFaIEluZHVzdHJpZXMsIExMQzEcMBoGCSqGSIb3DQEJARYNc3VwcG9ydEBxei5pbzEaMBgGA1UEAwwRUVogVHJheSBEZW1vIENlcnQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC/IpyzVhnmSdUwXCY0l3/36dscdipmqbW4hDjxaWoXbjIZw4vxNyxlZJw/jTclMRfVJhPyqleKCZydJuKx/9zn/QaFSIKyQxyoP/AmSPqeb2ybOEZBbjUtnPU7GfVqoDefHaFRrREm7CWNN5g1kfomxz5ihWHGEZLwdGyllvjEVWVuCSZoGim10SyuZ84hyJIAnnGU4GzS9N2TVqYPvER0/F1yM6DeCfZM4CKFNpz5Sj8eMfioXNDJ4GRdWSWZblkUvoZ0CXnaVu/vKJLxWRfJ9UTGREOz6tAAZFPeLIHXbt667MthlVP9DLqTtB1+X5y9MbNzOM7jt745kANtxACpAgMBAAGjRTBDMBIGA1UdEwEB/wQIMAYBAf8CAQEwDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBRrBlmnue1ANqsyWuAqlXU/redqwDANBgkqhkiG9w0BAQsFAAOCAQEALMLc3Us3A3hq/IaVIXAZU0BNe+3xhdnS41fdZh90LLAJQo3/Ro191gaVmfsodddT2SOc93FHfhKvfS02B3yWzTX/3mmM3ze4On/YvUQ4QVnHRzzusYWNepZoO8dXVkDT+XpENXmSecbwcjXo1vZDbYzhJPLj1fYulOldd/rowyzmlMrBnSu9xTj9bkhxO4doDGgNranrKQg/BIWF34KxaPebFYrtHQ1sDohwAHp9ea9CRzFc2JoJ8Imm6WfFmXcu9m7oY6UtYl/TvhrliyC5WEQ7ssuO0xOA1K+S9oMbWO3OtE+SEVYt7kgTxO3o1Rm5IcodLpo1Z2YIEIJmNWdJ/w==\n-----END CERTIFICATE-----\n"
-      );
-    });
-
-    //punya bayu
     // qz.security.setCertificatePromise(function (resolve, reject) {
     //   resolve(
-    //     "-----BEGIN CERTIFICATE-----\nMIIECzCCAvOgAwIBAgIGAZF0jXCaMA0GCSqGSIb3DQEBCwUAMIGiMQswCQYDVQQGEwJVUzELMAkGA1UECAwCTlkxEjAQBgNVBAcMCUNhbmFzdG90YTEbMBkGA1UECgwSUVogSW5kdXN0cmllcywgTExDMRswGQYDVQQLDBJRWiBJbmR1c3RyaWVzLCBMTEMxHDAaBgkqhkiG9w0BCQEWDXN1cHBvcnRAcXouaW8xGjAYBgNVBAMMEVFaIFRyYXkgRGVtbyBDZXJ0MB4XDTI0MDgyMDEwNDgzMloXDTQ0MDgyMDEwNDgzMlowgaIxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJOWTESMBAGA1UEBwwJQ2FuYXN0b3RhMRswGQYDVQQKDBJRWiBJbmR1c3RyaWVzLCBMTEMxGzAZBgNVBAsMElFaIEluZHVzdHJpZXMsIExMQzEcMBoGCSqGSIb3DQEJARYNc3VwcG9ydEBxei5pbzEaMBgGA1UEAwwRUVogVHJheSBEZW1vIENlcnQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDRLFVosBSOp+5Z4txzMzA6+M+bIooM6eoePWLKATbScFJlS/LqVlLJ/j9RdAsu8AB0055RHD9cA7OHg2qzt1E3PWq0tLaObe5gxS7pO7dlN7FkkQfAEWS9FaTL0N9ZXPnzMAQFB3iAjnEjnldGCgCtPoeQY5COpiElDNtUTB7Hm1EOr/2/N/G3bt6Plc8A+Vk9fffSKyW5xn+kNO9gQMwi8pbdB08jS3HeblnVz0SKUuEPtq46YyZ5cN0KA8n2dgSjuBmpeFm3w+TfrTm0tchqSBWhP3WjyxOMbbJwfYOyrPMtsTDS08qLizOts2hK57DzXAikVNcF96/pcS2NIXXJAgMBAAGjRTBDMBIGA1UdEwEB/wQIMAYBAf8CAQEwDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBSO/7SedSDuNS0aIJrl2O5XtudE1DANBgkqhkiG9w0BAQsFAAOCAQEAw3pyxfBeErqwNLr1xIW+T2NJ4YhrSZl9NpVjaS7oZ6YHDc3GiZq17gNGFtCmGQlCSCDHDesNAG7jtYACV2T49EKPqEvWxLw8/jr8Y3ggiCRqgLo56SKDWSEhzZmXGia6CVHK5yjKY7ca8njy7pWiT7k3ZyBqNMNd/+KL/8ckTTt4ZYQ1JT3rGYLfL+j1ksV7JGY/wCAu4cf/+0LsBFbamJMGmAzfQikir2PniWsMZ31WM3GiSOP92/TZNa8qtrU9NhvWyGP0emPly0jG1mvFoUXSYTkEEjEhnPne+BnPi+KAwM2TgoiH2z7ejdp+NyX+v2SlB7P0nwSYieWGilcA3A==\n-----END CERTIFICATE-----\n"
+    //     "-----BEGIN CERTIFICATE-----\nMIIECzCCAvOgAwIBAgIGAZG7LIaHMA0GCSqGSIb3DQEBCwUAMIGiMQswCQYDVQQGEwJVUzELMAkGA1UECAwCTlkxEjAQBgNVBAcMCUNhbmFzdG90YTEbMBkGA1UECgwSUVogSW5kdXN0cmllcywgTExDMRswGQYDVQQLDBJRWiBJbmR1c3RyaWVzLCBMTEMxHDAaBgkqhkiG9w0BCQEWDXN1cHBvcnRAcXouaW8xGjAYBgNVBAMMEVFaIFRyYXkgRGVtbyBDZXJ0MB4XDTI0MDkwMzAzNTU0M1oXDTQ0MDkwMzAzNTU0M1owgaIxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJOWTESMBAGA1UEBwwJQ2FuYXN0b3RhMRswGQYDVQQKDBJRWiBJbmR1c3RyaWVzLCBMTEMxGzAZBgNVBAsMElFaIEluZHVzdHJpZXMsIExMQzEcMBoGCSqGSIb3DQEJARYNc3VwcG9ydEBxei5pbzEaMBgGA1UEAwwRUVogVHJheSBEZW1vIENlcnQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC/IpyzVhnmSdUwXCY0l3/36dscdipmqbW4hDjxaWoXbjIZw4vxNyxlZJw/jTclMRfVJhPyqleKCZydJuKx/9zn/QaFSIKyQxyoP/AmSPqeb2ybOEZBbjUtnPU7GfVqoDefHaFRrREm7CWNN5g1kfomxz5ihWHGEZLwdGyllvjEVWVuCSZoGim10SyuZ84hyJIAnnGU4GzS9N2TVqYPvER0/F1yM6DeCfZM4CKFNpz5Sj8eMfioXNDJ4GRdWSWZblkUvoZ0CXnaVu/vKJLxWRfJ9UTGREOz6tAAZFPeLIHXbt667MthlVP9DLqTtB1+X5y9MbNzOM7jt745kANtxACpAgMBAAGjRTBDMBIGA1UdEwEB/wQIMAYBAf8CAQEwDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBRrBlmnue1ANqsyWuAqlXU/redqwDANBgkqhkiG9w0BAQsFAAOCAQEALMLc3Us3A3hq/IaVIXAZU0BNe+3xhdnS41fdZh90LLAJQo3/Ro191gaVmfsodddT2SOc93FHfhKvfS02B3yWzTX/3mmM3ze4On/YvUQ4QVnHRzzusYWNepZoO8dXVkDT+XpENXmSecbwcjXo1vZDbYzhJPLj1fYulOldd/rowyzmlMrBnSu9xTj9bkhxO4doDGgNranrKQg/BIWF34KxaPebFYrtHQ1sDohwAHp9ea9CRzFc2JoJ8Imm6WfFmXcu9m7oY6UtYl/TvhrliyC5WEQ7ssuO0xOA1K+S9oMbWO3OtE+SEVYt7kgTxO3o1Rm5IcodLpo1Z2YIEIJmNWdJ/w==\n-----END CERTIFICATE-----\n"
     //   );
     // });
+
+    //punya bayu
+    qz.security.setCertificatePromise(function (resolve, reject) {
+      resolve(
+        "-----BEGIN CERTIFICATE-----\nMIIECzCCAvOgAwIBAgIGAZF0jXCaMA0GCSqGSIb3DQEBCwUAMIGiMQswCQYDVQQGEwJVUzELMAkGA1UECAwCTlkxEjAQBgNVBAcMCUNhbmFzdG90YTEbMBkGA1UECgwSUVogSW5kdXN0cmllcywgTExDMRswGQYDVQQLDBJRWiBJbmR1c3RyaWVzLCBMTEMxHDAaBgkqhkiG9w0BCQEWDXN1cHBvcnRAcXouaW8xGjAYBgNVBAMMEVFaIFRyYXkgRGVtbyBDZXJ0MB4XDTI0MDgyMDEwNDgzMloXDTQ0MDgyMDEwNDgzMlowgaIxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJOWTESMBAGA1UEBwwJQ2FuYXN0b3RhMRswGQYDVQQKDBJRWiBJbmR1c3RyaWVzLCBMTEMxGzAZBgNVBAsMElFaIEluZHVzdHJpZXMsIExMQzEcMBoGCSqGSIb3DQEJARYNc3VwcG9ydEBxei5pbzEaMBgGA1UEAwwRUVogVHJheSBEZW1vIENlcnQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDRLFVosBSOp+5Z4txzMzA6+M+bIooM6eoePWLKATbScFJlS/LqVlLJ/j9RdAsu8AB0055RHD9cA7OHg2qzt1E3PWq0tLaObe5gxS7pO7dlN7FkkQfAEWS9FaTL0N9ZXPnzMAQFB3iAjnEjnldGCgCtPoeQY5COpiElDNtUTB7Hm1EOr/2/N/G3bt6Plc8A+Vk9fffSKyW5xn+kNO9gQMwi8pbdB08jS3HeblnVz0SKUuEPtq46YyZ5cN0KA8n2dgSjuBmpeFm3w+TfrTm0tchqSBWhP3WjyxOMbbJwfYOyrPMtsTDS08qLizOts2hK57DzXAikVNcF96/pcS2NIXXJAgMBAAGjRTBDMBIGA1UdEwEB/wQIMAYBAf8CAQEwDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBSO/7SedSDuNS0aIJrl2O5XtudE1DANBgkqhkiG9w0BAQsFAAOCAQEAw3pyxfBeErqwNLr1xIW+T2NJ4YhrSZl9NpVjaS7oZ6YHDc3GiZq17gNGFtCmGQlCSCDHDesNAG7jtYACV2T49EKPqEvWxLw8/jr8Y3ggiCRqgLo56SKDWSEhzZmXGia6CVHK5yjKY7ca8njy7pWiT7k3ZyBqNMNd/+KL/8ckTTt4ZYQ1JT3rGYLfL+j1ksV7JGY/wCAu4cf/+0LsBFbamJMGmAzfQikir2PniWsMZ31WM3GiSOP92/TZNa8qtrU9NhvWyGP0emPly0jG1mvFoUXSYTkEEjEhnPne+BnPi+KAwM2TgoiH2z7ejdp+NyX+v2SlB7P0nwSYieWGilcA3A==\n-----END CERTIFICATE-----\n"
+      );
+    });
 
     qz.api.setSha256Type((data) => {
       return crypto.subtle.digest("SHA-256", new TextEncoder().encode(data));
@@ -194,6 +194,7 @@ const Cashier = () => {
               name: response.data.name,
               address: response.data.address,
               index: i,
+              outletId: outletId
             },
           ]);
         } catch (error) {
@@ -277,7 +278,12 @@ const Cashier = () => {
     }
   };
 
-  const getRequestPrintFromAdmin = async (isFirstLoad, dataId) => {
+  const getRequestPrintFromAdmin = async (isFirstLoad, dataId, dataIndex) => {
+    console.log(`isFirstLoad: ${isFirstLoad}`)
+    console.log(`dataId: ${dataId}`)
+    console.log(dataId)
+    // console.log(`dataName: ${dataName}`)
+    console.log(outletSearching)
     if (isFirstLoad) {
       try {
         setRefreshLoadingAdminRequest(true);
@@ -296,6 +302,8 @@ const Cashier = () => {
       setRequestPrintDataFromAdmin((prevData) =>
         prevData.filter((data) => data.id !== dataId)
       );
+
+      setOutletSearching((prevData) => prevData.filter((data) => data.outletId != dataId && data.index != dataIndex))
     }
   };
 
@@ -384,8 +392,6 @@ const Cashier = () => {
 
     if (isStoreClicked) return;
 
-    setIsStoreClicked(true);
-
     const totalProfit = records.reduce((acc, val) => acc + val.profit, 0);
 
     try {
@@ -405,6 +411,7 @@ const Cashier = () => {
         setReturns(rupiah(response.data.data.cashReturn));
         setDiscount(rupiah(response.data.data.sumDiscount));
         setMsg({ msg: response.data.msg, color: "green" });
+        setIsStoreClicked(true);
 
         //menyimpan state cache [printan]
         // setPrintData({
@@ -418,6 +425,7 @@ const Cashier = () => {
     } catch (error) {
       console.log(error.response);
       setMsg({ msg: error.response.data.msg, color: "red" });
+      setIsStoreClicked(false)
     }
   };
 
@@ -444,8 +452,6 @@ const Cashier = () => {
 
     if (isStoreClicked) return;
 
-    setIsStoreClicked(true);
-
     const totalProfit = records.reduce((acc, val) => acc + val.profit, 0);
 
     try {
@@ -466,6 +472,7 @@ const Cashier = () => {
         setReturns(rupiah(response.data.data.cashReturn));
         setDiscount(rupiah(response.data.data.sumDiscount));
         setMsg({ msg: response.data.msg, color: "green" });
+        setIsStoreClicked(true);
 
         //menyimpan state cache [printan]
         setPrintData({
@@ -482,6 +489,7 @@ const Cashier = () => {
     } catch (error) {
       console.log(error.response);
       setMsg({ msg: error.response.data.msg, color: "red" });
+      setIsStoreClicked(false);
     }
   };
 
@@ -498,8 +506,8 @@ const Cashier = () => {
     console.log(datas);
     console.log(isBonFromAdmin);
     const config = qz.configs.create(
-      // "Microsoft Print to PDF",
-      "108Label Printer",
+      "Microsoft Print to PDF",
+      // "108Label Printer",
       {
         size: { width: 100, height: 150 },
         units: "mm",
@@ -1089,7 +1097,7 @@ const Cashier = () => {
                       >
                         {requestPrintDataFromAdmin.map((data, index) => {
                           const outlet = outletSearching.find(
-                            (otl) => otl.index === index
+                            (otl) => otl.index === index && otl.outletId == data.outlet
                           );
 
                           return (
@@ -1161,7 +1169,8 @@ const Cashier = () => {
                                       }/orders/adminRequest/${data.turnCode}`
                                     );
                                     if (response)
-                                      getRequestPrintFromAdmin(false, data.id);
+                                      console.log(response)
+                                      getRequestPrintFromAdmin(false, data.id, index);
                                   } catch (error) {
                                     console.error(error);
                                   }
