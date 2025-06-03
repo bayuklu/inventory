@@ -137,12 +137,21 @@ const Dashboard = () => {
           const response = await axios.get(
             `${import.meta.env.VITE_BASEURL}/dashboard/outlet/${outletId}`
           );
+
+          // console.log(response)
           newOutletNames.push({
             name: response.data.name,
             address: response.data.address,
             index: i,
           });
         } catch (error) {
+          if(error.response.status === 404) {
+            newOutletNames.push({
+              name: "OUTLET TIDAK TERSEDIA",
+              address: "DIHAPUS",
+              index: i,
+            });
+          }
           console.error(error);
         }
       }

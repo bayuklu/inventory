@@ -461,6 +461,7 @@ const Cashier = () => {
           author: userRole,
         }
       );
+      
       if (response) {
         setReturns(rupiah(response.data.data.cashReturn));
         setDiscount(rupiah(response.data.data.sumDiscount));
@@ -1140,7 +1141,7 @@ const Cashier = () => {
                                   backgroundColor: "green",
                                   border: "none",
                                 }}
-                                onClick={() => handlePrintFromAdmin(data, outlet)}
+                                onClick={() => handlePrintFromAdmin(data, outlet.name)}
                               >
                                 Print
                               </button>

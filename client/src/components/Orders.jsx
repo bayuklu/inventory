@@ -206,12 +206,23 @@ const Orders = () => {
               .utc(order.createdAt)
               .tz(`Asia/Makassar`)
               .format(`HH:mm`);
-            const outlet = await axios.get(
-              `${import.meta.env.VITE_BASEURL}/dashboard/orders/outlet/name/${
-                order.outlet
-              }`
-            );
-            const { name } = outlet.data;
+
+            let name
+            try {
+              const outlet = await axios.get(
+                `${import.meta.env.VITE_BASEURL}/dashboard/orders/outlet/name/${
+                  order.outlet
+                }`
+              );
+              console.log(outlet)
+              name = outlet.data.name
+            } catch (error) {
+              console.log(error)
+              if(error.response.status === 404) {
+                name = "OUTLET TIDAK TERSEDIA / DIHAPUS"
+              }
+            }
+            
             const profit = order.profit;
             const sales = order.sales;
             return [

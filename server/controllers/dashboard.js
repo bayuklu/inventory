@@ -297,6 +297,7 @@ export const lunaskanTagihan = async(req, res) => {
 
 export const getOutletName = async(req, res) => {
     const outletId = req.params['outletId']
+    // console.log(outletId)
     try {
         const outlet = await Outlet.findOne({ 
             where: {
@@ -305,6 +306,8 @@ export const getOutletName = async(req, res) => {
             raw: true,
             attributes: ['name', 'address']
          })
+         if(!outlet) return res.status(404).json({msg: "Outlet tidak ditemukan!"})
+        //  console.log(outlet)
 
          res.status(200).json(outlet)
     } catch (error) {
@@ -382,12 +385,13 @@ export const getItemListForTodayOrders = async(req, res) => {
 
 export const getOutletForTodayOrders = async(req, res) => {
     const id = req.params['id']
+    console.log(id)
     if(!id) return res.sendStatus(400)
     try {
         const otl = await Outlet.findOne({ where: { id }, raw: true, attributes: ['name'] })
         if(!otl) return res.status(404).json({msg: `Outlet Id of ${id} not found!`})
 
-        // console.log(otl)
+        console.log(otl)
         res.status(200).json(otl)
     } catch (error) {
         console.log(error)
