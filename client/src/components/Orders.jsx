@@ -611,19 +611,6 @@ const Orders = () => {
           </i>
         </a>
         <div style={{ display: "flex" }}>
-              <div
-                style={{
-                  display: "flex",
-                  height: "50px",
-                  alignItems: "center",
-                  margin: "0px 15px",
-                  borderBottom: "1px solid #fff",
-                  padding: "0px 10px",
-                  pointerEvents: "none"
-                }}
-              >
-                <p style={{color: "#fff", fontWeight: "normal", fontSize: "13px"}}>Tanggal: {dateView}</p>
-              </div>
           <div
             style={{
               display: "flex",
@@ -641,7 +628,8 @@ const Orders = () => {
                 borderRadius: "10px",
                 border: "3px solid grey",
                 paddingRight: "40px",
-                color: "transparent"
+                color: "transparent",
+                backgroundColor: "#000"
               }}
               placeholder={!isDateChanged ? "Hari Ini" : ""}
               onChange={([date]) => {
@@ -667,7 +655,7 @@ const Orders = () => {
               style={{
                 position: "absolute",
                 right: "15.5px",
-                top: "50%",
+                top: "55%",
                 transform: "translateY(-50%)",
                 color: "darkorange",
                 pointerEvents: "none",
@@ -675,6 +663,27 @@ const Orders = () => {
             >
               <CIcon icon={icon.cilCalendar} />
             </i>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              height: "50px",
+              alignItems: "center",
+              margin: "0px 15px",
+              padding: "0px 10px",
+              pointerEvents: "none",
+              gap: "5px",
+              borderBottom: "3px solid grey",
+              borderTop: "3px solid grey",
+              borderRight: "3px solid grey",
+              borderTopRightRadius: "10px",
+              borderBottomRightRadius: "10px"
+            }}
+          >
+            <i style={{color: "lightgreen"}}>
+              <CIcon icon={icon.cilCalendarCheck}/>
+            </i>
+            <p style={{color: "#fff", fontWeight: "normal", fontSize: "17px"}}>{dateView}</p>
           </div>
           <div>
             <button

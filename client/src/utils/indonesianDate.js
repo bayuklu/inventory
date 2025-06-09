@@ -39,5 +39,5 @@ export const convertStringCaleToIndonesiaFormat = (str) => {
     const __YEAR = Number(str.split("/")[2])
     //end years function
 
-    return `${__DATE.toString().padStart(2, "0")}, ${MOBTH} ${__YEAR}`
+    return `${__DATE.toString().padStart(2, "0")} ${MOBTH} ${__YEAR}`
 }
