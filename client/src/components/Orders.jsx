@@ -626,10 +626,10 @@ const Orders = () => {
                 width: "20px",
                 padding: "10px",
                 borderRadius: "10px",
-                border: "3px solid grey",
+                border: "none",
                 paddingRight: "40px",
                 color: "transparent",
-                backgroundColor: "#000"
+                backgroundColor: "darkorange"
               }}
               placeholder={!isDateChanged ? "Hari Ini" : ""}
               onChange={([date]) => {
@@ -654,10 +654,10 @@ const Orders = () => {
             <i
               style={{
                 position: "absolute",
-                right: "15.5px",
+                right: "26%",
                 top: "55%",
                 transform: "translateY(-50%)",
-                color: "darkorange",
+                color: "#fff",
                 pointerEvents: "none",
               }}
             >
@@ -673,9 +673,6 @@ const Orders = () => {
               padding: "0px 10px",
               pointerEvents: "none",
               gap: "5px",
-              borderBottom: "3px solid grey",
-              borderTop: "3px solid grey",
-              borderRight: "3px solid grey",
               borderTopRightRadius: "10px",
               borderBottomRightRadius: "10px"
             }}
