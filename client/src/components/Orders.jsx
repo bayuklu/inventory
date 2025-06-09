@@ -33,7 +33,7 @@ const Orders = () => {
   const [selectedTransactionSalesChange, setSelectedTransactionSalesChange] =
     useState(null);
 
-  const [dateView, setDateView] = useState(`${new Date(new Date()).getMonth() + 1}/${new Date(new Date()).getDate()}/${new Date(new Date()).getFullYear()}`)
+  const [dateView, setDateView] = useState(convertStringCaleToIndonesiaFormat(`${new Date(new Date()).getMonth() + 1}/${new Date(new Date()).getDate()}/${new Date(new Date()).getFullYear()}`))
     
   const calendarRef = useRef();
   const [isDateChanged, setIsDateChanged] = useState(false);
