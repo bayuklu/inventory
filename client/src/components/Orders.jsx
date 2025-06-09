@@ -630,6 +630,12 @@ const Orders = () => {
           alignItems: "center",
           padding: "20px",
           backgroundColor: "black",
+          position: "fixed",
+          zIndex: "999",
+          top: "0",
+          left: "0",
+          right: "0",
+          borderBottom: "3px solid lightgreen"
         }}
       >
         <a
@@ -743,6 +749,7 @@ const Orders = () => {
             height: "100vh",
             display: "flex",
             justifyContent: "center",
+            marginTop: "100px"
           }}
         >
           <SpinnerLoader color={"black"} width={"100px"} />
@@ -750,7 +757,7 @@ const Orders = () => {
       ) : (
         <div
           className="viewOrders"
-          style={{ position: "relative", minHeight: "90vh" }}
+          style={{ position: "relative", minHeight: "90vh", marginTop: "100px" }}
         >
           {ordersData.length < 1 ? (
             <div
