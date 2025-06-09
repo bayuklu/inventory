@@ -215,7 +215,7 @@ const Orders = () => {
                   order.outlet
                 }`
               );
-              console.log(outlet)
+              // console.log(outlet)
               name = outlet.data.name
             } catch (error) {
               console.log(error)
@@ -226,6 +226,7 @@ const Orders = () => {
             
             const profit = order.profit;
             const sales = order.sales;
+            const keterangan = order.isBon ? "TEMPO" : "CASH"
             return [
               itemList,
               convertedTime,
@@ -234,6 +235,7 @@ const Orders = () => {
               profit,
               sales,
               order.id,
+              keterangan
             ];
           })
         );
@@ -272,9 +274,9 @@ const Orders = () => {
       const year = date.getFullYear();
 
       formattedDate = convertStringCaleToIndonesiaFormat(`${month}/${day}/${year}`);
+    }else {
+      formattedDate = convertStringCaleToIndonesiaFormat(formattedDate)
     }
-
-    formattedDate = convertStringCaleToIndonesiaFormat(formattedDate)
 
     const worksheet1 = XLSX.utils.aoa_to_sheet([]);
 
@@ -298,7 +300,7 @@ const Orders = () => {
       "SETOR 2": "",
       "SETOR 3": "",
       "SETOR 4": "",
-      KET: "",
+      KET: order[7],
     }));
 
     // Tabel penjualan mulai di baris 5
@@ -434,7 +436,7 @@ const Orders = () => {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
 
-    FileSaver.saveAs(excelBlob, `${formattedDate}.xlsx`);
+    FileSaver.saveAs(excelBlob, `Laporan ${formattedDate}.xlsx`);
   };
 
   const handleHapusTransaksi = async (idTransaksi) => {

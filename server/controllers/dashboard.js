@@ -351,7 +351,7 @@ export const getTodayOrdersData = async (req, res) => {
             [Op.lt]: tomorrowStart
           }
         },
-        attributes: ["items", "outlet", "sales", "profit", "totalPayment", "id", "createdAt"]
+        attributes: ["items", "outlet", "sales", "profit", "totalPayment", "id", "createdAt", "isBon"]
       });
   
       if (orders.length < 1) {
@@ -385,13 +385,13 @@ export const getItemListForTodayOrders = async(req, res) => {
 
 export const getOutletForTodayOrders = async(req, res) => {
     const id = req.params['id']
-    console.log(id)
+    // console.log(id)
     if(!id) return res.sendStatus(400)
     try {
         const otl = await Outlet.findOne({ where: { id }, raw: true, attributes: ['name'] })
         if(!otl) return res.status(404).json({msg: `Outlet Id of ${id} not found!`})
 
-        console.log(otl)
+        // console.log(otl)
         res.status(200).json(otl)
     } catch (error) {
         console.log(error)
