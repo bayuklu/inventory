@@ -450,49 +450,51 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export const backupData = async(req, res) => {
+export const backupData = async (req, res) => {
     try {
-        // 1. Ambil data dari database
-        const orders = await Orders.findAll();
-        const plainOrders = orders.map(order => order.get({ plain: true }));
-        
-        // 2. Ubah ke CSV
-        const fields = Object.keys(plainOrders[0] || {}); // Kolom CSV otomatis dari data
-        const json2csvParser = new Parser({ fields });
-        const csv = json2csvParser.parse(plainOrders);
-        
-        // 3. Simpan ke file sementara
-        const filePath = path.join(__dirname, "../uploads", `backup_${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}.csv`);
-        fs.writeFileSync(filePath, csv);
-        
-        // 4. Kirim email pakai Nodemailer
-        const transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: "adambayu979@gmail.com",
-            pass: "oayd vzds wsyo yese",
+      // 1. Ambil data dari database
+      const orders = await Orders.findAll();
+      const plainOrders = orders.map((order) => order.get({ plain: true }));
+  
+      // 2. Ubah ke CSV
+      const fields = Object.keys(plainOrders[0] || {});
+      const json2csvParser = new Parser({ fields });
+      const csv = json2csvParser.parse(plainOrders);
+  
+      // 3. Simpan ke direktori sementara `/tmp` (bisa ditulis di Vercel)
+      const fileName = `backup_${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}.csv`;
+      const filePath = path.join("/tmp", fileName);
+      fs.writeFileSync(filePath, csv);
+  
+      // 4. Kirim email pakai Nodemailer
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: "adambayu979@gmail.com",
+          pass: "oayd vzds wsyo yese", // GUNAKAN APP PASSWORD BUKAN PASSWORD BIASA
+        },
+      });
+  
+      const mailOptions = {
+        from: "adambayu979@gmail.com",
+        to: "adambayu878@gmail.com",
+        subject: `BU_${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`,
+        text: "Terlampir laporan CSV dari database.",
+        attachments: [
+          {
+            filename: fileName,
+            path: filePath,
           },
-        });
-    
-        const mailOptions = {
-          from: "adambayu979@gmail.com",
-          to: "adambayu878@gmail.com",
-          subject: `BU_${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`,
-          text: "Terlampir laporan CSV dari database.",
-          attachments: [
-            {
-              filename: `backup_${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}.csv`,
-              path: filePath,
-            },
-          ],
-        };
-    
-        await transporter.sendMail(mailOptions);
-        fs.unlinkSync(filePath); // Hapus file setelah terkirim
-    
-        res.json({ msg: "Data berhasil dibackup!" });
-      } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Gagal mengirim email" });
-      }
-}
+        ],
+      };
+  
+      await transporter.sendMail(mailOptions);
+      // Tidak wajib dihapus karena /tmp akan otomatis dibersihkan, tapi bisa jika ingin eksplisit:
+      fs.unlinkSync(filePath);
+  
+      res.json({ msg: "Data berhasil dibackup dan dikirim via email!" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Gagal mengirim email" });
+    }
+  };
