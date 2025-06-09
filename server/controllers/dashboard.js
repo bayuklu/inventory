@@ -5,6 +5,9 @@ import {Op, where} from 'sequelize'
 import Outlet from '../model/outletModels.js'
 import { convertToWita, SEVEN_DAYS_AGO_WITA_CONVERT_UTC, SIX_DAYS_AGO_WITA_CONVERT_UTC, TODAY_START_WITA_CONVERT_UTC, YESTERDAY_START_WITA_CONVERT_UTC } from '../utils/time.js'
 import dayjs from 'dayjs'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export const getTotalOfItemsStock = async(req, res) => {
     try {
@@ -400,6 +403,10 @@ export const getOutletForTodayOrders = async(req, res) => {
 }
 
 export const deleteTransaction = async(req, res) => {
+    if(process.env.NODE_ENV !== "PRODUCTION") {
+        return res.status(400).json({msg: "Only Production!"})
+    }
+
     const transactionId = req.params['transactionId']
     if(!transactionId) return res.status(400).json({msg: "Id transaction required!"})
 
