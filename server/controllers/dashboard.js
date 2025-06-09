@@ -403,9 +403,6 @@ export const getOutletForTodayOrders = async(req, res) => {
 }
 
 export const deleteTransaction = async(req, res) => {
-    if(process.env.NODE_ENV !== "PRODUCTION") {
-        return res.status(400).json({msg: "Only Production!"})
-    }
 
     const transactionId = req.params['transactionId']
     if(!transactionId) return res.status(400).json({msg: "Id transaction required!"})
@@ -458,6 +455,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export const backupData = async (req, res) => {
+    if(process.env.NODE_ENV !== "PRODUCTION") {
+        return res.status(400).json({msg: "Only Production!"})
+    }
+    
     try {
       // 1. Ambil data dari database
       const orders = await Orders.findAll();
