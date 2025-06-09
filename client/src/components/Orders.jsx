@@ -32,10 +32,9 @@ const Orders = () => {
   const [outletName, setOutletName] = useState("");
   const [selectedTransactionSalesChange, setSelectedTransactionSalesChange] =
     useState(null);
-  const [tanggal, setTanggal] = useState(
-    // new Date(new Date().setHours(0, 0, 0, 0))
-    null
-  );
+
+  const [dateView, setDateView] = useState(`${new Date(new Date()).getMonth() + 1}/${new Date(new Date()).getDate()}/${new Date(new Date()).getFullYear()}`)
+    
   const calendarRef = useRef();
   const [isDateChanged, setIsDateChanged] = useState(false);
 
@@ -155,7 +154,6 @@ const Orders = () => {
     const regex = /^(0?[1-9]|1[0-2])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/;
     if (!fixDate) {
       const today = new Date();
-      
       const month = String(today.getMonth() + 1).padStart(2, "0");
       const date = String(today.getDate()).padStart(2, "0");
       const year = String(today.getFullYear());
@@ -165,6 +163,7 @@ const Orders = () => {
       const [day3, month3, year3] = formatted.split("-").map(Number);
       const dateObj = new Date(year3, month3 - 1, day3);
       fixDate = dateObj.toString();
+
     } else if (regex.test(fixDate)) {
       const input = fixDate;
       const [month, day, year] = input.split("/");
@@ -173,6 +172,7 @@ const Orders = () => {
       const dateObj = new Date(year2, month2 - 1, day2);
       fixDate = dateObj.toString();
     }
+
     try {
       setIsOrdersDataLoading(true);
       const response = await axios.get(
@@ -246,6 +246,20 @@ const Orders = () => {
       setIsOrdersDataLoading(false);
       setOrdersData([]);
       console.log(error.message);
+    }finally {
+      if(new Date(fixDate).getTime() % 10000 === 0) {
+        setDateView(
+          convertStringCaleToIndonesiaFormat(
+            `${new Date(fixDate).getMonth() + 1}/${new Date(fixDate).getDate()}/${new Date(fixDate).getFullYear()}`
+          )
+        )
+      }else {
+        setDateView(
+          convertStringCaleToIndonesiaFormat(
+            `${new Date(new Date()).getMonth() + 1}/${new Date(new Date()).getDate()}/${new Date(new Date()).getFullYear()}`
+          )
+        )
+      }
     }
   };
 
@@ -261,7 +275,13 @@ const Orders = () => {
       .trim();
   };
 
-  const handlePrint = () => {
+  const handleExport = () => {
+    if(ordersData.length < 1) {
+      return setMsg({
+        msg: "Gagal Export, Data Kosong!",
+        color: "red",
+      });
+    }
     // const tanggal = new Date();
     let formattedDate =
       calendarRef.current.querySelector(".flatpickr-input").value;
@@ -591,6 +611,19 @@ const Orders = () => {
           </i>
         </a>
         <div style={{ display: "flex" }}>
+              <div
+                style={{
+                  display: "flex",
+                  height: "50px",
+                  alignItems: "center",
+                  margin: "0px 15px",
+                  borderBottom: "1px solid #fff",
+                  padding: "0px 10px",
+                  pointerEvents: "none"
+                }}
+              >
+                <p style={{color: "#fff", fontWeight: "normal", fontSize: "13px"}}>Tanggal: {dateView}</p>
+              </div>
           <div
             style={{
               display: "flex",
@@ -603,12 +636,12 @@ const Orders = () => {
             <Flatpickr
               style={{
                 height: "50px",
-                width: "200px",
+                width: "20px",
                 padding: "10px",
                 borderRadius: "10px",
                 border: "3px solid grey",
                 paddingRight: "40px",
-                color: "GrayText",
+                color: "transparent"
               }}
               placeholder={!isDateChanged ? "Hari Ini" : ""}
               onChange={([date]) => {
@@ -620,7 +653,7 @@ const Orders = () => {
                 // console.log(locDate);
                 if (convDate !== locDate) {
                   fetchData(flatDate);
-                  // console.log("ini dari Pilihan");
+                  setIsDateChanged(true)
                 } else {
                   fetchData(convLocDate);
                   setIsDateChanged(false);
@@ -633,10 +666,11 @@ const Orders = () => {
             <i
               style={{
                 position: "absolute",
-                right: "10px",
+                right: "15.5px",
                 top: "50%",
                 transform: "translateY(-50%)",
                 color: "darkorange",
+                pointerEvents: "none",
               }}
             >
               <CIcon icon={icon.cilCalendar} />
@@ -652,7 +686,7 @@ const Orders = () => {
                 height: "50px",
               }}
               disabled={isOrdersDataLoading}
-              onClick={handlePrint}
+              onClick={handleExport}
             >
               Export ke Excel
             </button>
