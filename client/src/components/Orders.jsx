@@ -13,6 +13,7 @@ import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/themes/confetti.css";
+import { convertStringCaleToIndonesiaFormat } from "../utils/indonesianDate";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -270,8 +271,10 @@ const Orders = () => {
       const day = String(date.getDate()).padStart(2, "0");
       const year = date.getFullYear();
 
-      formattedDate = `${month}/${day}/${year}`;
+      formattedDate = convertStringCaleToIndonesiaFormat(`${month}/${day}/${year}`);
     }
+
+    formattedDate = convertStringCaleToIndonesiaFormat(formattedDate)
 
     const worksheet1 = XLSX.utils.aoa_to_sheet([]);
 
