@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { addItem, getAllItem, getFoods, getDrinks, getBathroom, getKitchen, updateItem, deleteItem, addStock, searchItem, updateDus, updatePack, updatePrice, updateCapitalPrice } from "../controllers/Items.js";
 import {getTurnCode, getRecordsByTurnCode, createRecordOrder, createFinalOrder, changePriceForSelectedItem, deleteRecordOrder, getRequestPrintFromAdmin, getRecordOrdersFromAdminRequest, setOrderIsPrinted, changeQuantityRecord} from "../controllers/orders.js"
-import {getTotalOfItemsStock, getTotalOFItemsProduct, getTodayOrders, getTodayIncomes, getLast7DaysIncomes, getBestSeller, getTodayBestSeller, getTodayOrdersData, getTodayProfit, deleteTransaction, changeSalesName, getItemListForTodayOrders, getOutletForTodayOrders, getTagihanIn7DayMore, getOutletName, lunaskanTagihan} from "../controllers/dashboard.js"
+import {getTotalOfItemsStock, getTotalOFItemsProduct, getTodayOrders, getTodayIncomes, getLast7DaysIncomes, getBestSeller, getTodayBestSeller, getTodayOrdersData, getTodayProfit, deleteTransaction, changeSalesName, getItemListForTodayOrders, getOutletForTodayOrders, getTagihanIn7DayMore, getOutletName, lunaskanTagihan, backupData} from "../controllers/dashboard.js"
 import { addOutlet, deleteOutlet, getOutlet, searchOutlet, updateOutlet } from "../controllers/outlet.js";
 import { isUserLoggedIn, Login, Logout, Register } from '../controllers/user.js'
 import { refreshToken } from '../controllers/refreshToken.js'
@@ -62,6 +62,7 @@ router.get('/dashboard/orders/item/list/:code', getItemListForTodayOrders)
 router.get('/dashboard/orders/outlet/name/:id', getOutletForTodayOrders)
 router.delete('/dashboard/orders/:transactionId', deleteTransaction)
 router.put('/dashboard/orders/sales', changeSalesName)
+router.post('/dashboard/orders/backup', backupData)
 
 //router outlet
 router.post('/outlet', addOutlet)

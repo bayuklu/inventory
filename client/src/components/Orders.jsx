@@ -33,8 +33,14 @@ const Orders = () => {
   const [selectedTransactionSalesChange, setSelectedTransactionSalesChange] =
     useState(null);
 
-  const [dateView, setDateView] = useState(convertStringCaleToIndonesiaFormat(`${new Date(new Date()).getMonth() + 1}/${new Date(new Date()).getDate()}/${new Date(new Date()).getFullYear()}`))
-    
+  const [dateView, setDateView] = useState(
+    convertStringCaleToIndonesiaFormat(
+      `${new Date(new Date()).getMonth() + 1}/${new Date(
+        new Date()
+      ).getDate()}/${new Date(new Date()).getFullYear()}`
+    )
+  );
+
   const calendarRef = useRef();
   const [isDateChanged, setIsDateChanged] = useState(false);
 
@@ -159,15 +165,20 @@ const Orders = () => {
       const year = String(today.getFullYear());
       const newInput = `${month}/${date}/${year}`;
       const [month2, day2, year2] = newInput.split("/");
-      const formatted = `${day2.padStart(2, "0")}-${month2.padStart(2,"0")}-${year2}`;
+      const formatted = `${day2.padStart(2, "0")}-${month2.padStart(
+        2,
+        "0"
+      )}-${year2}`;
       const [day3, month3, year3] = formatted.split("-").map(Number);
       const dateObj = new Date(year3, month3 - 1, day3);
       fixDate = dateObj.toString();
-
     } else if (regex.test(fixDate)) {
       const input = fixDate;
       const [month, day, year] = input.split("/");
-      const formatted = `${day.padStart(2, "0")}-${month.padStart(2,"0")}-${year}`;
+      const formatted = `${day.padStart(2, "0")}-${month.padStart(
+        2,
+        "0"
+      )}-${year}`;
       const [day2, month2, year2] = formatted.split("-").map(Number);
       const dateObj = new Date(year2, month2 - 1, day2);
       fixDate = dateObj.toString();
@@ -197,8 +208,11 @@ const Orders = () => {
                   );
                   return { itemName: product.data.name, quantity };
                 } catch (error) {
-                  if(error.response.status === 404) {
-                    return { itemName: "- dihapus / tidak tersedia -", quantity };
+                  if (error.response.status === 404) {
+                    return {
+                      itemName: "- dihapus / tidak tersedia -",
+                      quantity,
+                    };
                   }
                 }
               })
@@ -208,7 +222,7 @@ const Orders = () => {
               .tz(`Asia/Makassar`)
               .format(`HH:mm`);
 
-            let name
+            let name;
             try {
               const outlet = await axios.get(
                 `${import.meta.env.VITE_BASEURL}/dashboard/orders/outlet/name/${
@@ -216,17 +230,17 @@ const Orders = () => {
                 }`
               );
               // console.log(outlet)
-              name = outlet.data.name
+              name = outlet.data.name;
             } catch (error) {
-              console.log(error)
-              if(error.response.status === 404) {
-                name = "OUTLET TIDAK TERSEDIA / DIHAPUS"
+              console.log(error);
+              if (error.response.status === 404) {
+                name = "OUTLET TIDAK TERSEDIA / DIHAPUS";
               }
             }
-            
+
             const profit = order.profit;
             const sales = order.sales;
-            const keterangan = order.isBon ? "TEMPO" : "CASH"
+            const keterangan = order.isBon ? "TEMPO" : "CASH";
             return [
               itemList,
               convertedTime,
@@ -235,7 +249,7 @@ const Orders = () => {
               profit,
               sales,
               order.id,
-              keterangan
+              keterangan,
             ];
           })
         );
@@ -246,19 +260,23 @@ const Orders = () => {
       setIsOrdersDataLoading(false);
       setOrdersData([]);
       console.log(error.message);
-    }finally {
-      if(new Date(fixDate).getTime() % 10000 === 0) {
+    } finally {
+      if (new Date(fixDate).getTime() % 10000 === 0) {
         setDateView(
           convertStringCaleToIndonesiaFormat(
-            `${new Date(fixDate).getMonth() + 1}/${new Date(fixDate).getDate()}/${new Date(fixDate).getFullYear()}`
+            `${new Date(fixDate).getMonth() + 1}/${new Date(
+              fixDate
+            ).getDate()}/${new Date(fixDate).getFullYear()}`
           )
-        )
-      }else {
+        );
+      } else {
         setDateView(
           convertStringCaleToIndonesiaFormat(
-            `${new Date(new Date()).getMonth() + 1}/${new Date(new Date()).getDate()}/${new Date(new Date()).getFullYear()}`
+            `${new Date(new Date()).getMonth() + 1}/${new Date(
+              new Date()
+            ).getDate()}/${new Date(new Date()).getFullYear()}`
           )
-        )
+        );
       }
     }
   };
@@ -275,188 +293,202 @@ const Orders = () => {
       .trim();
   };
 
-  const handleExport = () => {
-    if(ordersData.length < 1) {
-      return setMsg({
-        msg: "Gagal Export, Data Kosong!",
-        color: "red",
+  const handleExport = async() => {
+    try {
+      if (ordersData.length < 1) {
+        return setMsg({
+          msg: "Gagal Export, Data Kosong!",
+          color: "red",
+        });
+      }
+      // const tanggal = new Date();
+      let formattedDate =
+        calendarRef.current.querySelector(".flatpickr-input").value;
+
+      if (!formattedDate) {
+        const date = new Date();
+
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        const year = date.getFullYear();
+
+        formattedDate = convertStringCaleToIndonesiaFormat(
+          `${month}/${day}/${year}`
+        );
+      } else {
+        formattedDate = convertStringCaleToIndonesiaFormat(formattedDate);
+      }
+
+      const worksheet1 = XLSX.utils.aoa_to_sheet([]);
+
+      // Baris 1: Tanggal
+      XLSX.utils.sheet_add_aoa(worksheet1, [[`Tanggal: ${formattedDate}`]], {
+        origin: "B1",
       });
-    }
-    // const tanggal = new Date();
-    let formattedDate =
-      calendarRef.current.querySelector(".flatpickr-input").value;
 
-    if (!formattedDate) {
-      const date = new Date();
+      // Baris 3: Judul Data Penjualan
+      XLSX.utils.sheet_add_aoa(worksheet1, [["ANA BASALIM FROZEN"]], {
+        origin: "B3",
+      });
 
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      const year = date.getFullYear();
-
-      formattedDate = convertStringCaleToIndonesiaFormat(`${month}/${day}/${year}`);
-    }else {
-      formattedDate = convertStringCaleToIndonesiaFormat(formattedDate)
-    }
-
-    const worksheet1 = XLSX.utils.aoa_to_sheet([]);
-
-    // Baris 1: Tanggal
-    XLSX.utils.sheet_add_aoa(worksheet1, [[`Tanggal: ${formattedDate}`]], {
-      origin: "B1",
-    });
-
-    // Baris 3: Judul Data Penjualan
-    XLSX.utils.sheet_add_aoa(worksheet1, [["ANA BASALIM FROZEN"]], {
-      origin: "B3",
-    });
-
-    // Format data ordersData
-    const ordersFormatted = ordersData.map((order, index) => ({
-      No: index + 1,
-      NAMA: order[2].toUpperCase(),
-      S: order[5],
-      JUMLAH: rupiah(order[3]),
-      "SETOR 1": "",
-      "SETOR 2": "",
-      "SETOR 3": "",
-      "SETOR 4": "",
-      KET: order[7],
-    }));
-
-    // Tabel penjualan mulai di baris 5
-    XLSX.utils.sheet_add_json(worksheet1, ordersFormatted, { origin: "B5" });
-
-    // Kolom
-    worksheet1["!cols"] = [
-      { wch: 2 }, // Kolom A kosong (jarak)
-      { wch: 3 },
-      { wch: 20 },
-      { wch: 6 },
-      { wch: 12 },
-      { wch: 8 },
-      { wch: 8 },
-      { wch: 8 },
-      { wch: 8 },
-      { wch: 5 },
-    ];
-
-    // Fungsi menghitung banyak order dan pendapatan
-    const HitungBanyakOrderSales = (namaSales) =>
-      ordersData.reduce(
-        (count, order) => (order[5] === namaSales ? count + 1 : count),
-        0
-      );
-
-    const hitungJumlahPendapatan = (namaSales) =>
-      ordersData.reduce((total, order) => {
-        if (order[5] === namaSales) {
-          const jumlah = Number(order[3]);
-          total += isNaN(jumlah) ? 0 : jumlah;
-        }
-        return total;
-      }, 0);
-
-    // Data Sales
-    const newOrdersData = [
-      {
-        No: "",
-        NAMA: "Jumlah Setoran Sales ==>",
-        S: "Sales",
-        JUMLAH: "Jumlah Order",
-        "SETOR 1": "Jumlah Uang",
+      // Format data ordersData
+      const ordersFormatted = ordersData.map((order, index) => ({
+        No: index + 1,
+        NAMA: order[2].toUpperCase(),
+        S: order[5],
+        JUMLAH: rupiah(order[3]),
+        "SETOR 1": "",
         "SETOR 2": "",
         "SETOR 3": "",
         "SETOR 4": "",
-        KET: "",
-      },
-      {
-        No: "",
-        NAMA: "",
-        S: "Eja",
-        JUMLAH: HitungBanyakOrderSales("Eja"),
-        "SETOR 1": rupiah(hitungJumlahPendapatan("Eja")),
-      },
-      {
-        No: "",
-        NAMA: "",
-        S: "Uyung",
-        JUMLAH: HitungBanyakOrderSales("Uyung"),
-        "SETOR 1": rupiah(hitungJumlahPendapatan("Uyung")),
-      },
-      {
-        No: "",
-        NAMA: "",
-        S: "Eva",
-        JUMLAH: HitungBanyakOrderSales("Eva"),
-        "SETOR 1": rupiah(hitungJumlahPendapatan("Eva")),
-      },
-      {
-        No: "",
-        NAMA: "",
-        S: "Dwik",
-        JUMLAH: HitungBanyakOrderSales("Dwik"),
-        "SETOR 1": rupiah(hitungJumlahPendapatan("Dwik")),
-      },
-      {
-        No: "",
-        NAMA: "",
-        S: "Suhendri",
-        JUMLAH: HitungBanyakOrderSales("Suhendri"),
-        "SETOR 1": rupiah(hitungJumlahPendapatan("Suhendri")),
-      },
-      {
-        No: "",
-        NAMA: "",
-        S: "Eman",
-        JUMLAH: HitungBanyakOrderSales("Eman"),
-        "SETOR 1": rupiah(hitungJumlahPendapatan("Eman")),
-      },
-      {
-        No: "",
-        NAMA: "",
-        S: "Ana",
-        JUMLAH: HitungBanyakOrderSales("Ana"),
-        "SETOR 1": rupiah(hitungJumlahPendapatan("Ana")),
-      },
-      {
-        No: "",
-        NAMA: "",
-        S: "Dian",
-        JUMLAH: HitungBanyakOrderSales("Dian"),
-        "SETOR 1": rupiah(hitungJumlahPendapatan("Dian")),
-      },
-      {
-        No: "",
-        NAMA: "",
-        S: "Eyung",
-        JUMLAH: HitungBanyakOrderSales("Eyung"),
-        "SETOR 1": rupiah(hitungJumlahPendapatan("Eyung")),
-      },
-    ];
+        KET: order[7],
+      }));
 
-    // Baris awal tabel sales = 5 (start table) + ordersData.length (jumlah data) + 2 (judul sales + spasi)
-    const startRowForSales = 5 + ordersFormatted.length + 2;
+      // Tabel penjualan mulai di baris 5
+      XLSX.utils.sheet_add_json(worksheet1, ordersFormatted, { origin: "B5" });
 
-    // Judul Data Sales
-    XLSX.utils.sheet_add_aoa(worksheet1, [["Data Sales"]], {
-      origin: `B${startRowForSales}`,
-    });
+      // Kolom
+      worksheet1["!cols"] = [
+        { wch: 2 }, // Kolom A kosong (jarak)
+        { wch: 3 },
+        { wch: 20 },
+        { wch: 6 },
+        { wch: 12 },
+        { wch: 8 },
+        { wch: 8 },
+        { wch: 8 },
+        { wch: 8 },
+        { wch: 5 },
+      ];
 
-    // Tabel sales dimulai 1 baris setelah judul
-    XLSX.utils.sheet_add_json(worksheet1, newOrdersData, {
-      skipHeader: true,
-      origin: `B${startRowForSales + 1}`,
-    });
+      // Fungsi menghitung banyak order dan pendapatan
+      const HitungBanyakOrderSales = (namaSales) =>
+        ordersData.reduce(
+          (count, order) => (order[5] === namaSales ? count + 1 : count),
+          0
+        );
 
-    // Buat dan simpan file Excel
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, worksheet1, "Data Laporan");
-    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    const excelBlob = new Blob([excelBuffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
+      const hitungJumlahPendapatan = (namaSales) =>
+        ordersData.reduce((total, order) => {
+          if (order[5] === namaSales) {
+            const jumlah = Number(order[3]);
+            total += isNaN(jumlah) ? 0 : jumlah;
+          }
+          return total;
+        }, 0);
 
-    FileSaver.saveAs(excelBlob, `Laporan ${formattedDate}.xlsx`);
+      // Data Sales
+      const newOrdersData = [
+        {
+          No: "",
+          NAMA: "Jumlah Setoran Sales ==>",
+          S: "Sales",
+          JUMLAH: "Jumlah Order",
+          "SETOR 1": "Jumlah Uang",
+          "SETOR 2": "",
+          "SETOR 3": "",
+          "SETOR 4": "",
+          KET: "",
+        },
+        {
+          No: "",
+          NAMA: "",
+          S: "Eja",
+          JUMLAH: HitungBanyakOrderSales("Eja"),
+          "SETOR 1": rupiah(hitungJumlahPendapatan("Eja")),
+        },
+        {
+          No: "",
+          NAMA: "",
+          S: "Uyung",
+          JUMLAH: HitungBanyakOrderSales("Uyung"),
+          "SETOR 1": rupiah(hitungJumlahPendapatan("Uyung")),
+        },
+        {
+          No: "",
+          NAMA: "",
+          S: "Eva",
+          JUMLAH: HitungBanyakOrderSales("Eva"),
+          "SETOR 1": rupiah(hitungJumlahPendapatan("Eva")),
+        },
+        {
+          No: "",
+          NAMA: "",
+          S: "Dwik",
+          JUMLAH: HitungBanyakOrderSales("Dwik"),
+          "SETOR 1": rupiah(hitungJumlahPendapatan("Dwik")),
+        },
+        {
+          No: "",
+          NAMA: "",
+          S: "Suhendri",
+          JUMLAH: HitungBanyakOrderSales("Suhendri"),
+          "SETOR 1": rupiah(hitungJumlahPendapatan("Suhendri")),
+        },
+        {
+          No: "",
+          NAMA: "",
+          S: "Eman",
+          JUMLAH: HitungBanyakOrderSales("Eman"),
+          "SETOR 1": rupiah(hitungJumlahPendapatan("Eman")),
+        },
+        {
+          No: "",
+          NAMA: "",
+          S: "Ana",
+          JUMLAH: HitungBanyakOrderSales("Ana"),
+          "SETOR 1": rupiah(hitungJumlahPendapatan("Ana")),
+        },
+        {
+          No: "",
+          NAMA: "",
+          S: "Dian",
+          JUMLAH: HitungBanyakOrderSales("Dian"),
+          "SETOR 1": rupiah(hitungJumlahPendapatan("Dian")),
+        },
+        {
+          No: "",
+          NAMA: "",
+          S: "Eyung",
+          JUMLAH: HitungBanyakOrderSales("Eyung"),
+          "SETOR 1": rupiah(hitungJumlahPendapatan("Eyung")),
+        },
+      ];
+
+      // Baris awal tabel sales = 5 (start table) + ordersData.length (jumlah data) + 2 (judul sales + spasi)
+      const startRowForSales = 5 + ordersFormatted.length + 2;
+
+      // Judul Data Sales
+      XLSX.utils.sheet_add_aoa(worksheet1, [["Data Sales"]], {
+        origin: `B${startRowForSales}`,
+      });
+
+      // Tabel sales dimulai 1 baris setelah judul
+      XLSX.utils.sheet_add_json(worksheet1, newOrdersData, {
+        skipHeader: true,
+        origin: `B${startRowForSales + 1}`,
+      });
+
+      // Buat dan simpan file Excel
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, worksheet1, "Data Laporan");
+      const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+      const excelBlob = new Blob([excelBuffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      FileSaver.saveAs(excelBlob, `Laporan ${formattedDate}.xlsx`);
+
+      const response = await axios.post(`${import.meta.env.VITE_BASEURL}/dashboard/orders/backup`)
+      setMsg({
+        msg: response.data.msg,
+        color: "green",
+      });
+      // console.log(response.data)
+      
+    } catch (error) {
+      console.error(error.response);
+    }
   };
 
   const handleHapusTransaksi = async (idTransaksi) => {
@@ -629,7 +661,7 @@ const Orders = () => {
                 border: "none",
                 paddingRight: "40px",
                 color: "transparent",
-                backgroundColor: "darkorange"
+                backgroundColor: "darkorange",
               }}
               placeholder={!isDateChanged ? "Hari Ini" : ""}
               onChange={([date]) => {
@@ -641,7 +673,7 @@ const Orders = () => {
                 // console.log(locDate);
                 if (convDate !== locDate) {
                   fetchData(flatDate);
-                  setIsDateChanged(true)
+                  setIsDateChanged(true);
                 } else {
                   fetchData(convLocDate);
                   setIsDateChanged(false);
@@ -674,13 +706,17 @@ const Orders = () => {
               pointerEvents: "none",
               gap: "5px",
               borderTopRightRadius: "10px",
-              borderBottomRightRadius: "10px"
+              borderBottomRightRadius: "10px",
             }}
           >
-            <i style={{color: "lightgreen"}}>
-              <CIcon icon={icon.cilCalendarCheck}/>
+            <i style={{ color: "lightgreen" }}>
+              <CIcon icon={icon.cilCalendarCheck} />
             </i>
-            <p style={{color: "#fff", fontWeight: "normal", fontSize: "17px"}}>{dateView}</p>
+            <p
+              style={{ color: "#fff", fontWeight: "normal", fontSize: "17px" }}
+            >
+              {dateView}
+            </p>
           </div>
           <div>
             <button
