@@ -54,6 +54,7 @@ const Dashboard = () => {
   const [dataTagihanIsEnd, setDataTagihanIsEnd] = useState(false);
   const [outletTagihanName, setOutletTagihanName] = useState([]);
   const [validasiTagihanShow, setValidasiTagihanShow] = useState({});
+  const [tagihanList, setTagihanList] = useState({});
   const navigate = useNavigate();
 
   const listTagihanRef = useRef(null);
@@ -145,7 +146,7 @@ const Dashboard = () => {
             index: i,
           });
         } catch (error) {
-          if(error.response.status === 404) {
+          if (error.response.status === 404) {
             newOutletNames.push({
               name: "OUTLET TIDAK TERSEDIA",
               address: "DIHAPUS",
@@ -163,6 +164,40 @@ const Dashboard = () => {
       fetchAllOutletNames();
     }
   }, [dataTagihan]);
+
+  useEffect(() => {
+    const fetchTagihanBills = async () => {
+      for (let item of dataTagihan) {
+        console.log(`item ID = ${item.id}`);
+        // ✅ Skip jika data tagihan untuk item.id sudah ada
+        if (tagihanList[item.id]) continue;
+
+        try {
+          const res = await axios.get(
+            `${import.meta.env.VITE_BASEURL}/dashboard/tagihan7hari/bills/${
+              item.id
+            }`
+          );
+          console.log(res);
+          setTagihanList((prev) => ({
+            ...prev,
+            [item.id]: res.data.bills,
+          }));
+        } catch (err) {
+          setTagihanList((prev) => ({
+            ...prev,
+            [item.id]: "Gagal memuat",
+          }));
+        }
+      }
+    };
+
+    if (dataTagihan.length > 0) {
+      fetchTagihanBills();
+    }
+
+    console.log(tagihanList);
+  }, [dataTagihan, tagihanList]);
 
   const refreshToken = async () => {
     try {
@@ -323,7 +358,7 @@ const Dashboard = () => {
         }/dashboard/tagihan7hari/${isMore}/${latestDateShowed}`
       );
 
-      console.log(response.data);
+      // console.log(response.data);
       setJumlahDataTagihan(response.data.manyOfTransaction);
       setDataTagihan((prevData) => [...prevData, ...response.data.transaction]);
 
@@ -334,6 +369,20 @@ const Dashboard = () => {
       console.log(dataTagihan, response.data.isEnd);
     } catch (error) {
       console.log(error.response);
+    }
+  };
+
+  const handleLoadTagihan = async (orderId, billIndex) => {
+    try {
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_BASEURL
+        }/dashboard/tagihan7hari/bills/${orderId}/${billIndex}`
+      );
+      console.log(response);
+      return response.data.msg;
+    } catch (error) {
+      console.error(error.response);
     }
   };
 
@@ -639,7 +688,7 @@ const Dashboard = () => {
                         <div
                           style={{
                             width: "100%",
-                            height: "70px",
+                            // height: "70px",
                             backgroundColor:
                               validasiTagihanShow[idx] === "flex"
                                 ? "rgb(230, 243, 245)"
@@ -653,7 +702,7 @@ const Dashboard = () => {
                             borderRadius: "10px",
                           }}
                         >
-                          <div
+                          {/* <div
                             style={{ display: "flex", alignItems: "center" }}
                           >
                             <p
@@ -709,6 +758,65 @@ const Dashboard = () => {
                             >
                               Tidak
                             </button>
+                          </div> */}
+
+                          <div
+                            style={{
+                              width: "100%",
+                              display: "flex",
+                              gap: "10px",
+                              flexDirection: "column",
+                            }}
+                          >
+                            {[1, 2, 3, 4].map((i) => {
+                              const setorKey = `setor${i}`;
+                              const value = tagihanList[data.id]?.[setorKey];
+
+                              return (
+                                <div
+                                  key={i}
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    fontSize: "12px",
+                                  }}
+                                >
+                                  <p>Setoran ke {i}:</p>
+                                  <p>
+                                    {!tagihanList[data.id]
+                                      ? "Loading..."
+                                      : value
+                                      ? rupiah(value)
+                                      : "-"}
+                                  </p>
+                                </div>
+                              );
+                            })}
+
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                fontSize: "12px",
+                              }}
+                            >
+                              <p>Sisa Tagihan:</p>
+                              <p>
+                                {!tagihanList[data.id]
+                                  ? "Loading..."
+                                  : rupiah(
+                                      data.totalPayment -
+                                        [1, 2, 3, 4].reduce(
+                                          (sum, i) =>
+                                            sum +
+                                            (tagihanList[data.id]?.[
+                                              `setor${i}`
+                                            ] || 0),
+                                          0
+                                        )
+                                    )}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -792,10 +900,18 @@ const Dashboard = () => {
         </div>
         <div className="my-dashboardChild">
           <div className="my-headMenu">
-            <div className="my-menu" >
+            <div className="my-menu">
               <h3>Today Best Seller</h3>
-              <div style={{width: "600px"}}>
-                <h1 style={{whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"}}>{todayBestSeler || "-"}</h1>
+              <div style={{ width: "600px" }}>
+                <h1
+                  style={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {todayBestSeler || "-"}
+                </h1>
               </div>
             </div>
           </div>

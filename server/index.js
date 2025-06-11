@@ -9,6 +9,7 @@ import Items from './model/ItemsModel.js'
 import Orders from './model/ordersModel.js'
 import Outlet from './model/outletModels.js'
 import Users from './model/userModel.js'
+import Bills from './model/billModels.js'
 // import { tableMigrator, valueChangerPlus } from './utils/db.js'
 
 const app = express()
@@ -26,11 +27,11 @@ const init = async() => {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!JANGAN_LUPA_DIMATIKAN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //Singkron Database
 
-        // if(process.env.NODE_ENV === "DEVELOPMENT") {
-        //   await db.sync({
-        //       alter: true
-        //   })
-        // }
+        if(process.env.NODE_ENV === "DEVELOPMENT") {
+          await db.sync({
+              alter: true
+          })
+        }
         
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!JANGAN_LUPA_DIMATIKAN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

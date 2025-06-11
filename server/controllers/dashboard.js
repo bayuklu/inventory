@@ -6,6 +6,13 @@ import Outlet from '../model/outletModels.js'
 import { convertToWita, SEVEN_DAYS_AGO_WITA_CONVERT_UTC, SIX_DAYS_AGO_WITA_CONVERT_UTC, TODAY_START_WITA_CONVERT_UTC, YESTERDAY_START_WITA_CONVERT_UTC } from '../utils/time.js'
 import dayjs from 'dayjs'
 import dotenv from 'dotenv'
+import { Parser } from "json2csv"
+import nodemailer from 'nodemailer'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import Bills from '../model/billModels.js'
 
 dotenv.config()
 
@@ -249,7 +256,7 @@ export const getTagihanIn7DayMore = async(req, res) => {
             attributes: ['totalPayment', 'createdAt', 'outlet', 'id']
         })
 
-        const manyOfTransaction = await Orders. findAll({
+        const manyOfTransaction = await Orders.findAll({
             where: {
                 [Op.and]: {
                     isBon: true,
@@ -273,6 +280,35 @@ export const getTagihanIn7DayMore = async(req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ msg: "Internal server error" });
+    }
+}
+
+export const getBillOfTempoOrders = async(req, res) => {
+    const orderId = req.params['orderId']
+    try {
+        const billOfOrder = await Bills.findOne({
+            where: {
+                orderId
+            },
+            raw: true
+        })
+        if(!billOfOrder) {
+            await Bills.create({
+                orderId: orderId
+            })
+        }
+
+        const newBillOfOrder = {
+            setor1: billOfOrder.setor1 ?? 0,
+            setor2: billOfOrder.setor2 ?? 0,
+            setor3: billOfOrder.setor3 ?? 0,
+            setor4: billOfOrder.setor4 ?? 0,
+        }
+
+        res.status(200).json({msg: "ok", bills: newBillOfOrder})
+    } catch (error) {
+     console.log(error);
+     res.status(500).json({msg: 'Internal Server Error!'});   
     }
 }
 
@@ -442,14 +478,6 @@ export const changeSalesName = async(req, res) => {
         res.status(500).json({msg: "internal server error", error})
     }
 }
-
-import { Parser } from "json2csv"
-import nodemailer from 'nodemailer'
-import fs from 'fs'
-import path from 'path'
-
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
