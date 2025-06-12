@@ -31,7 +31,8 @@ const init = async() => {
           // await db.sync({
           //     alter: true
           // })
-          await db.sync(Bills)
+          await Bills.sync({alter: true})
+          console.log("Bills syncroned!")
         }
         
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!JANGAN_LUPA_DIMATIKAN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
