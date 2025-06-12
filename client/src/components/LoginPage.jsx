@@ -53,6 +53,8 @@ const LoginPage = () => {
           password: password,
         }
       );
+
+      console.log(response)
       if (response) {
         navigate("/");
         setIsLoading(false);
