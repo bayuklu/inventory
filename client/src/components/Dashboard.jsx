@@ -168,7 +168,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchTagihanBills = async () => {
       for (let item of dataTagihan) {
-        console.log(`item ID = ${item.id}`);
+        // console.log(`item ID = ${item.id}`);
         // ✅ Skip jika data tagihan untuk item.id sudah ada
         if (tagihanList[item.id]) continue;
 
@@ -178,7 +178,7 @@ const Dashboard = () => {
               item.id
             }`
           );
-          console.log(res);
+          // console.log(res);
           setTagihanList((prev) => ({
             ...prev,
             [item.id]: res.data.bills,
@@ -196,7 +196,7 @@ const Dashboard = () => {
       fetchTagihanBills();
     }
 
-    console.log(tagihanList);
+    // console.log(tagihanList);
   }, [dataTagihan, tagihanList]);
 
   const refreshToken = async () => {
@@ -366,7 +366,7 @@ const Dashboard = () => {
         setDataTagihanIsEnd(true);
       }
 
-      console.log(dataTagihan, response.data.isEnd);
+      // console.log(dataTagihan, response.data.isEnd);
     } catch (error) {
       console.log(error.response);
     }
@@ -379,7 +379,7 @@ const Dashboard = () => {
           import.meta.env.VITE_BASEURL
         }/dashboard/tagihan7hari/bills/${orderId}/${billIndex}`
       );
-      console.log(response);
+      // console.log(response);
       return response.data.msg;
     } catch (error) {
       console.error(error.response);
@@ -464,7 +464,7 @@ const Dashboard = () => {
       };
     });
 
-    console.log(validasiTagihanShow);
+    // console.log(validasiTagihanShow);
   };
 
   const handleLunasinTagihan = async (orderId) => {
@@ -477,7 +477,7 @@ const Dashboard = () => {
       );
 
       if (response) {
-        console.log("hapus");
+        // console.log("hapus");
         setDataTagihan((prevData) => {
           return prevData.filter((data) => data.id !== orderId);
         });

@@ -4,6 +4,7 @@ import Items from '../model/ItemsModel.js'
 import {Op, where} from 'sequelize'
 import orderRecords from '../model/orderRecordModel.js'
 import { TODAY_START_WITA_CONVERT_UTC, TOMORROW_START_WITA_CONVERT_UTC, YESTERDAY_START_WITA_CONVERT_UTC } from '../utils/time.js'
+import Bills from '../model/billModels.js'
 
 export const getTurnCode = async(req, res) => {
     const date = new Date()
@@ -398,7 +399,7 @@ try {
 
     const isPrinted = author === "admin" ? false : true
     //membuat orderan (start)
-    await Orders.create({
+    const createOrder = await Orders.create({
         transCode: transCode,
         items: encItems,
         totalDiscount: sumDiscount,
@@ -415,6 +416,15 @@ try {
     })
     //membuat orderan (end)
 
+    //membuat data Bills kalau TEMPO (start)
+    if(createOrder.dataValues.isBon) {
+        const orderId = createOrder.dataValues.id
+        await Bills.create({
+            orderId
+        })
+    }
+    //membuat data Bills kalau TEMPO (end)
+    
     res.status(200).json({
         msg: "Order successfully created",
         data: {cashReturn, sumDiscount, transCode},
