@@ -1,30 +1,20 @@
-import db from "../config/Database.js"
-import { DataTypes } from "sequelize"
+import db from "../config/Database.js";
+import { DataTypes } from "sequelize";
 
-const Bills = db.define(
-    'bills',
-    {
-        orderId: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        setor1: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-        setor2: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-        setor3: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-        setor4: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-    }
-)
+const Bills = db.define("bills", {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  orderId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  setor1: DataTypes.INTEGER,
+  setor2: DataTypes.INTEGER,
+  setor3: DataTypes.INTEGER,
+  setor4: DataTypes.INTEGER,
+});
 
-export default Bills
+export default Bills;
