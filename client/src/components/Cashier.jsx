@@ -13,7 +13,8 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import "dayjs/locale/id";
 
-import backgroundKu from "../assets/img/form2.jpg"
+import backgroundKu from "../assets/img/form2.jpg";
+import handleFunLoading from "../utils/handleFunLoading.js";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -74,6 +75,8 @@ const Cashier = () => {
     useState(false);
 
   const [isContainerLoading, setIsContainerLoading] = useState(true);
+
+  const [isRecordsLoading, setIsRecordsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -194,7 +197,7 @@ const Cashier = () => {
               name: response.data.name,
               address: response.data.address,
               index: i,
-              outletId: outletId
+              outletId: outletId,
             },
           ]);
         } catch (error) {
@@ -279,11 +282,11 @@ const Cashier = () => {
   };
 
   const getRequestPrintFromAdmin = async (isFirstLoad, dataId, dataIndex) => {
-    console.log(`isFirstLoad: ${isFirstLoad}`)
-    console.log(`dataId: ${dataId}`)
-    console.log(dataId)
+    console.log(`isFirstLoad: ${isFirstLoad}`);
+    console.log(`dataId: ${dataId}`);
+    console.log(dataId);
     // console.log(`dataName: ${dataName}`)
-    console.log(outletSearching)
+    console.log(outletSearching);
     if (isFirstLoad) {
       try {
         setRefreshLoadingAdminRequest(true);
@@ -303,7 +306,11 @@ const Cashier = () => {
         prevData.filter((data) => data.id !== dataId)
       );
 
-      setOutletSearching((prevData) => prevData.filter((data) => data.outletId != dataId && data.index != dataIndex))
+      setOutletSearching((prevData) =>
+        prevData.filter(
+          (data) => data.outletId != dataId && data.index != dataIndex
+        )
+      );
     }
   };
 
@@ -353,7 +360,7 @@ const Cashier = () => {
         setProductCode("");
         setProductName("");
         setQuantity("");
-        getRecords();
+        await getRecords();
       }
     } catch (error) {
       if (error.response) {
@@ -425,27 +432,29 @@ const Cashier = () => {
     } catch (error) {
       console.log(error.response);
       setMsg({ msg: error.response.data.msg, color: "red" });
-      setIsStoreClicked(false)
+      setIsStoreClicked(false);
     }
   };
 
-  const handleQuantityArrowOnClick = async(isLeft, recordId) => {
-    // isLeft = BOOLEAN
+  const handleQuantityArrowOnClick = async (isLeft, recordId) => {
     try {
-      const response = await axios.put(`${import.meta.env.VITE_BASEURL}/record/quantity`, {
-        isLeft: isLeft,
-        id: recordId,
-        turnCode: recordCode
-      })
+      const response = await axios.put(
+        `${import.meta.env.VITE_BASEURL}/record/quantity`,
+        {
+          isLeft: isLeft,
+          id: recordId,
+          turnCode: recordCode,
+        }
+      );
 
-     if(response) {
-       getRecords()
-     }
+      if (response) {
+        await getRecords();
+      }
     } catch (error) {
-      setMsg({msg: error.response.data.msg, color: "red"})
-      console.error(error.response)
+      setMsg({ msg: error.response.data.msg, color: "red" });
+      console.error(error.response);
     }
-  }
+  };
 
   const storeOrders = async (e) => {
     e.preventDefault();
@@ -467,7 +476,7 @@ const Cashier = () => {
           author: userRole,
         }
       );
-      
+
       if (response) {
         setReturns(rupiah(response.data.data.cashReturn));
         setDiscount(rupiah(response.data.data.sumDiscount));
@@ -837,7 +846,7 @@ const Cashier = () => {
       );
 
       if (response) {
-        getRecords(); // Update setelah perubahan sukses
+        await getRecords(); // Update setelah perubahan sukses
       }
     } catch (error) {
       // Cek jika error status 400 (harga kurang dari harga modal)
@@ -906,7 +915,7 @@ const Cashier = () => {
         `${import.meta.env.VITE_BASEURL}/record/${recordId}`
       );
       if (response) {
-        getRecords();
+        await getRecords();
       }
     } catch (error) {
       console.log(error.response);
@@ -996,7 +1005,7 @@ const Cashier = () => {
     minHeight: "200px",
     overflow: "scroll",
     padding: "10px 0px 10px 0px",
-    top: "-200px"
+    top: "-200px",
     // marginTop: "40px",
   };
 
@@ -1036,7 +1045,13 @@ const Cashier = () => {
       ) : (
         <>
           <div className="myCashierContainer">
-            <div style={{width: "100%", display: "flex", flexDirection: "column"}}>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
               <div style={{ width: "100%", display: "flex", gap: "10px" }}>
                 <div className="judul">
                   <h1>Kasir {userRole === "admin" ? userRole : ""}</h1>
@@ -1097,7 +1112,8 @@ const Cashier = () => {
                       >
                         {requestPrintDataFromAdmin.map((data, index) => {
                           const outlet = outletSearching.find(
-                            (otl) => otl.index === index && otl.outletId == data.outlet
+                            (otl) =>
+                              otl.index === index && otl.outletId == data.outlet
                           );
 
                           return (
@@ -1149,7 +1165,9 @@ const Cashier = () => {
                                   backgroundColor: "green",
                                   border: "none",
                                 }}
-                                onClick={() => handlePrintFromAdmin(data, outlet)}
+                                onClick={() =>
+                                  handlePrintFromAdmin(data, outlet)
+                                }
                               >
                                 Print
                               </button>
@@ -1168,9 +1186,12 @@ const Cashier = () => {
                                         import.meta.env.VITE_BASEURL
                                       }/orders/adminRequest/${data.turnCode}`
                                     );
-                                    if (response)
-                                      console.log(response)
-                                      getRequestPrintFromAdmin(false, data.id, index);
+                                    if (response) console.log(response);
+                                    getRequestPrintFromAdmin(
+                                      false,
+                                      data.id,
+                                      index
+                                    );
                                   } catch (error) {
                                     console.error(error);
                                   }
@@ -1186,8 +1207,12 @@ const Cashier = () => {
                   </div>
                 )}
               </div>
-              <div className="formContainer" style={{position: "relative"}}>
-                <form onSubmit={record} className="is-flex codeForm" style={{gap: "8px"}}>
+              <div className="formContainer" style={{ position: "relative" }}>
+                <form
+                  onSubmit={record}
+                  className="is-flex codeForm"
+                  style={{ gap: "8px" }}
+                >
                   <div
                     style={{
                       display: "flex",
@@ -1201,7 +1226,7 @@ const Cashier = () => {
                       placeholder="Cari Barang dengan memasukkan 'kode' Barang atau 'nama' Barang"
                       value={productName}
                       onChange={handleProductCodeChange}
-                      style={{backgroundColor: "#fff", color: "black"}}
+                      style={{ backgroundColor: "#fff", color: "black" }}
                     />
                     {showDropdownProductCode && (
                       <ul className="dropdown" style={dropdownStyle}>
@@ -1222,7 +1247,11 @@ const Cashier = () => {
                     )}
                   </div>
                   <input
-                    style={{...quantityStyle, backgroundColor: "#fff", color: "black"}}
+                    style={{
+                      ...quantityStyle,
+                      backgroundColor: "#fff",
+                      color: "black",
+                    }}
                     type="number"
                     className="input"
                     placeholder="Jumlah"
@@ -1273,155 +1302,355 @@ const Cashier = () => {
                       }}
                     />
                   </div>
-                  <button style={{...addButtonStyle, backgroundColor: "darkgoldenrod"}} className="button is-success">
-                    <i style={{color: "#fff"}}><CIcon icon={icon.cilChevronDoubleDown}/></i>
+                  <button
+                    disabled={isRecordsLoading}
+                    style={{
+                      ...addButtonStyle,
+                      backgroundColor: "darkgoldenrod",
+                    }}
+                    className="button is-success"
+                  >
+                    <i style={{ color: "#fff" }}>
+                      <CIcon icon={icon.cilChevronDoubleDown} />
+                    </i>
                   </button>
                 </form>
               </div>
             </div>
-            <div style={{flex: "1", overflow: "auto", display: "flex", paddingLeft: "20px"}}>
-              <div className="orderView" style={{backgroundColor: records.length > 0 ? "lightgrey" : "black"}}>
-                    <table style={tableStyle} className="table">
-                      <thead style={{backgroundColor: "black"}}>
-                        <tr>
-                          <th style={{width: "0%", color: "#fff"}}>
-                            <i>
-                              <CIcon icon={icon.cilSortAscending}/>
-                            </i>
-                          </th>
-                          <th style={{color: "#fff", width: "0%"}}>Kode</th>
-                          <th style={{color: "#fff", width: "40%"}}>Nama Barang</th>
-                          <th style={{color: "#fff", width: "15%"}}>Harga Modal{" (pcs)"}</th>
-                          <th style={{color: "#fff", width: "15%"}} >Harga Jual{" (pcs)"}</th>
-                          <th style={{color: "#fff", width: "10%"}}>Jumlah</th>
-                          <th style={{color: "#fff", width: "10%"}}>Profit</th>
-                          <th style={{color: "#fff", width: "10%"}}>Total</th>
-                          <th style={{color: "#fff", width: "0%"}}><i style={{color: "#fff"}}><CIcon icon={icon.cilControl}></CIcon></i></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {records.map((record, index) => (
-                          <tr key={index} style={{backgroundColor: "#fff"}}>
-                            <th style={{verticalAlign: "middle", color: "grey"}}>{index + 1}</th>
-                            <td style={{verticalAlign: "middle", color: "grey"}}>{record.itemCode}</td>
-                            <td style={{nameTableStyle, verticalAlign: "middle", color: "grey"}}>
-                              {record.itemName.toUpperCase()}
-                            </td>
-                            <td style={{verticalAlign: "middle", color: "grey"}}>{rupiah(record.capitalPrice)}</td>
-                            <td style={{verticalAlign: "middle"}}>
-                              <input
-                                className="input"
-                                style={{ padding: "0px 5px", backgroundColor: "#fff", color: "black"}}
-                                type="text"
-                                value={record.formattedPrice || rupiah(record.price)}
-                                onChange={(e) =>
-                                  handleFormattedPriceChange(e, record.id)
-                                }
-                                onBlur={(e) =>
-                                  handlePriceOnChange(e, record.id, record.itemCode)
-                                }
-                              />
-                            </td>
-                            <td
+            <div
+              style={{
+                flex: "1",
+                overflow: "auto",
+                display: "flex",
+                paddingLeft: "20px",
+              }}
+            >
+              <div
+                className="orderView"
+                style={{
+                  backgroundColor: records.length > 0 ? "lightgrey" : "black",
+                }}
+              >
+                <table style={tableStyle} className="table">
+                  <thead style={{ backgroundColor: "black" }}>
+                    <tr>
+                      <th style={{ width: "0%", color: "#fff" }}>
+                        <i>
+                          <CIcon icon={icon.cilSortAscending} />
+                        </i>
+                      </th>
+                      <th style={{ color: "#fff", width: "0%" }}>Kode</th>
+                      <th style={{ color: "#fff", width: "40%" }}>
+                        Nama Barang
+                      </th>
+                      <th style={{ color: "#fff", width: "15%" }}>
+                        Harga Modal{" (pcs)"}
+                      </th>
+                      <th style={{ color: "#fff", width: "15%" }}>
+                        Harga Jual{" (pcs)"}
+                      </th>
+                      <th style={{ color: "#fff", width: "10%" }}>Jumlah</th>
+                      <th style={{ color: "#fff", width: "10%" }}>Profit</th>
+                      <th style={{ color: "#fff", width: "10%" }}>Total</th>
+                      <th style={{ color: "#fff", width: "0%" }}>
+                        <i style={{ color: "#fff" }}>
+                          <CIcon icon={icon.cilControl}></CIcon>
+                        </i>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {records.map((record, index) => (
+                      <tr key={index} style={{ backgroundColor: "#fff" }}>
+                        <th style={{ verticalAlign: "middle", color: "grey" }}>
+                          {index + 1}
+                        </th>
+                        <td style={{ verticalAlign: "middle", color: "grey" }}>
+                          {record.itemCode}
+                        </td>
+                        <td
+                          style={{
+                            nameTableStyle,
+                            verticalAlign: "middle",
+                            color: "grey",
+                          }}
+                        >
+                          {record.itemName.toUpperCase()}
+                        </td>
+                        <td style={{ verticalAlign: "middle", color: "grey" }}>
+                          {rupiah(record.capitalPrice)}
+                        </td>
+                        <td style={{ verticalAlign: "middle" }}>
+                          <input
+                            disabled={isRecordsLoading}
+                            className="input"
+                            style={{
+                              padding: "0px 5px",
+                              backgroundColor: "#fff",
+                              color: "black",
+                            }}
+                            type="text"
+                            value={
+                              record.formattedPrice || rupiah(record.price)
+                            }
+                            onChange={(e) =>
+                              handleFormattedPriceChange(e, record.id)
+                            }
+                            onBlur={(e) => {
+                              handleFunLoading(
+                                setIsRecordsLoading,
+                                handlePriceOnChange,
+                                [e, record.id, record.itemCode]
+                              );
+                            }}
+                          />
+                        </td>
+                        <td
+                          style={{
+                            verticalAlign: "middle",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              paddingTop: "5px",
+                            }}
+                          >
+                            {/* tombol kiri kanan */}
+                            <div
                               style={{
-                                verticalAlign: "middle"
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                gap: "5px",
                               }}
                             >
-                              <div style={{
+                              <button
+                                disabled={isRecordsLoading}
+                                style={{
+                                  position: "relative",
+                                  backgroundColor: "darkorange",
+                                  border: "none",
+                                  color: "#fff",
+                                }}
+                                onClick={() => {
+                                  handleFunLoading(
+                                    setIsRecordsLoading,
+                                    handleQuantityArrowOnClick,
+                                    [true, record.id]
+                                  );
+                                }}
+                                className="button"
+                              >
+                                &minus;
+                                <span
+                                  style={{
+                                    fontSize: "10px",
+                                    position: "absolute",
+                                    left: "21px",
+                                    top: "4px",
+                                  }}
+                                >
+                                  1
+                                </span>
+                              </button>
+                              <button
+                                style={{
+                                  backgroundColor: "darkorange",
+                                  border: "none",
+                                  color: "#fff",
+                                }}
+                                onClick={() => {}}
+                                className="button"
+                              >
+                                &lt;
+                              </button>
+                            </div>
+                            <div
+                              style={{
                                 display: "flex",
                                 alignItems: "center",
-                                paddingTop: "5px"
-                              }}>
-                                {/* tombol kiri kanan */}
-                                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px" }}>
-                                  <button style={{position: "relative", backgroundColor: "darkorange", border: "none", color: "#fff"}} onClick={() => handleQuantityArrowOnClick(true, record.id)} className="button">&minus;<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
-                                  <button style={{backgroundColor: "darkorange", border: "none", color: "#fff"}} onClick={() => {}} className="button">&lt;</button>
-                                </div>
+                                width: "80px",
+                                // justifyContent: "space-between",
+                                // padding: "0px 15px",
+                                textAlign: "center",
+                              }}
+                            >
+                              {/* pola isUnitChecked = ["0" = pcs], ["1-12-12" = dus], ["2-12-12" = pack] */}
+                              {record.isUnitChecked !== "0" ? (
+                                record.isUnitChecked.split("-")[0] === "1" ? (
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      gap: "20px",
+                                      justifyContent: "space-between",
+                                      flexDirection: "column",
+                                      width: "100%",
+                                    }}
+                                  >
+                                    <p style={{ color: "grey" }}>
+                                      {record.isUnitChecked.split("-")[1] /
+                                        record.isUnitChecked.split("-")[2]}
+                                    </p>
+                                    <p style={{ color: "crimson" }}>DUS</p>
+                                  </div>
+                                ) : (
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      gap: "20px",
+                                      justifyContent: "space-between",
+                                      flexDirection: "column",
+                                      width: "100%",
+                                    }}
+                                  >
+                                    <p style={{ color: "grey" }}>
+                                      {record.isUnitChecked.split("-")[1] /
+                                        record.isUnitChecked.split("-")[2]}
+                                    </p>
+                                    <p style={{ color: "crimson" }}>PCK</p>
+                                  </div>
+                                )
+                              ) : (
                                 <div
                                   style={{
                                     display: "flex",
-                                    alignItems: "center",
-                                    width: "80px",
-                                    // justifyContent: "space-between",
-                                    // padding: "0px 15px",
-                                    textAlign: "center"
+                                    gap: "20px",
+                                    justifyContent: "space-between",
+                                    flexDirection: "column",
+                                    width: "100%",
                                   }}
                                 >
-                                  {/* pola isUnitChecked = ["0" = pcs], ["1-12-12" = dus], ["2-12-12" = pack] */}
-                                  {record.isUnitChecked !== "0" ? (
-                                    record.isUnitChecked.split("-")[0] === "1" ? (
-                                      <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
-                                        <p style={{color: "grey"}}>
-                                          {record.isUnitChecked.split("-")[1] /
-                                            record.isUnitChecked.split("-")[2]}
-                                        </p>
-                                        <p style={{color: "crimson"}}>DUS</p>
-                                      </div>
-                                    ) : (
-                                      <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
-                                        <p style={{color: "grey"}}>
-                                          {record.isUnitChecked.split("-")[1] /
-                                            record.isUnitChecked.split("-")[2]}
-                                        </p>
-                                        <p style={{color: "crimson"}}>PCK</p>
-                                      </div>
-                                    )
-                                  ) : (
-                                  <div style={{display: "flex", gap: "20px", justifyContent: "space-between", flexDirection: "column", width: "100%"}}>
-                                    <p style={{color: "grey"}}>{record.quantity}</p>
-                                    <p style={{color: "crimson"}}>PCS</p>
-                                  </div>
-                                  )}
+                                  <p style={{ color: "grey" }}>
+                                    {record.quantity}
+                                  </p>
+                                  <p style={{ color: "crimson" }}>PCS</p>
                                 </div>
-                                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "5px" }}>
-                                  <button style={{position: "relative", backgroundColor: "darkorange", border: "none", color: "#fff"}} onClick={() => handleQuantityArrowOnClick(false, record.id)} className="button">+<span style={{fontSize: "10px", position: "absolute", left: "21px", top: "4px"}}>1</span></button>
-                                  <button style={{backgroundColor: "darkorange", border: "none", color: "#fff"}} onClick={() => {}} className="button">&gt;</button>
-                                </div>
-                              </div>
-                            </td>
-                            <td style={{verticalAlign: "middle", color: "grey"}}>{rupiah(record.profit)}</td>
-                            <td style={{verticalAlign: "middle", color: "grey"}}>
-                              {rupiah(record.finalPrice)}{" "}
-                              <span style={{ color: "red" }}>
-                                {record.discount > 0
-                                  ? `(-${record.discount * 100}%)`
-                                  : ""}
-                              </span>
-                            </td>
-                            <td style={{verticalAlign: "middle"}}>
+                              )}
+                            </div>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: "5px",
+                              }}
+                            >
                               <button
-                                style={{verticalAlign: "middle", backgroundColor: "rgb(200, 10, 50)", border: "none", color: "#fff"}}
+                                disabled={isRecordsLoading}
+                                style={{
+                                  position: "relative",
+                                  backgroundColor: "darkorange",
+                                  border: "none",
+                                  color: "#fff",
+                                }}
+                                onClick={() => {
+                                  handleFunLoading(
+                                    setIsRecordsLoading,
+                                    handleQuantityArrowOnClick,
+                                    [false, record.id]
+                                  );
+                                }}
                                 className="button"
-                                onClick={() => handleDeleteRecord(record.id)}
                               >
-                                &times;
+                                +
+                                <span
+                                  style={{
+                                    fontSize: "10px",
+                                    position: "absolute",
+                                    left: "21px",
+                                    top: "4px",
+                                  }}
+                                >
+                                  1
+                                </span>
                               </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                              <button
+                                style={{
+                                  backgroundColor: "darkorange",
+                                  border: "none",
+                                  color: "#fff",
+                                }}
+                                onClick={() => {}}
+                                className="button"
+                              >
+                                &gt;
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ verticalAlign: "middle", color: "grey" }}>
+                          {rupiah(record.profit)}
+                        </td>
+                        <td style={{ verticalAlign: "middle", color: "grey" }}>
+                          {rupiah(record.finalPrice)}{" "}
+                          <span style={{ color: "red" }}>
+                            {record.discount > 0
+                              ? `(-${record.discount * 100}%)`
+                              : ""}
+                          </span>
+                        </td>
+                        <td style={{ verticalAlign: "middle" }}>
+                          <button
+                            disabled={isRecordsLoading}
+                            style={{
+                              verticalAlign: "middle",
+                              backgroundColor: "rgb(200, 10, 50)",
+                              border: "none",
+                              color: "#fff",
+                            }}
+                            className="button"
+                            onClick={() => {
+                              handleFunLoading(
+                                setIsRecordsLoading,
+                                handleDeleteRecord,
+                                [record.id]
+                              );
+                            }}
+                          >
+                            &times;
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
-            <div style={{position: "", top: "100%", width: "100%", padding: "0px 20px"}}>
-                <div style={{width: "100%", display: "flex", justifyContent: "space-between"}}>
-                  <h1 style={totalBayar}>Total Keseluruhan:</h1>
-                  <h1 style={totalBayar}>{total}</h1>
-                </div>
-                <form
-                  onSubmit={
-                    userRole === "admin" ? sendOrdersToKasir : storeOrders
-                  }
-                  className="is-flex codeForm mt-5"
-                >
-                  <input
-                    style={quantityStyle}
-                    type="hidden"
-                    value={recordCode}
-                    className="input"
-                  />
-                  {/* jika menggunakan cash aktifkan input dibawah */}
-                  {/* <input 
+            <div
+              style={{
+                position: "",
+                top: "100%",
+                width: "100%",
+                padding: "0px 20px",
+              }}
+            >
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <h1 style={totalBayar}>Total Keseluruhan:</h1>
+                <h1 style={totalBayar}>{total}</h1>
+              </div>
+              <form
+                onSubmit={
+                  userRole === "admin" ? sendOrdersToKasir : storeOrders
+                }
+                className="is-flex codeForm mt-5"
+              >
+                <input
+                  style={quantityStyle}
+                  type="hidden"
+                  value={recordCode}
+                  className="input"
+                />
+                {/* jika menggunakan cash aktifkan input dibawah */}
+                {/* <input 
                                           style={quantityStyle} 
                                           type="text" 
                                           className='input' 
@@ -1430,151 +1659,95 @@ const Cashier = () => {
                                           onChange={handleFormattedCashChange} 
                                           onBlur={handleCashOnChange} 
                                       /> */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "5px",
-                      marginRight: "10px",
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "5px",
+                    marginRight: "10px",
+                  }}
+                >
+                  <h1 style={{ color: "black", fontWeight: "bold" }}>Tempo</h1>
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      setIsBon(e.target.checked);
                     }}
-                  >
-                    <h1 style={{ color: "black", fontWeight: "bold" }}>Tempo</h1>
-                    <input
-                      type="checkbox"
-                      onChange={(e) => {
-                        setIsBon(e.target.checked);
-                      }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      gap: "10px",
-                      width: "100%",
-                      marginLeft: "2px",
-                      position: "relative"
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="input"
-                      placeholder="Cari Outlet"
-                      value={outlet.name}
-                      onChange={handleOutletChange}
-                      style={{backgroundColor: "#fff", color: "black"}}
-                    />
-                    {showDropdownOutlet && (
-                      <ul className="dropdown" style={dropdownStyleOutlet}>
-                        {outletList.map((outlet) => (
-                          <li
-                            style={{ cursor: "pointer", color: "white" }}
-                            key={outlet.id}
-                            onClick={() => handleSelectOutlet(outlet)}
-                          >
-                            {outlet.name.toUpperCase()}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                    {/* <input
+                  />
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: "10px",
+                    width: "100%",
+                    marginLeft: "2px",
+                    position: "relative",
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="Cari Outlet"
+                    value={outlet.name}
+                    onChange={handleOutletChange}
+                    style={{ backgroundColor: "#fff", color: "black" }}
+                  />
+                  {showDropdownOutlet && (
+                    <ul className="dropdown" style={dropdownStyleOutlet}>
+                      {outletList.map((outlet) => (
+                        <li
+                          style={{ cursor: "pointer", color: "white" }}
+                          key={outlet.id}
+                          onClick={() => handleSelectOutlet(outlet)}
+                        >
+                          {outlet.name.toUpperCase()}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {/* <input
                           type="text"
                           className="input"
                           placeholder="Sales"
                           onChange={handleSalesOnChange}
                         /> */}
-                    <select
-                      onChange={handleSalesOnChange}
-                      className="input"
-                      name="sales"
-                      id="sales"
-                      value={sales}
-                      style={{backgroundColor: "#fff", color: "black"}}
-                    >
-                      <option value="Ana">Ana</option>
-                      <option value="Eman">Eman</option>
-                      <option value="Eva">Eva</option>
-                      <option value="Uyung">Uyung</option>
-                      <option value="Dwik">Dwik</option>
-                      <option value="Suhendri">Suhendri</option>
-                      <option value="Eja">Eja</option>
-                      <option value="Dian">Dian</option>
-                      <option value="Eyung">Eyung</option>
-                    </select>
-                  </div>
-                  {
-                    isStoreClicked
-                    ? 
-                      (
-                        <div style={{display: "flex", alignItems: "center", justifyContent: "center", width: "300px"}}>
-                          <button
-                            style={{...addButtonStyle, backgroundColor: "rgb(200, 10, 50)"}}
-                            className="button is-success"
-                            disabled={!isStoreClicked}
-                            onClick={() =>
-                              createRecipt(
-                                printData.datas,
-                                printData.transCode,
-                                printData.from,
-                                printData.isBonFromAdmin,
-                                printData.outletName
-                              )
-                            }
-                          >
-                            <i style={{display: "flex", alignItems: "center"}}>
-                              <CIcon icon={icon.cilPrint}/>
-                            </i>
-                          </button>
-                          <button
-                            style={{...addButtonStyle, backgroundColor: "green"}}
-                            className="button is-success"
-                            disabled={!isStoreClicked}
-                            onClick={handleRefresh}
-                          >
-                            <i style={{display: "flex", alignItems: "center"}}>
-                              <CIcon icon={icon.cilReload}/>
-                            </i>
-                          </button>
-                        </div>
-                      )
-                      :
-                      (
-                        <button
-                          style={addButtonStyle}
-                          className="button is-success"
-                          disabled={isStoreClicked}
-                          type="submit"
-                        >
-                          {userRole === "admin" ? "Kirim Ke Kasir" : "Buat Order"}
-                        </button>
-                      )
-                  }
-                </form>
-                {/* {isStoreClicked && (
+                  <select
+                    onChange={handleSalesOnChange}
+                    className="input"
+                    name="sales"
+                    id="sales"
+                    value={sales}
+                    style={{ backgroundColor: "#fff", color: "black" }}
+                  >
+                    <option value="Ana">Ana</option>
+                    <option value="Eman">Eman</option>
+                    <option value="Eva">Eva</option>
+                    <option value="Uyung">Uyung</option>
+                    <option value="Dwik">Dwik</option>
+                    <option value="Suhendri">Suhendri</option>
+                    <option value="Eja">Eja</option>
+                    <option value="Dian">Dian</option>
+                    <option value="Eyung">Eyung</option>
+                  </select>
+                </div>
+                {isStoreClicked ? (
                   <div
                     style={{
                       display: "flex",
-                      gap: "10px",
-                      width: "230px",
-                      position: "absolute",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "300px",
                     }}
                   >
                     <button
-                      onClick={handleRefresh}
-                      className="button is-danger"
                       style={{
                         ...addButtonStyle,
-                        marginTop: "10px",
-                        backgroundColor: "green",
-                        width: "100px",
-                        height: "100px",
-                        marginLeft: "",
+                        backgroundColor: "rgb(200, 10, 50)",
                       }}
-                    >
-                      Refresh
-                    </button>
-                    <button
+                      className="button is-success"
+                      disabled={!isStoreClicked}
                       onClick={() =>
                         createRecipt(
                           printData.datas,
@@ -1584,30 +1757,33 @@ const Cashier = () => {
                           printData.outletName
                         )
                       }
-                      className="button is-danger"
-                      style={{
-                        ...addButtonStyle,
-                        marginTop: "10px",
-                        backgroundColor: "darkgoldenrod",
-                        width: "100px",
-                        height: "100px",
-                        marginLeft: "",
-                      }}
                     >
-                      Print Ulang
+                      <i style={{ display: "flex", alignItems: "center" }}>
+                        <CIcon icon={icon.cilPrint} />
+                      </i>
+                    </button>
+                    <button
+                      style={{ ...addButtonStyle, backgroundColor: "green" }}
+                      className="button is-success"
+                      disabled={!isStoreClicked}
+                      onClick={handleRefresh}
+                    >
+                      <i style={{ display: "flex", alignItems: "center" }}>
+                        <CIcon icon={icon.cilReload} />
+                      </i>
                     </button>
                   </div>
-                )} */}
-                {/* <div style={returnAndDiscountStyle} className="is-flex mt-5">
-                  <h1 style={totalKembalian}>
-                    Kembali <br />
-                    {returns}
-                  </h1>
-                  <h1 className="ml-5" style={totalKembalian}>
-                    Diskon <br />
-                    {discount}
-                  </h1>
-                </div> */}
+                ) : (
+                  <button
+                    style={addButtonStyle}
+                    className="button is-success"
+                    disabled={isStoreClicked || isRecordsLoading}
+                    type="submit"
+                  >
+                    {userRole === "admin" ? "Kirim Ke Kasir" : "Buat Order"}
+                  </button>
+                )}
+              </form>
             </div>
           </div>
         </>
