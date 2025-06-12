@@ -27,12 +27,12 @@ const init = async() => {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!JANGAN_LUPA_DIMATIKAN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //Singkron Database
 
-        if(process.env.NODE_ENV === "PRODUCTION") {
-          await db.sync({
-              alter: true
-          })
-          console.log("Bills syncroned!")
-        }
+        // if(process.env.NODE_ENV === "") {
+          // await db.sync({
+          //     alter: true
+          // })
+          // console.log("Bills syncroned!")
+        // }
         
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!JANGAN_LUPA_DIMATIKAN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
