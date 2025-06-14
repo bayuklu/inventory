@@ -1733,7 +1733,6 @@ const Cashier = () => {
                     <option value="Eva">Eva</option>
                     <option value="Uyung">Uyung</option>
                     <option value="Dwik">Dwik</option>
-                    <option value="Suhendri">Suhendri</option>
                     <option value="Eja">Eja</option>
                     <option value="Dian">Dian</option>
                     <option value="Eyung">Eyung</option>

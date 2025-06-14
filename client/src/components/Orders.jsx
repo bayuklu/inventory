@@ -51,7 +51,6 @@ const Orders = () => {
     "Eva",
     "Uyung",
     "Dwik",
-    "Suhendri",
     "Eja",
     "Dian",
     "Eyung",
@@ -417,13 +416,6 @@ const Orders = () => {
           S: "Dwik",
           JUMLAH: HitungBanyakOrderSales("Dwik"),
           "SETOR 1": rupiah(hitungJumlahPendapatan("Dwik")),
-        },
-        {
-          No: "",
-          NAMA: "",
-          S: "Suhendri",
-          JUMLAH: HitungBanyakOrderSales("Suhendri"),
-          "SETOR 1": rupiah(hitungJumlahPendapatan("Suhendri")),
         },
         {
           No: "",
