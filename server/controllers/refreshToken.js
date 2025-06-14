@@ -5,8 +5,6 @@ export const refreshToken = async(req, res) => {
     try {
         const {refreshToken} = req.cookies
         if(refreshToken == undefined) return res.sendStatus(401)
-        
-        console.log(refreshToken)
 
         const user = await Users.findOne({where : {refreshToken: refreshToken}, attributes: ['id', 'username', 'role']})
         if(!user) return res.sendStatus(403)

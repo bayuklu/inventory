@@ -444,12 +444,12 @@ export const getRequestPrintFromAdmin = async (req, res) => {
                 [Op.and]: [
                     {author: "admin"},
                     {isPrinted: false},
-                    {
-                        createdAt: {
-                            [Op.lt]: TOMORROW_START_WITA_CONVERT_UTC,
-                            [Op.gt]: TODAY_START_WITA_CONVERT_UTC
-                        }
-                    }
+                    // {
+                    //     createdAt: {
+                    //         [Op.lt]: TOMORROW_START_WITA_CONVERT_UTC,
+                    //         [Op.gt]: TODAY_START_WITA_CONVERT_UTC
+                    //     }
+                    // }
                 ]
             },
             raw: true
