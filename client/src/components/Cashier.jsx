@@ -70,6 +70,8 @@ const Cashier = () => {
     []
   );
 
+  const [isCreateOrderClicked, setIsCreateOrderClicked] = useState(false)
+
   const [outletSearching, setOutletSearching] = useState([]);
   const [refreshLoadingAdminRequest, setRefreshLoadingAdminRequest] =
     useState(false);
@@ -406,6 +408,8 @@ const Cashier = () => {
 
     if (isStoreClicked) return;
 
+    setIsCreateOrderClicked(true)
+
     const totalProfit = records.reduce((acc, val) => acc + val.profit, 0);
 
     try {
@@ -467,6 +471,8 @@ const Cashier = () => {
     e.preventDefault();
 
     if (isStoreClicked) return;
+
+    setIsCreateOrderClicked(true)
 
     const totalProfit = records.reduce((acc, val) => acc + val.profit, 0);
 
@@ -1783,7 +1789,7 @@ const Cashier = () => {
                   <button
                     style={addButtonStyle}
                     className="button is-success"
-                    disabled={isStoreClicked || isRecordsLoading}
+                    disabled={isStoreClicked || isRecordsLoading || isCreateOrderClicked}
                     type="submit"
                   >
                     {userRole === "admin" ? "Kirim Ke Kasir" : "Buat Order"}
