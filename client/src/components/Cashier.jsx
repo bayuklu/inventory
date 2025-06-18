@@ -443,6 +443,7 @@ const Cashier = () => {
     } catch (error) {
       console.log(error.response);
       setMsg({ msg: error.response.data.msg, color: "red" });
+      setIsCreateOrderClicked(false)
       setIsStoreClicked(false);
     }
   };
