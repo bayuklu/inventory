@@ -8,6 +8,7 @@ import CIcon from "@coreui/icons-react";
 import * as icon from "@coreui/icons";
 import { jwtDecode } from "jwt-decode";
 import SpinnerLoader from "./SpinnerLoader";
+import rupiah from "../utils/rupiah";
 
 const Inventory = () => {
   const [msg, setMsg] = useState({});
@@ -235,15 +236,6 @@ const Inventory = () => {
       console.log(error);
       setMsg({ msg: error.response.data.msg, color: "red" });
     }
-  };
-
-  const rupiah = (number) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(number);
   };
 
   const handleAddStock = (code, name, stock) => {

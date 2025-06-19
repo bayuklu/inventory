@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { addItem, getAllItem, getFoods, getDrinks, getBathroom, getKitchen, updateItem, deleteItem, addStock, searchItem, updateDus, updatePack, updatePrice, updateCapitalPrice } from "../controllers/Items.js";
 import {getTurnCode, getRecordsByTurnCode, createRecordOrder, createFinalOrder, changePriceForSelectedItem, deleteRecordOrder, getRequestPrintFromAdmin, getRecordOrdersFromAdminRequest, setOrderIsPrinted, changeQuantityRecord} from "../controllers/orders.js"
-import {getTotalOfItemsStock, getTotalOFItemsProduct, getTodayOrders, getTodayIncomes, getLast7DaysIncomes, getBestSeller, getTodayBestSeller, getTodayOrdersData, getTodayProfit, deleteTransaction, changeSalesName, getItemListForTodayOrders, getOutletForTodayOrders, getTagihanIn7DayMore, getOutletName, lunaskanTagihan, backupData, getBillOfTempoOrders} from "../controllers/dashboard.js"
+import {getTotalOfItemsStock, getTotalOFItemsProduct, getTodayOrders, getTodayIncomes, getLast7DaysIncomes, getBestSeller, getTodayBestSeller, getTodayOrdersData, getTodayProfit, deleteTransaction, changeSalesName, getItemListForTodayOrders, getOutletForTodayOrders, getOutletName, lunaskanTagihan, backupData, getBillOfTempoOrders, getTagihanIn7DayMore} from "../controllers/dashboard.js"
 import { addOutlet, deleteOutlet, getOutlet, searchOutlet, updateOutlet } from "../controllers/outlet.js";
 import { isUserLoggedIn, Login, Logout, Register } from '../controllers/user.js'
 import { refreshToken } from '../controllers/refreshToken.js'
@@ -54,7 +54,8 @@ router.get('/dashboard/bestseller', getBestSeller)
 router.get('/dashboard/todayBestSeller', getTodayBestSeller)
 router.get('/dashboard/tagihan7hari/bills/:orderId', getBillOfTempoOrders)
 router.put('/dashboard/tagihan7hari', lunaskanTagihan)
-router.get('/dashboard/tagihan7hari/:isMore/:latestDateShowed', getTagihanIn7DayMore)
+router.get('/dashboard/tagihan/:date/:isFiltering', getTagihanIn7DayMore)
+
 router.get('/dashboard/outlet/:outletId', getOutletName)
 
 //router transaksi today orders

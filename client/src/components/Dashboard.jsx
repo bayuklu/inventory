@@ -34,6 +34,16 @@ ChartJS.register(
 import { jwtDecode } from "jwt-decode";
 import CIcon from "@coreui/icons-react";
 import * as icon from "@coreui/icons";
+import {
+  convertStringCaleToIndonesiaFormat,
+  getIndonesianDay,
+  parseIndonesianDate,
+} from "../utils/indonesianDate";
+import { handleExport } from "../utils/exportOrdersToExcel";
+import {
+  getCookie,
+  setTagihanNotificationCookieUntilTomorrowStart,
+} from "../utils/cookies";
 
 const Dashboard = () => {
   const [product, setProduct] = useState("0");
@@ -49,12 +59,18 @@ const Dashboard = () => {
   const [isNoLoggedIn, setIsNoLoggedIn] = useState(false);
   const [authCheck, setAuthCheck] = useState(true);
   const [listTagihanShow, setListTagihanShow] = useState(false);
-  const [dataTagihan, setDataTagihan] = useState([]);
-  const [jumlahDataTagihan, setJumlahDataTagihan] = useState(0);
-  const [dataTagihanIsEnd, setDataTagihanIsEnd] = useState(false);
+  const [dataTagihan, setDataTagihan] = useState({
+    tanggal: convertStringCaleToIndonesiaFormat(
+      new Date(
+        new Date().setDate(new Date().getDate() - 7)
+      ).toLocaleDateString()
+    ),
+    ordersData: [],
+  });
+  const [isTagihanLoading, setIsTagihanLoading] = useState(true);
   const [outletTagihanName, setOutletTagihanName] = useState([]);
   const [validasiTagihanShow, setValidasiTagihanShow] = useState({});
-  const [tagihanList, setTagihanList] = useState({});
+  // const [tagihanList, setTagihanList] = useState({});
   const navigate = useNavigate();
 
   const listTagihanRef = useRef(null);
@@ -120,7 +136,8 @@ const Dashboard = () => {
           getLast6DaysIncomes();
           getTodayProfit();
           getTodayBestSellerProduct();
-          getTagihan7DayMore("0");
+          // getTagihan7DayMore("0");
+          getTagihan(false);
         }
       } catch (error) {
         console.error("Token decoding failed:", error);
@@ -129,75 +146,10 @@ const Dashboard = () => {
   }, [token]);
 
   useEffect(() => {
-    async function fetchAllOutletNames() {
-      const newOutletNames = [];
-
-      for (let i = 0; i < dataTagihan.length; i++) {
-        const outletId = dataTagihan[i].outlet;
-        try {
-          const response = await axios.get(
-            `${import.meta.env.VITE_BASEURL}/dashboard/outlet/${outletId}`
-          );
-
-          // console.log(response)
-          newOutletNames.push({
-            name: response.data.name,
-            address: response.data.address,
-            index: i,
-          });
-        } catch (error) {
-          if (error.response.status === 404) {
-            newOutletNames.push({
-              name: "OUTLET TIDAK TERSEDIA",
-              address: "DIHAPUS",
-              index: i,
-            });
-          }
-          console.error(error);
-        }
-      }
-
-      setOutletTagihanName(newOutletNames); // ✅ hanya sekali setState
+    if (dataTagihan.ordersData) {
+      setIsTagihanLoading(false);
     }
-
-    if (dataTagihan.length > 0) {
-      fetchAllOutletNames();
-    }
-  }, [dataTagihan]);
-
-  useEffect(() => {
-    const fetchTagihanBills = async () => {
-      for (let item of dataTagihan) {
-        // console.log(`item ID = ${item.id}`);
-        // ✅ Skip jika data tagihan untuk item.id sudah ada
-        if (tagihanList[item.id]) continue;
-
-        try {
-          const res = await axios.get(
-            `${import.meta.env.VITE_BASEURL}/dashboard/tagihan7hari/bills/${
-              item.id
-            }`
-          );
-          // console.log(res);
-          setTagihanList((prev) => ({
-            ...prev,
-            [item.id]: res.data.bills,
-          }));
-        } catch (err) {
-          setTagihanList((prev) => ({
-            ...prev,
-            [item.id]: "Gagal memuat",
-          }));
-        }
-      }
-    };
-
-    if (dataTagihan.length > 0) {
-      fetchTagihanBills();
-    }
-
-    // console.log(tagihanList);
-  }, [dataTagihan, tagihanList]);
+  }, [dataTagihan.ordersData]);
 
   const refreshToken = async () => {
     try {
@@ -346,43 +298,95 @@ const Dashboard = () => {
     }
   };
 
-  const getTagihan7DayMore = async (isMore) => {
-    // const isMore = dataTagihan.length > 2 ? true : false
-    const latestDateShowed = dataTagihan.length
-      ? dataTagihan[dataTagihan.length - 1].createdAt
-      : "-";
+  const getTagihan = async (isFilteringDate) => {
+    setIsTagihanLoading(true);
     try {
       const response = await axios.get(
         `${
           import.meta.env.VITE_BASEURL
-        }/dashboard/tagihan7hari/${isMore}/${latestDateShowed}`
+        }/dashboard/tagihan/${parseIndonesianDate(
+          dataTagihan.tanggal
+        ).toISOString()}/${isFilteringDate ? "1" : "0"}`
+      );
+      console.log(response);
+
+      const { orders } = response.data;
+      const ordersData = await Promise.all(
+        orders.map(async (order) => {
+          const rawItems = order.items;
+          const items = rawItems.includes(",")
+            ? rawItems.split(",")
+            : [rawItems];
+          const itemList = await Promise.all(
+            items.map(async (i) => {
+              const [code, quantity] = i.split(":");
+              try {
+                const product = await axios.get(
+                  `${
+                    import.meta.env.VITE_BASEURL
+                  }/dashboard/orders/item/list/${code}`
+                );
+                return { itemName: product.data.name, quantity };
+              } catch (error) {
+                if (error.response.status === 404) {
+                  return {
+                    itemName: "- dihapus / tidak tersedia -",
+                    quantity,
+                  };
+                }
+              }
+            })
+          );
+          const convertedTime = dayjs
+            .utc(order.createdAt)
+            .tz(`Asia/Makassar`)
+            .format(`HH:mm`);
+
+          let name;
+          try {
+            const outlet = await axios.get(
+              `${import.meta.env.VITE_BASEURL}/dashboard/orders/outlet/name/${
+                order.outlet
+              }`
+            );
+            // console.log(outlet)
+            name = outlet.data.name;
+          } catch (error) {
+            console.log(error);
+            if (error.response.status === 404) {
+              name = "OUTLET TIDAK TERSEDIA / DIHAPUS";
+            }
+          }
+
+          const profit = order.profit;
+          const sales = order.sales;
+          const keterangan = order.isBon ? "TEMPO" : "CASH";
+          return [
+            itemList,
+            convertedTime,
+            name,
+            order.totalPayment,
+            profit,
+            sales,
+            order.id,
+            keterangan,
+          ];
+        })
       );
 
-      // console.log(response.data);
-      setJumlahDataTagihan(response.data.manyOfTransaction);
-      setDataTagihan((prevData) => [...prevData, ...response.data.transaction]);
-
-      if (response.data.isEnd === "1") {
-        setDataTagihanIsEnd(true);
+      setDataTagihan((prevData) => ({
+        ...prevData,
+        ordersData: ordersData,
+      }));
+    } catch (error) {
+      if (error.response.status === 404) {
+        setIsTagihanLoading(false);
       }
-
-      // console.log(dataTagihan, response.data.isEnd);
-    } catch (error) {
+      setDataTagihan((prevData) => ({
+        ...prevData,
+        ordersData: [],
+      }));
       console.log(error.response);
-    }
-  };
-
-  const handleLoadTagihan = async (orderId, billIndex) => {
-    try {
-      const response = await axios.get(
-        `${
-          import.meta.env.VITE_BASEURL
-        }/dashboard/tagihan7hari/bills/${orderId}/${billIndex}`
-      );
-      // console.log(response);
-      return response.data.msg;
-    } catch (error) {
-      console.error(error.response);
     }
   };
 
@@ -450,46 +454,6 @@ const Dashboard = () => {
     return udahBerapaLama;
   };
 
-  const handleShowValidLunas = async (index) => {
-    setValidasiTagihanShow((prevValid) => {
-      if (!prevValid[index] || prevValid[index] === "none") {
-        return {
-          ...prevValid,
-          [index]: "flex",
-        };
-      }
-      return {
-        ...prevValid,
-        [index]: "none",
-      };
-    });
-
-    // console.log(validasiTagihanShow);
-  };
-
-  const handleLunasinTagihan = async (orderId) => {
-    try {
-      const response = await axios.put(
-        `${import.meta.env.VITE_BASEURL}/dashboard/tagihan7hari`,
-        {
-          orderId: orderId,
-        }
-      );
-
-      if (response) {
-        // console.log("hapus");
-        setDataTagihan((prevData) => {
-          return prevData.filter((data) => data.id !== orderId);
-        });
-        setJumlahDataTagihan(jumlahDataTagihan - 1);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  // console.log(dataTagihan)
-
   // CSS styling
   const myHeroStyle = {
     display: "block",
@@ -539,7 +503,6 @@ const Dashboard = () => {
                   className="scrollable"
                   style={{
                     width: "350px",
-                    height: "500px",
                     zIndex: "2",
                     position: "absolute",
                     marginTop: "10px",
@@ -549,299 +512,123 @@ const Dashboard = () => {
                     flexDirection: "column",
                     padding: "20px",
                     scrollPadding: "20px",
-                    gap: "20px",
+                    gap: "5px",
                     alignItems: "center",
                     overflowY: "auto",
                     display: listTagihanShow ? "flex" : "none",
                   }}
                   ref={listTagihanRef}
                 >
-                  {/* raw */}
-                  {dataTagihan.map((data, idx) => {
-                    const outlet = outletTagihanName.find(
-                      (otl) => otl.index === idx
-                    );
+                  <div >
+                    <p style={{textAlign: "center"}}>TAGIHAN MINGGU LALU</p>
 
-                    return (
+                  </div>
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "2px",
+                      boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
+                      borderRadius: "10px",
+                      backgroundColor: "rgb(230, 243, 245)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        borderRadius: "10px",
+                        backgroundColor: getCookie("TodayBillsExported") === "1" ? "lightgrey" : "#00B050",
+                        cursor: "pointer",
+                        // boxShadow:
+                        //   validasiTagihanShow[idx] !== "flex"
+                        //     ? "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
+                        //     : "",
+                        padding: "4px",
+                      }}
+                      onClick={async () =>
+                        await handleExport({
+                          ordersData: dataTagihan.ordersData,
+                          isBillsData: true,
+                          formattedDate: parseIndonesianDate(
+                            dataTagihan.tanggal
+                          ).toLocaleDateString(),
+                          isUsingMsg: false,
+                        })
+                      }
+                    >
                       <div
                         style={{
-                          width: "100%",
-                          // minHeight: "80px",
-                          // maxHeight: "80px",
+                          width: "85%",
+                          padding: "5px",
                           display: "flex",
                           flexDirection: "column",
-                          gap: "2px",
-                          boxShadow:
-                            validasiTagihanShow[idx] === "flex"
-                              ? "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
-                              : "",
-                          borderRadius: "10px",
-                          backgroundColor:
-                            validasiTagihanShow[idx] === "flex"
-                              ? "rgb(230, 243, 245)"
-                              : "white",
                         }}
                       >
                         <div
-                          key={idx}
                           style={{
                             width: "100%",
-                            minHeight: "80px",
-                            maxHeight: "80px",
-                            display: "flex",
-                            borderRadius: "10px",
-                            backgroundColor:
-                              validasiTagihanShow[idx] === "flex"
-                                ? "rgb(230, 243, 245)"
-                                : "white",
-                            cursor: "pointer",
-                            boxShadow:
-                              validasiTagihanShow[idx] !== "flex"
-                                ? "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
-                                : "",
-                            padding: "4px",
-                          }}
-                          onClick={() => handleShowValidLunas(idx)}
-                        >
-                          <div
-                            style={{
-                              width: "85%",
-                              padding: "5px",
-                              display: "flex",
-                              flexDirection: "column",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "100%",
-                                height: "75%",
-                                borderBottom: "1px solid lightgrey",
-                              }}
-                            >
-                              <h1
-                                style={{
-                                  color: "silver",
-                                  whiteSpace: "nowrap", // ⛔ Jangan bungkus ke baris baru
-                                  overflow: "hidden", // Sembunyikan kelebihan teks
-                                  textOverflow: "ellipsis", // Tampilkan "..." di ujung
-                                  maxWidth: "100%", // Batasi lebar maksimalnya
-                                }}
-                              >
-                                {outlet
-                                  ? `${outlet.name.toUpperCase()} - ${outlet.address.toUpperCase()}`
-                                  : "Loading..."}
-                              </h1>
-                              <h2 style={{ color: "salmon", fontSize: "13px" }}>
-                                {rupiah(data.totalPayment)}
-                              </h2>
-                            </div>
-                            <div
-                              style={{
-                                width: "100%",
-                                height: "25%",
-                                display: "flex",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  fontSize: "11px",
-                                  marginTop: "2px",
-                                  color: "grey",
-                                }}
-                              >
-                                {convertTanggal(data.createdAt)}
-                              </p>
-                            </div>
-                          </div>
-                          <div
-                            style={{
-                              width: "15%",
-                              // backgroundColor: "red",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              flexDirection: "column",
-                            }}
-                          >
-                            <h1 style={{ color: "darkorange" }}>
-                              {hitungSudahBerapaHari(data.createdAt)}
-                              <span style={{ fontSize: "10px" }}>hr</span>
-                            </h1>
-                            <i
-                              style={{
-                                color:
-                                  validasiTagihanShow[idx] !== "flex"
-                                    ? "green"
-                                    : "red",
-                              }}
-                            >
-                              <CIcon
-                                icon={
-                                  validasiTagihanShow[idx] !== "flex"
-                                    ? icon.cilCheckAlt
-                                    : icon.cilLevelUp
-                                }
-                              />
-                            </i>
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            width: "100%",
-                            // height: "70px",
-                            backgroundColor:
-                              validasiTagihanShow[idx] === "flex"
-                                ? "rgb(230, 243, 245)"
-                                : "white",
-                            display: validasiTagihanShow[idx] || "none",
-                            padding: "10px",
-                            paddingBottom: "20px",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            flexDirection: "column",
-                            borderRadius: "10px",
+                            height: "75%",
                           }}
                         >
-                          {/* <div
-                            style={{ display: "flex", alignItems: "center" }}
-                          >
-                            <p
-                              style={{ fontSize: "12px", color: "darkorange" }}
-                            >
-                              Lunaskan tagihan?
-                            </p>
-                            <i
-                              style={{
-                                color: "darkorange",
-                                transform: "scale(0.7)",
-                              }}
-                            >
-                              <CIcon icon={icon.cilWarning} />
-                            </i>
-                          </div>
-                          <div
-                            className="pemilihan-lunas"
+                          <h1
                             style={{
-                              padding: "5px",
-                              display: "flex",
-                              gap: "5px",
+                              color: "#fff",
+                              whiteSpace: "nowrap", // ⛔ Jangan bungkus ke baris baru
+                              overflow: "hidden", // Sembunyikan kelebihan teks
+                              textOverflow: "ellipsis", // Tampilkan "..." di ujung
+                              maxWidth: "100%", // Batasi lebar maksimalnya
                             }}
                           >
-                            <button
-                              className="button"
-                              style={{
-                                fontSize: "12px",
-                                border: "none",
-                                backgroundColor: "green",
-                              }}
-                              onClick={() => handleLunasinTagihan(data.id)}
-                            >
-                              Lunaskan
-                            </button>
-                            <button
-                              className="button"
-                              style={{
-                                fontSize: "12px",
-                                border: "none",
-                                backgroundColor: "red",
-                              }}
-                              onClick={() => {
-                                setValidasiTagihanShow((prevValid) => {
-                                  if (prevValid[idx]) {
-                                    return {
-                                      ...prevValid,
-                                      [idx]: "none",
-                                    };
-                                  }
-                                });
-                              }}
-                            >
-                              Tidak
-                            </button>
-                          </div> */}
-
-                          <div
+                            {`Tagihan ${getIndonesianDay(
+                              parseIndonesianDate(dataTagihan.tanggal).getDay()
+                            )}, ${dataTagihan.tanggal}`}
+                          </h1>
+                          <h2
                             style={{
-                              width: "100%",
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
+                              color: "blanchedalmond",
+                              fontSize: "13px",
                             }}
                           >
-                            {[1, 2, 3, 4].map((i) => {
-                              const setorKey = `setor${i}`;
-                              const value = tagihanList[data.id]?.[setorKey];
-
-                              return (
-                                <div
-                                  key={i}
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    fontSize: "12px",
-                                  }}
-                                >
-                                  <p>Setoran ke {i}:</p>
-                                  <p>
-                                    {!tagihanList[data.id]
-                                      ? "Loading..."
-                                      : value
-                                      ? rupiah(value)
-                                      : "-"}
-                                  </p>
-                                </div>
-                              );
-                            })}
-
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                fontSize: "12px",
-                              }}
-                            >
-                              <p>Sisa Tagihan:</p>
-                              <p>
-                                {!tagihanList[data.id]
-                                  ? "Loading..."
-                                  : rupiah(
-                                      data.totalPayment -
-                                        [1, 2, 3, 4].reduce(
-                                          (sum, i) =>
-                                            sum +
-                                            (tagihanList[data.id]?.[
-                                              `setor${i}`
-                                            ] || 0),
-                                          0
-                                        )
-                                    )}
-                              </p>
-                            </div>
-                          </div>
+                            {isTagihanLoading
+                              ? "Loading..."
+                              : `Total: ${rupiah(
+                                  dataTagihan.ordersData.reduce(
+                                    (acc, val) => acc + Number(val[3]),
+                                    0
+                                  )
+                                )}`}
+                          </h2>
                         </div>
                       </div>
-                    );
-                  })}
-                  {/* end raw */}
-
-                  <p
-                    style={{
-                      cursor: !dataTagihanIsEnd ? "pointer" : "",
-                      color: dataTagihanIsEnd ? "silver" : "lightgreen",
-                      fontSize: "12px",
-                    }}
-                    onClick={(e) => {
-                      if (dataTagihanIsEnd) return;
-                      e.stopPropagation();
-                      getTagihan7DayMore("1");
-                    }}
-                  >
-                    {dataTagihanIsEnd
-                      ? "Tidak ada data untuk ditampilkan lagi"
-                      : "Muat lebih banyak"}
-                  </p>
+                      <div
+                        style={{
+                          width: "15%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <h1
+                          style={{
+                            color: "lightgreen",
+                            padding: "0px 7px",
+                            borderRadius: "100%",
+                            backgroundColor: "green",
+                          }}
+                        >
+                          {isTagihanLoading
+                            ? "..."
+                            : `${dataTagihan.ordersData.length}`}
+                        </h1>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
+
               <p
                 style={{
                   position: "relative",
@@ -853,13 +640,18 @@ const Dashboard = () => {
                   fontSize: "12px",
                   textAlign: "center",
                   borderRadius: "50%",
-                  backgroundColor: "red",
+                  // backgroundColor: "green",
+                  backgroundColor:
+                    getCookie("TodayBillsExported") === "1"
+                      ? "transparent"
+                      : "green",
                 }}
               >
-                {jumlahDataTagihan}
+                {`${getCookie("TodayBillsExported") === "1" ? "" : "1"}`}
               </p>
             </div>
           </div>
+
           <div className="my-headMenu">
             <div className="chartContainer">
               <Bar className="chartView" data={data} options={options} />

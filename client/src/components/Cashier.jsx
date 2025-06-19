@@ -12,6 +12,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import "dayjs/locale/id";
+import rupiah from "../utils/rupiah.js";
 
 import backgroundKu from "../assets/img/form2.jpg";
 import handleFunLoading from "../utils/handleFunLoading.js";
@@ -260,18 +261,6 @@ const Cashier = () => {
   if (isNoLoggedIn || !userRole) {
     return null;
   }
-
-  const rupiah = (number) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    })
-      .format(number)
-      .replace("IDR", "Rp")
-      .trim();
-  };
 
   const convertTanggal = (date) => {
     const converedTime = dayjs.utc(date).tz(`Asia/Makassar`).format(`HH:mm`);

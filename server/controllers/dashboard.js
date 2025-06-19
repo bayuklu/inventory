@@ -229,57 +229,40 @@ export const getLast7DaysIncomes = async(req, res) => {
 }
 
 export const getTagihanIn7DayMore = async(req, res) => {
-    const isMore = req.params['isMore']
-    const latestDateShowed = req.params['latestDateShowed']
-    const limit = 5
-    // console.log(latestDateShowed)
-    // console.log(SIX_DAYS_AGO_WITA_CONVERT_UTC)
+    let date = req.params['date']
+    const isFiltering = req.params['isFiltering']
 
+    const startOfDayFromTarget = new Date(date)
+    const startOfNextDayFromTarget = new Date(startOfDayFromTarget.getTime() + 24 * 60 * 60 * 1000)
     try {
-        const httpResponse = isMore === "1" ? 201 : 200
-        // console.log(isMore)
-
-        const transaction = await Orders.findAll({
+        const orders = await Orders.findAll({
+            order: [['createdAt', 'DESC']],
             where: {
-                [Op.and]: {
-                    isBon: true,
-                    createdAt: {
-                        [Op.lt]: isMore === "1" ? latestDateShowed : SIX_DAYS_AGO_WITA_CONVERT_UTC
+                [Op.and]: [
+                    {
+                        createdAt: {
+                            [Op.gte]: startOfDayFromTarget,
+                            [Op.lt]: startOfNextDayFromTarget
+                        }
                     },
-                }
+                    {
+                        isBon: true
+                    }
+                ]
             },
-            raw: true,
-            order: [
-                ['createdAt', 'DESC'] 
-            ],
-            limit: limit,
-            attributes: ['totalPayment', 'createdAt', 'outlet', 'id']
-        })
+            attributes: ["items", "outlet", "sales", "profit", "totalPayment", "id", "createdAt", "isBon"]
+          });
 
-        const manyOfTransaction = await Orders.findAll({
-            where: {
-                [Op.and]: {
-                    isBon: true,
-                    createdAt: {
-                        [Op.lt]: SIX_DAYS_AGO_WITA_CONVERT_UTC
-                    },
-                }
-            },
-            attributes: ['id'],
-            raw: true
-        })
-        
-        // console.log(manyOfTransaction)
-        const isEnd = transaction.length < limit ? "1" : "0"
+          if (orders.length < 1) {
+            return res.status(404).json({ msg: "Tidak ada data pada tanggal tersebut!", date: startOfDayFromTarget });
+          }
 
-        res.status(httpResponse ?? 200).json({
-            transaction: transaction,
-            manyOfTransaction: manyOfTransaction.length,
-            isEnd: isEnd
-        })
+          console.log(orders)
+      
+          res.status(200).json({ orders, date: startOfDayFromTarget });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ msg: "Internal server error" });
+        res.status(500).json({msg: 'Internal Server Error!'});
     }
 }
 
