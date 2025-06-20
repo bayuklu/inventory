@@ -102,7 +102,7 @@ export const handleExport = async ({
       "SETOR 2": "",
       "SETOR 3": "",
       "SETOR 4": "",
-      KET: order[7],
+      KET: order[7] === "TEMPO" && isBillsData ? "TAGIHAN" : order[7],
     }));
 
     // Tabel penjualan mulai di baris 5
