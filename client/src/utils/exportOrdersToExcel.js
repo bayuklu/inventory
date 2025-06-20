@@ -255,9 +255,11 @@ export const handleExport = async ({
     const a = document.createElement("a");
     a.href = url;
 
-    const response = await axios.post(
-      `${import.meta.env.VITE_BASEURL}/dashboard/orders/backup`
-    );
+    if(!isBillsData) {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASEURL}/dashboard/orders/backup`
+      );
+    }
     
     a.download = fileName;
     document.body.appendChild(a);
