@@ -174,6 +174,7 @@ const Dashboard = () => {
       setExpire(decoded.exp);
       setIsNoLoggedIn(false);
       setUserRole(decoded.role);
+      hasTokenMountRef.current = true
     } catch (error) {
       if (error.response) {
         setIsNoLoggedIn(true);
@@ -181,7 +182,6 @@ const Dashboard = () => {
       }
     } finally {
       setAuthCheck(false);
-      hasTokenMountRef.current = true
     }
   };
 
