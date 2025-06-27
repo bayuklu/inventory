@@ -99,10 +99,10 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    if(!token) {
+    if(token === "") {
       document.title = "AB FROZEN | Dashboard";
       refreshToken();
-      console.log(token)
+      // console.log(token)
     }
   }, [token]);
 
