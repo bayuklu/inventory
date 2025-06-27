@@ -129,7 +129,7 @@ const Dashboard = () => {
   }, [listTagihanShow]);
 
   useEffect(() => {
-    if (token) {
+    if (token && !hasTokenMountRef.current) {
       try {
         const decoded = jwtDecode(token);
         if (decoded.role === "admin") {
@@ -143,6 +143,7 @@ const Dashboard = () => {
           // getTagihan7DayMore("0");
           getTagihan(false);
           
+          hasTokenMountRef.current = true
         }
       } catch (error) {
         console.error("Token decoding failed:", error);
@@ -176,7 +177,6 @@ const Dashboard = () => {
       }
     } finally {
       setAuthCheck(false);
-      hasTokenMountRef.current = true
     }
   };
 

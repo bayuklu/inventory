@@ -1,4 +1,4 @@
-import React, { act, useEffect } from "react";
+import React, { act, useEffect, useRef } from "react";
 import Sidebar from "./Sidebar";
 import axios from "axios";
 import "../index.css";
@@ -57,7 +57,7 @@ const Inventory = () => {
 
   useEffect(() => {
     // console.log(dataView)
-    if (token) {
+    if (token && !hasTokenMountRef.current) {
       try {
         const decoded = jwtDecode(token);
         if (
@@ -67,6 +67,7 @@ const Inventory = () => {
         ) {
           // console.log("Mount")
           fetchItemsData("All Category", true);
+          hasTokenMountRef.current = true
         }
       } catch (error) {
         console.error("Token decoding failed:", error);
@@ -100,7 +101,6 @@ const Inventory = () => {
       }
     } finally {
       setAuthCheck(false);
-      hasTokenMountRef.current = true
     }
   };
 
