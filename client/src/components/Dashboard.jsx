@@ -125,7 +125,7 @@ const Dashboard = () => {
   }, [listTagihanShow]);
 
   useEffect(() => {
-    if (token && !dataTagihan.ordersData) {
+    if (token) {
       try {
         const decoded = jwtDecode(token);
         if (decoded.role === "admin") {
@@ -138,6 +138,7 @@ const Dashboard = () => {
           getTodayBestSellerProduct();
           // getTagihan7DayMore("0");
           getTagihan(false);
+          console.log(dataTagihan)
         }
       } catch (error) {
         console.error("Token decoding failed:", error);
