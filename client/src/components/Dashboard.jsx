@@ -125,7 +125,7 @@ const Dashboard = () => {
   }, [listTagihanShow]);
 
   useEffect(() => {
-    if (token) {
+    if (token && !dataTagihan) {
       try {
         const decoded = jwtDecode(token);
         if (decoded.role === "admin") {
@@ -143,7 +143,7 @@ const Dashboard = () => {
         console.error("Token decoding failed:", error);
       }
     }
-  }, [token]);
+  }, [token, dataTagihan]);
 
   useEffect(() => {
     if (dataTagihan.ordersData) {
@@ -379,13 +379,13 @@ const Dashboard = () => {
         ordersData: ordersData,
       }));
     } catch (error) {
-      // if (error.response.status === 404) {
-      // }
+      if (error.response.status === 404) {
+        setIsTagihanLoading(false);
+      }
       setDataTagihan((prevData) => ({
         ...prevData,
         ordersData: [],
       }));
-      setIsTagihanLoading(false);
       console.log(error.response);
     }
   };
