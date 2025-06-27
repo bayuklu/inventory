@@ -181,6 +181,7 @@ const Dashboard = () => {
       }
     } finally {
       setAuthCheck(false);
+      hasTokenMountRef.current = true
     }
   };
 
