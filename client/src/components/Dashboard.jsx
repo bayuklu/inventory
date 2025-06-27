@@ -54,7 +54,7 @@ const Dashboard = () => {
   const [todayProfit, setTodayProfit] = useState("");
   const [todayBestSeler, setTodayBestSeller] = useState("");
   const [token, setToken] = useState("");
-  const [hasFetched, setHasFetched] = useState(false);
+  const hasFetchedRef = useRef(false)
   const [expire, setExpire] = useState("");
   const [userRole, setUserRole] = useState("");
   const [isNoLoggedIn, setIsNoLoggedIn] = useState(false);
@@ -103,7 +103,7 @@ const Dashboard = () => {
     if(authCheck) {
       document.title = "AB FROZEN | Dashboard";
       refreshToken();
-      console.log("refreshToken!!!!!!!!!!!!!!")
+      // console.log("refreshToken!!!!!!!!!!!!!!")
     }
   }, [authCheck]);
 
@@ -129,7 +129,7 @@ const Dashboard = () => {
   }, [listTagihanShow]);
 
   useEffect(() => {
-    if (token && !hasFetched) {
+    if (token && !hasFetchedRef.current) {
       try {
         const decoded = jwtDecode(token);
         if (decoded.role === "admin") {
@@ -142,22 +142,14 @@ const Dashboard = () => {
           getTodayBestSellerProduct();
           // getTagihan7DayMore("0");
           getTagihan(false);
-          console.log("fetch!!!!!!!!!!!!!!!!!!!!!!!!")
-          console.log(token);
           
-          setHasFetched(true)
+          hasFetchedRef.current = true
         }
       } catch (error) {
         console.error("Token decoding failed:", error);
       }
     }
-  }, [token, hasFetched]);
-
-  // useEffect(() => {
-  //   if (dataTagihan.ordersData.length > 0) {
-  //     setIsTagihanLoading(false);
-  //   }
-  // }, [dataTagihan]);
+  }, [token]);
 
   const refreshToken = async () => {
     try {
@@ -387,7 +379,8 @@ const Dashboard = () => {
         ...prevData,
         ordersData: ordersData,
       }));
-
+      
+      setIsTagihanLoading(false);
     } catch (error) {
       if (error.response.status === 404) {
         setIsTagihanLoading(false);
@@ -397,8 +390,6 @@ const Dashboard = () => {
         ordersData: [],
       }));
       console.log(error.response);
-    } finally {
-      setIsTagihanLoading(false);
     }
   };
 
