@@ -137,8 +137,10 @@ const Dashboard = () => {
           getTodayProfit();
           getTodayBestSellerProduct();
           // getTagihan7DayMore("0");
-          getTagihan(false);
-          console.log(dataTagihan)
+          if(dataTagihan.ordersData.length > 0) {
+            getTagihan(false);
+          }
+          // console.log(dataTagihan)
         }
       } catch (error) {
         console.error("Token decoding failed:", error);
