@@ -99,9 +99,11 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    document.title = "AB FROZEN | Dashboard";
-    refreshToken();
-  }, []);
+    if(!token) {
+      document.title = "AB FROZEN | Dashboard";
+      refreshToken();
+    }
+  }, [token]);
 
   useEffect(() => {
     function handleClickOutsideListTagihan(event) {
