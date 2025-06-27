@@ -102,6 +102,7 @@ const Dashboard = () => {
     if(!token) {
       document.title = "AB FROZEN | Dashboard";
       refreshToken();
+      console.log(token)
     }
   }, [token]);
 
