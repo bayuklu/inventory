@@ -43,18 +43,18 @@ const Outlet = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(!hasTokenMountRef.current) {
-      document.title = "AB FROZEN | Outlet";
-      refreshToken();
-    }
-  }, [hasTokenMountRef]);
+    document.title = "AB FROZEN | Outlet";
+    refreshToken();
+  }, []);
 
   useEffect(() => {
-    if (token) {
+    if (token && !hasTokenMountRef.current) {
       try {
         const decoded = jwtDecode(token);
         if (decoded.role === "admin") {
           getOutlet();
+
+          hasTokenMountRef.current = true
         }
       } catch (error) {
         console.error("Token decoding failed:", error);
@@ -88,7 +88,6 @@ const Outlet = () => {
       }
     } finally {
       setAuthCheck(false);
-      hasTokenMountRef.current = true
     }
   };
 

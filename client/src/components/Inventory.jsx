@@ -49,11 +49,9 @@ const Inventory = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(!hasTokenMountRef.current) {
       document.title = "AB FROZEN | Inventory";
       refreshToken();
-    }
-  }, [hasTokenMountRef]);
+  }, []);
 
   useEffect(() => {
     // console.log(dataView)

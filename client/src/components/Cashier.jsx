@@ -138,10 +138,9 @@ const Cashier = () => {
   }, [printData]);
 
   useEffect(() => {
-    if(!hasTokenMountRef.current)
     document.title = "AB FROZEN | Cashier";
     refreshToken();
-  }, [hasTokenMountRef]);
+  }, []);
 
   useEffect(() => {
     if (recordCode && records.length === 0) {
@@ -150,16 +149,20 @@ const Cashier = () => {
   }, [recordCode, records]);
 
   useEffect(() => {
-    try {
-      if (token && !recordCode && userRole) {
-        getTurnCode();
-      } else if (token && userRole === "kasir") {
-        getRequestPrintFromAdmin(true);
+    if (token && !hasTokenMountRef.current) {
+      try {
+        if (token && !recordCode && userRole) {
+          getTurnCode();
+        } else if (token && userRole === "kasir") {
+          getRequestPrintFromAdmin(true);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsContainerLoading(false);
       }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsContainerLoading(false);
+
+      hasTokenMountRef.current = true
     }
   }, [token, recordCode, userRole]);
 
@@ -191,7 +194,6 @@ const Cashier = () => {
       }
     } finally {
       setAuthCheck(false);
-      hasTokenMountRef.current = true
     }
   };
 

@@ -62,14 +62,12 @@ const Orders = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(!hasTokenMountRef.current) {
-      document.title = "AB FROZEN | Today Orders";
-      refreshToken();
-    }
-  }, [hasTokenMountRef]);
+    document.title = "AB FROZEN | Today Orders";
+    refreshToken();
+  }, []);
 
   useEffect(() => {
-    if (token) {
+    if (token && !hasTokenMountRef.current) {
       try {
         const decoded = jwtDecode(token);
         if (decoded.role === "admin" && isDateChanged === false) {
@@ -79,6 +77,8 @@ const Orders = () => {
         } else {
           setIsDateChanged(true);
         }
+
+        hasTokenMountRef.current = true
       } catch (error) {
         console.error("Token decoding failed:", error);
       }
@@ -116,7 +116,6 @@ const Orders = () => {
       }
     } finally {
       setAuthCheck(false);
-      hasTokenMountRef.current = true
     }
   };
 
