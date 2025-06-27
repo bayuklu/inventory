@@ -379,6 +379,7 @@ const Dashboard = () => {
         ...prevData,
         ordersData: ordersData,
       }));
+
     } catch (error) {
       if (error.response.status === 404) {
         setIsTagihanLoading(false);
@@ -388,6 +389,8 @@ const Dashboard = () => {
         ordersData: [],
       }));
       console.log(error.response);
+    } finally {
+      setIsTagihanLoading(false);
     }
   };
 
