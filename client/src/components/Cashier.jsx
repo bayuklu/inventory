@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "./Sidebar";
 import axios from "axios";
 import "../index.css";
@@ -22,6 +22,7 @@ dayjs.extend(timezone);
 dayjs.locale("id");
 
 const Cashier = () => {
+  const hasTokenMountRef = useRef(false)
   const [msg, setMsg] = useState(null);
   const [recordCode, setRecordCode] = useState("");
   const [productCode, setProductCode] = useState("");
@@ -137,9 +138,10 @@ const Cashier = () => {
   }, [printData]);
 
   useEffect(() => {
+    if(!hasTokenMountRef.current)
     document.title = "AB FROZEN | Cashier";
     refreshToken();
-  }, []);
+  }, [hasTokenMountRef]);
 
   useEffect(() => {
     if (recordCode && records.length === 0) {
@@ -189,6 +191,7 @@ const Cashier = () => {
       }
     } finally {
       setAuthCheck(false);
+      hasTokenMountRef.current = true
     }
   };
 
