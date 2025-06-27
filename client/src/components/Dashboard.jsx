@@ -99,12 +99,12 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    if(token === "") {
+    if(authCheck) {
       document.title = "AB FROZEN | Dashboard";
       refreshToken();
       // console.log(token)
     }
-  }, [token]);
+  }, [token, authCheck]);
 
   useEffect(() => {
     function handleClickOutsideListTagihan(event) {
