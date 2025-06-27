@@ -100,11 +100,8 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    if(!hasTokenMountRef.current) {
-      document.title = "AB FROZEN | Dashboard";
-      refreshToken();
-      hasTokenMountRef.current = true
-    }
+    document.title = "AB FROZEN | Dashboard";
+    refreshToken();
   }, []);
 
   useEffect(() => {
@@ -133,7 +130,7 @@ const Dashboard = () => {
 }, [token]);
 
   useEffect(() => {
-    if (token) {
+    if (token && !hasTokenMountRef.current) {
       try {
         const decoded = jwtDecode(token);
         if (decoded.role === "admin") {
@@ -147,7 +144,7 @@ const Dashboard = () => {
           // getTagihan7DayMore("0");
           getTagihan(false);
           
-          // hasTokenMountRef.current = true
+          hasTokenMountRef.current = true
         }
       } catch (error) {
         console.error("Token decoding failed:", error);
