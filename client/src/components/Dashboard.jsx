@@ -145,11 +145,11 @@ const Dashboard = () => {
     }
   }, [token]);
 
-  useEffect(() => {
-    if (dataTagihan.ordersData.length > 0) {
-      setIsTagihanLoading(false);
-    }
-  }, [dataTagihan]);
+  // useEffect(() => {
+  //   if (dataTagihan.ordersData.length > 0) {
+  //     setIsTagihanLoading(false);
+  //   }
+  // }, [dataTagihan]);
 
   const refreshToken = async () => {
     try {
