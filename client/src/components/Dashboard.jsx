@@ -138,6 +138,7 @@ const Dashboard = () => {
           getTodayBestSellerProduct();
           // getTagihan7DayMore("0");
           getTagihan(false);
+          console.log("fetch!!!!!!!!!!!!!!!!!!!!!!!!")
         }
       } catch (error) {
         console.error("Token decoding failed:", error);
