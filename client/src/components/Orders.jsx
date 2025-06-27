@@ -21,6 +21,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 const Orders = () => {
+  const hasTokenMountRef = useRef(false)
   const [msg, setMsg] = useState({ msg: "", color: "" });
   const [ordersData, setOrdersData] = useState([]);
   const [token, setToken] = useState("");
@@ -61,9 +62,11 @@ const Orders = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = "AB FROZEN | Today Orders";
-    refreshToken();
-  }, []);
+    if(!hasTokenMountRef.current) {
+      document.title = "AB FROZEN | Today Orders";
+      refreshToken();
+    }
+  }, [hasTokenMountRef]);
 
   useEffect(() => {
     if (token) {
@@ -113,6 +116,7 @@ const Orders = () => {
       }
     } finally {
       setAuthCheck(false);
+      hasTokenMountRef.current = true
     }
   };
 

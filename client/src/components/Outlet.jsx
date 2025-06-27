@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "./Sidebar";
 import outletBackground from "../assets/img/outletBackground2.png";
 import CIcon from "@coreui/icons-react";
@@ -9,6 +9,7 @@ import SpinnerLoader from "./SpinnerLoader";
 import { useNavigate } from "react-router-dom";
 
 const Outlet = () => {
+  const hasTokenMountRef = useRef(false)
   const [outlets, setOutlets] = useState([]);
   const [msg, setMsg] = useState(null);
   const [search, setSearch] = useState("");
@@ -42,9 +43,11 @@ const Outlet = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = "AB FROZEN | Outlet";
-    refreshToken();
-  }, []);
+    if(!hasTokenMountRef.current) {
+      document.title = "AB FROZEN | Outlet";
+      refreshToken();
+    }
+  }, [hasTokenMountRef]);
 
   useEffect(() => {
     if (token) {
@@ -85,6 +88,7 @@ const Outlet = () => {
       }
     } finally {
       setAuthCheck(false);
+      hasTokenMountRef.current = true
     }
   };
 

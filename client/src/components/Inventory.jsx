@@ -11,6 +11,7 @@ import SpinnerLoader from "./SpinnerLoader";
 import rupiah from "../utils/rupiah";
 
 const Inventory = () => {
+  const hasTokenMountRef = useRef(false)
   const [msg, setMsg] = useState({});
   const [items, setItems] = useState([]);
   const [activeButton, setActiveButton] = useState("All Category");
@@ -48,9 +49,11 @@ const Inventory = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = "AB FROZEN | Inventory";
-    refreshToken();
-  }, []);
+    if(!hasTokenMountRef.current) {
+      document.title = "AB FROZEN | Inventory";
+      refreshToken();
+    }
+  }, [hasTokenMountRef]);
 
   useEffect(() => {
     // console.log(dataView)
@@ -97,6 +100,7 @@ const Inventory = () => {
       }
     } finally {
       setAuthCheck(false);
+      hasTokenMountRef.current = true
     }
   };
 

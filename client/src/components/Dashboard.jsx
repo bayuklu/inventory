@@ -46,6 +46,7 @@ import {
 } from "../utils/cookies";
 
 const Dashboard = () => {
+  const hasTokenMountRef = useRef(false)
   const [product, setProduct] = useState("0");
   const [stock, setStock] = useState("0");
   const [todayOrders, setTodayOrders] = useState("0");
@@ -54,7 +55,6 @@ const Dashboard = () => {
   const [todayProfit, setTodayProfit] = useState("");
   const [todayBestSeler, setTodayBestSeller] = useState("");
   const [token, setToken] = useState("");
-  const hasFetchedRef = useRef(false)
   const [expire, setExpire] = useState("");
   const [userRole, setUserRole] = useState("");
   const [isNoLoggedIn, setIsNoLoggedIn] = useState(false);
@@ -100,12 +100,12 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    if(authCheck) {
+    if(!hasTokenMountRef.current) {
       document.title = "AB FROZEN | Dashboard";
       refreshToken();
       // console.log("refreshToken!!!!!!!!!!!!!!")
     }
-  }, [authCheck]);
+  }, [hasTokenMountRef]);
 
   useEffect(() => {
     function handleClickOutsideListTagihan(event) {
@@ -129,7 +129,7 @@ const Dashboard = () => {
   }, [listTagihanShow]);
 
   useEffect(() => {
-    if (token && !hasFetchedRef.current) {
+    if (token) {
       try {
         const decoded = jwtDecode(token);
         if (decoded.role === "admin") {
@@ -143,7 +143,6 @@ const Dashboard = () => {
           // getTagihan7DayMore("0");
           getTagihan(false);
           
-          hasFetchedRef.current = true
         }
       } catch (error) {
         console.error("Token decoding failed:", error);
@@ -177,6 +176,7 @@ const Dashboard = () => {
       }
     } finally {
       setAuthCheck(false);
+      hasTokenMountRef.current = true
     }
   };
 
