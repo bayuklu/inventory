@@ -129,6 +129,10 @@ const Dashboard = () => {
   }, [listTagihanShow]);
 
   useEffect(() => {
+  console.log("Token berubah:", token);
+}, [token]);
+
+  useEffect(() => {
     if (token && !hasTokenMountRef.current) {
       try {
         const decoded = jwtDecode(token);
