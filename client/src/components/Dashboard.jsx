@@ -103,7 +103,7 @@ const Dashboard = () => {
     if(!hasTokenMountRef.current) {
       document.title = "AB FROZEN | Dashboard";
       refreshToken();
-      // console.log("refreshToken!!!!!!!!!!!!!!")
+      hasTokenMountRef.current = true
     }
   }, [hasTokenMountRef]);
 
@@ -174,7 +174,6 @@ const Dashboard = () => {
       setExpire(decoded.exp);
       setIsNoLoggedIn(false);
       setUserRole(decoded.role);
-      hasTokenMountRef.current = true
     } catch (error) {
       if (error.response) {
         setIsNoLoggedIn(true);
