@@ -142,6 +142,8 @@ const Dashboard = () => {
           // getTagihan7DayMore("0");
           getTagihan(false);
           console.log("fetch!!!!!!!!!!!!!!!!!!!!!!!!")
+          console.log(token);
+          
         }
       } catch (error) {
         console.error("Token decoding failed:", error);
