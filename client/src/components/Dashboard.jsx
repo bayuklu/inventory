@@ -54,6 +54,7 @@ const Dashboard = () => {
   const [todayProfit, setTodayProfit] = useState("");
   const [todayBestSeler, setTodayBestSeller] = useState("");
   const [token, setToken] = useState("");
+  const [hasFetched, setHasFetched] = useState(false);
   const [expire, setExpire] = useState("");
   const [userRole, setUserRole] = useState("");
   const [isNoLoggedIn, setIsNoLoggedIn] = useState(false);
@@ -128,7 +129,7 @@ const Dashboard = () => {
   }, [listTagihanShow]);
 
   useEffect(() => {
-    if (token) {
+    if (token && !hasFetched) {
       try {
         const decoded = jwtDecode(token);
         if (decoded.role === "admin") {
@@ -144,12 +145,13 @@ const Dashboard = () => {
           console.log("fetch!!!!!!!!!!!!!!!!!!!!!!!!")
           console.log(token);
           
+          setHasFetched(true)
         }
       } catch (error) {
         console.error("Token decoding failed:", error);
       }
     }
-  }, [token]);
+  }, [token, hasFetched]);
 
   // useEffect(() => {
   //   if (dataTagihan.ordersData.length > 0) {
