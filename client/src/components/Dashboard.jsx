@@ -137,22 +137,19 @@ const Dashboard = () => {
           getTodayProfit();
           getTodayBestSellerProduct();
           // getTagihan7DayMore("0");
-          if(dataTagihan.ordersData.length > 0) {
-            getTagihan(false);
-          }
-          // console.log(dataTagihan)
+          getTagihan(false);
         }
       } catch (error) {
         console.error("Token decoding failed:", error);
       }
     }
-  }, [token, dataTagihan]);
+  }, [token]);
 
   useEffect(() => {
-    if (dataTagihan.ordersData) {
+    if (dataTagihan.ordersData.length > 0) {
       setIsTagihanLoading(false);
     }
-  }, [dataTagihan.ordersData]);
+  }, [dataTagihan]);
 
   const refreshToken = async () => {
     try {
@@ -302,7 +299,7 @@ const Dashboard = () => {
   };
 
   const getTagihan = async (isFilteringDate) => {
-
+    
     try {
       setIsTagihanLoading(true);
       const response = await axios.get(
@@ -312,7 +309,7 @@ const Dashboard = () => {
           dataTagihan.tanggal
         ).toISOString()}/${isFilteringDate ? "1" : "0"}`
       );
-      console.log(response);
+      // console.log(response);
 
       const { orders } = response.data;
       const ordersData = await Promise.all(
