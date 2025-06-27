@@ -105,7 +105,7 @@ const Dashboard = () => {
       refreshToken();
       hasTokenMountRef.current = true
     }
-  }, [hasTokenMountRef]);
+  }, []);
 
   useEffect(() => {
     function handleClickOutsideListTagihan(event) {
