@@ -379,13 +379,13 @@ const Dashboard = () => {
         ordersData: ordersData,
       }));
     } catch (error) {
-      if (error.response.status === 404) {
-        setIsTagihanLoading(false);
-      }
+      // if (error.response.status === 404) {
+      // }
       setDataTagihan((prevData) => ({
         ...prevData,
         ordersData: [],
       }));
+      setIsTagihanLoading(false);
       console.log(error.response);
     }
   };
