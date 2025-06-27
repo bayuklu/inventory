@@ -125,7 +125,7 @@ const Dashboard = () => {
   }, [listTagihanShow]);
 
   useEffect(() => {
-    if (token && !dataTagihan) {
+    if (token && !dataTagihan.ordersData) {
       try {
         const decoded = jwtDecode(token);
         if (decoded.role === "admin") {
@@ -299,8 +299,9 @@ const Dashboard = () => {
   };
 
   const getTagihan = async (isFilteringDate) => {
-    setIsTagihanLoading(true);
+
     try {
+      setIsTagihanLoading(true);
       const response = await axios.get(
         `${
           import.meta.env.VITE_BASEURL
