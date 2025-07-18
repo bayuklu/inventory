@@ -155,7 +155,7 @@ const Dashboard = () => {
   const refreshToken = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BASEURL}/tokens`,
+        `${import.meta.env.VITE_BASEURL}/token`,
         {
           withCredentials: true,
         }
