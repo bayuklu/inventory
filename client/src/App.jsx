@@ -1,4 +1,4 @@
-import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
+import {BrowserRouter as Router, Route, Routes} from 'react-router-domm'
 import Dashboard from './components/Dashboard'
 import Cashier from './components/Cashier'
 import Inventory from './components/Inventory'
