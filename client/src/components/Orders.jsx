@@ -57,6 +57,8 @@ const Orders = () => {
     "Eja",
     "Dian",
     "Eyung",
+    "Arif",
+    "Umi Dawas",
   ];
 
   const navigate = useNavigate();
