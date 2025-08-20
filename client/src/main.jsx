@@ -6,7 +6,7 @@ axios.defaults.withCredentials = true
 import './index.css'
 import 'bulma/css/bulma.css'
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById('roots')).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
