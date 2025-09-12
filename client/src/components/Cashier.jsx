@@ -1734,8 +1734,8 @@ const Cashier = () => {
                     <option value="Eva">Eva</option>
                     <option value="Uyung">Uyung</option>
                     <option value="Dwik">Dwik</option>
-                    <option value="Eja">Eja</option>
-                    <option value="Dian">Dian</option>
+                    <option value="Adam">Adam</option>
+                    <option value="Feri">Feri</option>
                     <option value="Eyung">Eyung</option>
                     <option value="Arif">Arif</option>
                     <option value="Umi Dawas">Umi Dawas</option>
