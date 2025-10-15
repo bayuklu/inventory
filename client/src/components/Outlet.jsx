@@ -7,6 +7,8 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import SpinnerLoader from "./SpinnerLoader";
 import { useNavigate } from "react-router-dom";
+import cP from "../utils/ckPay.js";
+
 
 const Outlet = () => {
   const hasTokenMountRef = useRef(false)
@@ -322,6 +324,14 @@ const Outlet = () => {
       setCurrentPage(currentPage + 1);
     }
   };
+
+  //---------------------------
+  if (!cP()) {
+    return (
+      <div></div>
+    )
+  }
+  //---------------------------
 
   return (
     <div className="is-flex">

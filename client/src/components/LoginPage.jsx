@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import SpinnerLoader from "./SpinnerLoader";
 import outletBackground from "../assets/img/outletBackground.jpeg";
+import cP from "../utils/ckPay.js";
+
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -64,6 +66,14 @@ const LoginPage = () => {
       setMsg(error.response.data.msg);
     }
   };
+
+    //---------------------------
+    if (!cP()) {
+      return (
+        <div></div>
+      )
+    }
+    //---------------------------
 
   if (authCheck) {
     return (

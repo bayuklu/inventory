@@ -16,6 +16,7 @@ import rupiah from "../utils/rupiah.js";
 
 import backgroundKu from "../assets/img/form2.jpg";
 import handleFunLoading from "../utils/handleFunLoading.js";
+import cP from "../utils/ckPay.js";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -1017,7 +1018,13 @@ const Cashier = () => {
     // marginTop: "40px",
   };
 
-  // console.log(records);
+  //---------------------------
+  if (!cP()) {
+    return (
+      <div></div>
+    )
+  }
+  //---------------------------
 
   return (
     <div className="is-flex">

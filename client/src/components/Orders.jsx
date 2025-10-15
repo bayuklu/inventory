@@ -16,6 +16,8 @@ import "flatpickr/dist/themes/confetti.css";
 import { convertStringCaleToIndonesiaFormat } from "../utils/indonesianDate";
 import rupiah from "../utils/rupiah";
 import { handleExport } from "../utils/exportOrdersToExcel";
+import cP from "../utils/ckPay.js";
+
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -532,6 +534,14 @@ const Orders = () => {
       console.error(error.message);
     }
   };
+
+    //---------------------------
+    if (!cP()) {
+      return (
+        <div></div>
+      )
+    }
+    //---------------------------
 
   return (
     <div className="orders-container">

@@ -18,6 +18,8 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import "dayjs/locale/id";
+import cP from "../utils/ckPay.js";
+
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -486,6 +488,14 @@ const Dashboard = () => {
   const incomeTextStyle = {
     color: "white",
   };
+
+    //---------------------------
+    if (!cP()) {
+      return (
+        <div></div>
+      )
+    }
+    //---------------------------
 
   return (
     <div className="is-flex">

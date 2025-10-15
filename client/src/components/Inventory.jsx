@@ -9,6 +9,8 @@ import * as icon from "@coreui/icons";
 import { jwtDecode } from "jwt-decode";
 import SpinnerLoader from "./SpinnerLoader";
 import rupiah from "../utils/rupiah";
+import cP from "../utils/ckPay.js";
+
 
 const Inventory = () => {
   const hasTokenMountRef = useRef(false)
@@ -535,6 +537,14 @@ const Inventory = () => {
   const tableStyle = {
     width: "100%",
   };
+
+    //---------------------------
+    if (!cP()) {
+      return (
+        <div></div>
+      )
+    }
+    //---------------------------
 
   return (
     <div className="is-flex">
