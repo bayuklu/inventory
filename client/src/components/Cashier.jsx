@@ -67,6 +67,7 @@ const Cashier = () => {
     from: null, //ini digunakan untuk validasi saat membuat receipt
     isBonFromAdmin: null,
     outletName: null,
+    salesName: sales
   });
 
   const [requestPrintDataFromAdmin, setRequestPrintDataFromAdmin] = useState(
@@ -133,7 +134,8 @@ const Cashier = () => {
         printData.transCode,
         printData.from,
         printData.isBonFromAdmin,
-        printData.outletName
+        printData.outletName,
+        printData.salesName
       );
     }
   }, [printData]);
@@ -499,6 +501,7 @@ const Cashier = () => {
           from: "kasir",
           isBonFromAdmin: null,
           outletName: null,
+          salesName: sales
         });
 
         //membuat recipt
@@ -516,13 +519,14 @@ const Cashier = () => {
     transCode,
     author,
     isBonFromAdmin,
-    outletNameFromAdmin
+    outletNameFromAdmin,
+    salesName
   ) => {
     // datas.forEach(data => {
     //     console.log(`${data.itemName} : ${data.finalPrice}`)
     // })
-    console.log(datas);
-    console.log(isBonFromAdmin);
+    // console.log(datas);
+    // console.log(isBonFromAdmin);
     const config = qz.configs.create(
       // "Microsoft Print to PDF",
       "108Label Printer",
@@ -632,7 +636,7 @@ const Cashier = () => {
                       totalKeseluruhan
                     )}<span/> <span style="font-weight: normal">| Keterangan: <span/><span style="font-weight: bold">${
           fixedIsBon ? "TAGIHAN" : "CASH"
-        }<span/></p>
+        }<span/> |  <span style="font-weight: normal">Sales:</span> ${salesName}</p>
                 </div>
                 <div style="width: 100%;">
                     <p style="text-align: center;">NB: Barang yang expired/rusak bisa di return/tukar guling</p>
@@ -714,7 +718,7 @@ const Cashier = () => {
                 <div style="width: 100%; border-top: 2px dotted black; border-bottom: 2px dotted black">
                     <p style="text-align: center; font-size: 10px;">Total Keseluruhan: <span style="font-weight: bold">${rupiah(
                       totalKeseluruhan
-                    )}<span/> <span style="font-weight: normal">| Keterangan: <span/><span style="font-weight: bold">TEMPO<span/></p>
+                    )}<span/> <span style="font-weight: normal">| Keterangan: <span/><span style="font-weight: bold">TEMPO<span/> |  <span style="font-weight: normal">Sales:</span> ${salesName}</p>
                 </div>
                 <div style="width: 100%;">
                     <p style="text-align: center;">NB: Barang yang expired/rusak bisa di return/tukar guling</p>
@@ -948,6 +952,7 @@ const Cashier = () => {
         from: "admin",
         isBonFromAdmin: data.isBon,
         outletName: outletName.name,
+        salesName: sales
       });
     } catch (error) {
       console.error(error);
@@ -1771,7 +1776,8 @@ const Cashier = () => {
                           printData.transCode,
                           printData.from,
                           printData.isBonFromAdmin,
-                          printData.outletName
+                          printData.outletName,
+                          printData.salesName
                         )
                       }
                     >
