@@ -207,6 +207,34 @@ export const handleExport = async ({
         JUMLAH: HitungBanyakOrderSales("Eyung"),
         "SETOR 1": rupiah(hitungJumlahPendapatan("Eyung")),
       },
+      {
+        No: "",
+        NAMA: "",
+        S: "Arif",
+        JUMLAH: HitungBanyakOrderSales("Arif"),
+        "SETOR 1": rupiah(hitungJumlahPendapatan("Arif")),
+      },
+      {
+        No: "",
+        NAMA: "",
+        S: "Adam",
+        JUMLAH: HitungBanyakOrderSales("Adam"),
+        "SETOR 1": rupiah(hitungJumlahPendapatan("Adam")),
+      },
+      {
+        No: "",
+        NAMA: "",
+        S: "Feri",
+        JUMLAH: HitungBanyakOrderSales("Feri"),
+        "SETOR 1": rupiah(hitungJumlahPendapatan("Feri")),
+      },
+      {
+        No: "",
+        NAMA: "",
+        S: "Umi Dawas",
+        JUMLAH: HitungBanyakOrderSales("Umi Dawas"),
+        "SETOR 1": rupiah(hitungJumlahPendapatan("Umi Dawas")),
+      },
     ];
 
     // Baris awal tabel sales = 5 (start table) + ordersData.length (jumlah data) + 2 (judul sales + spasi)
