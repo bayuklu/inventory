@@ -945,6 +945,7 @@ const Cashier = () => {
       );
 
       const newDatas = getRecordsResponse.data;
+      // console.log(data.sales);
 
       setPrintData({
         datas: newDatas,
@@ -952,7 +953,7 @@ const Cashier = () => {
         from: "admin",
         isBonFromAdmin: data.isBon,
         outletName: outletName.name,
-        salesName: sales
+        salesName: data.sales
       });
     } catch (error) {
       console.error(error);
