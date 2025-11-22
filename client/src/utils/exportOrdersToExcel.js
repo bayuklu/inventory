@@ -235,6 +235,13 @@ export const handleExport = async ({
         JUMLAH: HitungBanyakOrderSales("Umi Dawas"),
         "SETOR 1": rupiah(hitungJumlahPendapatan("Umi Dawas")),
       },
+      {
+        No: "",
+        NAMA: "",
+        S: "Sopian",
+        JUMLAH: HitungBanyakOrderSales("Sopian"),
+        "SETOR 1": rupiah(hitungJumlahPendapatan("Sopian")),
+      },
     ];
 
     // Baris awal tabel sales = 5 (start table) + ordersData.length (jumlah data) + 2 (judul sales + spasi)

@@ -1753,6 +1753,7 @@ const Cashier = () => {
                     <option value="Arif">Arif</option>
                     <option value="Umi Dawas">Umi Dawas</option>
                     <option value="Eja">Eja</option>
+                    <option value="Sopian">Sopian</option>
                   </select>
                 </div>
                 {isStoreClicked ? (
