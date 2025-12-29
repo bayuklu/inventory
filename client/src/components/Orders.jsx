@@ -60,9 +60,10 @@ const Orders = () => {
     "Feri",
     "Eyung",
     "Arif",
-    "Umi Dawas",
     "Eja",
     "Sopian",
+    "Dika",
+    "Rani",
   ];
 
   const navigate = useNavigate();

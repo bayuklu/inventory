@@ -196,13 +196,6 @@ export const handleExport = async ({
       {
         No: "",
         NAMA: "",
-        S: "Dian",
-        JUMLAH: HitungBanyakOrderSales("Dian"),
-        "SETOR 1": rupiah(hitungJumlahPendapatan("Dian")),
-      },
-      {
-        No: "",
-        NAMA: "",
         S: "Eyung",
         JUMLAH: HitungBanyakOrderSales("Eyung"),
         "SETOR 1": rupiah(hitungJumlahPendapatan("Eyung")),
@@ -231,16 +224,23 @@ export const handleExport = async ({
       {
         No: "",
         NAMA: "",
-        S: "Umi Dawas",
-        JUMLAH: HitungBanyakOrderSales("Umi Dawas"),
-        "SETOR 1": rupiah(hitungJumlahPendapatan("Umi Dawas")),
+        S: "Sopian",
+        JUMLAH: HitungBanyakOrderSales("Sopian"),
+        "SETOR 1": rupiah(hitungJumlahPendapatan("Sopian")),
       },
       {
         No: "",
         NAMA: "",
-        S: "Sopian",
-        JUMLAH: HitungBanyakOrderSales("Sopian"),
-        "SETOR 1": rupiah(hitungJumlahPendapatan("Sopian")),
+        S: "Dika",
+        JUMLAH: HitungBanyakOrderSales("Dika"),
+        "SETOR 1": rupiah(hitungJumlahPendapatan("Dika")),
+      },
+      {
+        No: "",
+        NAMA: "",
+        S: "Rani",
+        JUMLAH: HitungBanyakOrderSales("Rani"),
+        "SETOR 1": rupiah(hitungJumlahPendapatan("Rani")),
       },
     ];
 
