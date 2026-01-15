@@ -242,6 +242,20 @@ export const handleExport = async ({
         JUMLAH: HitungBanyakOrderSales("Rani"),
         "SETOR 1": rupiah(hitungJumlahPendapatan("Rani")),
       },
+      {
+        No: "",
+        NAMA: "",
+        S: "Ate",
+        JUMLAH: HitungBanyakOrderSales("Ate"),
+        "SETOR 1": rupiah(hitungJumlahPendapatan("Ate")),
+      },
+      {
+        No: "",
+        NAMA: "",
+        S: "Rahman",
+        JUMLAH: HitungBanyakOrderSales("Rahman"),
+        "SETOR 1": rupiah(hitungJumlahPendapatan("Rahman")),
+      },
     ];
 
     // Baris awal tabel sales = 5 (start table) + ordersData.length (jumlah data) + 2 (judul sales + spasi)

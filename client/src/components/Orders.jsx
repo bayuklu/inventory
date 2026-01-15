@@ -64,6 +64,8 @@ const Orders = () => {
     "Sopian",
     "Dika",
     "Rani",
+    "Ate",
+    "Rahman",
   ];
 
   const navigate = useNavigate();

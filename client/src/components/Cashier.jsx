@@ -1755,6 +1755,8 @@ const Cashier = () => {
                     <option value="Sopian">Sopian</option>
                     <option value="Dika">Dika</option>
                     <option value="Rani">Rani</option>
+                    <option value="Ate">Ate</option>
+                    <option value="Rahman">Rahman</option>
                   </select>
                 </div>
                 {isStoreClicked ? (
