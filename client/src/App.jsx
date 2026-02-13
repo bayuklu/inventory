@@ -6,14 +6,10 @@ import Outlet from './components/Outlet'
 import Orders from './components/Orders'
 import LoginPage from './components/LoginPage'
 
-import UpStorage from './components/upStorage'
-
 function App() {
   return (
     // <div><Dashboard/></div>
     <>
-
-   <UpStorage/>
    <Router> 
      <Routes>
        <Route path="/" element={<Dashboard/>}/>
