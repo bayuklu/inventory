@@ -1742,21 +1742,18 @@ const Cashier = () => {
                     value={sales}
                     style={{ backgroundColor: "#fff", color: "black" }}
                   >
-                    <option value="Ana">Ana</option>
-                    <option value="Eman">Eman</option>
+                    <option value="Eja">Eja</option>
                     <option value="Eva">Eva</option>
-                    <option value="Uyung">Uyung</option>
                     <option value="Dwik">Dwik</option>
+                    <option value="Eman">Eman</option>
+                    <option value="Ana">Ana</option>
                     <option value="Adam">Adam</option>
                     <option value="Feri">Feri</option>
-                    <option value="Eyung">Eyung</option>
-                    <option value="Arif">Arif</option>
-                    <option value="Eja">Eja</option>
-                    <option value="Sopian">Sopian</option>
-                    <option value="Dika">Dika</option>
+                    <option value="Isma">Isma</option>
+                    <option value="Debi">Debi</option>
                     <option value="Rani">Rani</option>
-                    <option value="Ate">Ate</option>
-                    <option value="Rahman">Rahman</option>
+                    <option value="Rachman">Rachman</option>
+                    <option value="Agus">Agus</option>
                   </select>
                 </div>
                 {isStoreClicked ? (

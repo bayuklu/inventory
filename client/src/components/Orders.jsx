@@ -51,21 +51,18 @@ const Orders = () => {
 
   const salesList = [
     "--Ganti Sales--",
-    "Ana",
-    "Eman",
+    "Eja",
     "Eva",
-    "Uyung",
     "Dwik",
+    "Eman",
+    "Ana",
     "Adam",
     "Feri",
-    "Eyung",
-    "Arif",
-    "Eja",
-    "Sopian",
-    "Dika",
+    "Isma",
+    "Debi",
     "Rani",
-    "Ate",
-    "Rahman",
+    "Rachman",
+    "Agus",
   ];
 
   const navigate = useNavigate();
