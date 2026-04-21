@@ -225,8 +225,8 @@ export const handleExport = async ({
         No: "",
         NAMA: "",
         S: "Rachman",
-        JUMLAH: HitungBanyakOrderSales("Rahman"),
-        "SETOR 1": rupiah(hitungJumlahPendapatan("Rahman")),
+        JUMLAH: HitungBanyakOrderSales("Rachman"),
+        "SETOR 1": rupiah(hitungJumlahPendapatan("Rachman")),
       },
       {
         No: "",
