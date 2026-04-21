@@ -224,7 +224,7 @@ export const handleExport = async ({
       {
         No: "",
         NAMA: "",
-        S: "Rahman",
+        S: "Rachman",
         JUMLAH: HitungBanyakOrderSales("Rahman"),
         "SETOR 1": rupiah(hitungJumlahPendapatan("Rahman")),
       },
